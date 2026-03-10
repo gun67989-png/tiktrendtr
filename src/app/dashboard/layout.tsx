@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import {
@@ -16,6 +16,8 @@ import {
   FiX,
   FiActivity,
   FiPlay,
+  FiShield,
+  FiUser,
 } from "react-icons/fi";
 
 const navItems = [
@@ -29,14 +31,33 @@ const navItems = [
   { href: "/dashboard/predictions", label: "Trend Tahminleri", icon: FiTarget },
 ];
 
+interface UserInfo {
+  userId: string;
+  username: string;
+  email: string;
+  role: "admin" | "user";
+}
+
 export default function DashboardLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [user, setUser] = useState<UserInfo | null>(null);
   const pathname = usePathname();
   const router = useRouter();
+
+  useEffect(() => {
+    fetch("/api/auth/check")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          setUser(data.user);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const handleLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
@@ -115,10 +136,58 @@ export default function DashboardLayout({
               </button>
             );
           })}
+
+          {/* Admin Panel Link - only for admins */}
+          {user?.role === "admin" && (
+            <>
+              <div className="my-3 border-t border-border" />
+              <button
+                onClick={() => {
+                  router.push("/dashboard/admin");
+                  setSidebarOpen(false);
+                }}
+                className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+                  isActive("/dashboard/admin")
+                    ? "bg-teal/10 text-teal"
+                    : "text-text-secondary hover:text-teal hover:bg-teal/5"
+                }`}
+              >
+                <FiShield
+                  className={`w-4 h-4 ${
+                    isActive("/dashboard/admin") ? "text-teal" : ""
+                  }`}
+                />
+                Admin Paneli
+                {isActive("/dashboard/admin") && (
+                  <motion.div
+                    layoutId="activeNavAdmin"
+                    className="ml-auto w-1.5 h-1.5 rounded-full bg-teal"
+                  />
+                )}
+              </button>
+            </>
+          )}
         </nav>
 
-        {/* Status & Logout */}
+        {/* User Info & Logout */}
         <div className="p-4 border-t border-border space-y-3">
+          {/* User info */}
+          {user && (
+            <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-light">
+              <div className="w-7 h-7 rounded-full gradient-red flex items-center justify-center flex-shrink-0">
+                <FiUser className="w-3.5 h-3.5 text-white" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-xs font-medium text-text-primary truncate">
+                  {user.username}
+                </p>
+                <p className="text-[10px] text-text-muted truncate">
+                  {user.role === "admin" ? "Yönetici" : "Kullanıcı"}
+                </p>
+              </div>
+            </div>
+          )}
+
           <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-light">
             <div className="w-2 h-2 rounded-full bg-teal animate-pulse" />
             <span className="text-xs text-text-secondary">Veri toplama aktif</span>

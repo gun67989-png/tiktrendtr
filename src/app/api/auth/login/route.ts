@@ -1,42 +1,53 @@
 import { NextRequest, NextResponse } from "next/server";
-import { verifyPassword, createSession } from "@/lib/auth";
+import { verifyUserPassword, createSession } from "@/lib/auth";
 
 export async function POST(request: NextRequest) {
   try {
-    const { password } = await request.json();
+    const { identifier, password } = await request.json();
 
-    if (!password) {
+    if (!identifier || !password) {
       return NextResponse.json(
-        { error: "Şifre gerekli" },
+        { error: "Kullanıcı adı/e-posta ve şifre gerekli" },
         { status: 400 }
       );
     }
 
-    const isValid = await verifyPassword(password);
+    const user = await verifyUserPassword(identifier, password);
 
-    if (!isValid) {
+    if (!user) {
       return NextResponse.json(
-        { error: "Geçersiz şifre" },
+        { error: "Geçersiz kullanıcı adı/e-posta veya şifre" },
         { status: 401 }
       );
     }
 
-    const token = await createSession();
+    const token = await createSession({
+      id: user.id,
+      username: user.username,
+      email: user.email,
+      role: user.role,
+    });
 
-    const response = NextResponse.json({ success: true });
+    const response = NextResponse.json({
+      success: true,
+      user: {
+        id: user.id,
+        username: user.username,
+        email: user.email,
+        role: user.role,
+      },
+    });
+
     response.cookies.set("session", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
       sameSite: "lax",
-      maxAge: 60 * 60 * 24 * 7, // 7 days
+      maxAge: 60 * 60 * 24 * 7,
       path: "/",
     });
 
     return response;
   } catch {
-    return NextResponse.json(
-      { error: "Sunucu hatası" },
-      { status: 500 }
-    );
+    return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
   }
 }

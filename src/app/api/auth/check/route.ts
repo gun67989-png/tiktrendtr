@@ -1,9 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { jwtVerify } from "jose";
-
-const JWT_SECRET = new TextEncoder().encode(
-  process.env.JWT_SECRET || "default-secret-change-me"
-);
+import { verifySession } from "@/lib/auth";
 
 export async function GET(request: NextRequest) {
   const token = request.cookies.get("session")?.value;
@@ -12,10 +8,18 @@ export async function GET(request: NextRequest) {
     return NextResponse.json({ authenticated: false }, { status: 401 });
   }
 
-  try {
-    await jwtVerify(token, JWT_SECRET);
-    return NextResponse.json({ authenticated: true });
-  } catch {
+  const session = await verifySession(token);
+  if (!session) {
     return NextResponse.json({ authenticated: false }, { status: 401 });
   }
+
+  return NextResponse.json({
+    authenticated: true,
+    user: {
+      userId: session.userId,
+      username: session.username,
+      email: session.email,
+      role: session.role,
+    },
+  });
 }
