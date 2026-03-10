@@ -922,6 +922,157 @@ export function generateVideoAnalytics(videoId: string): VideoAnalytics | null {
   };
 }
 
+// Generate mock video list for trending videos page
+export interface VideoListItem {
+  id: string;
+  tiktokId: string;
+  description: string;
+  creator: string;
+  creatorAvatar: string | null;
+  thumbnailUrl: string;
+  videoUrl: string;
+  tiktokUrl: string;
+  views: number;
+  likes: number;
+  comments: number;
+  shares: number;
+  engagementRate: number;
+  viralScore: number;
+  duration: number;
+  format: string | null;
+  category: string | null;
+  soundId: string | null;
+  soundName: string | null;
+  soundCreator: string | null;
+  publishedAt: string;
+  hashtags: string[];
+}
+
+export function generateVideos(options: {
+  limit?: number;
+  offset?: number;
+  category?: string;
+  sortBy?: "viralScore" | "views" | "engagementRate" | "publishedAt";
+  order?: "asc" | "desc";
+} = {}): { videos: VideoListItem[]; total: number } {
+  const { limit = 20, offset = 0, category, sortBy = "viralScore", order = "desc" } = options;
+
+  const creators = [
+    "yemek_ustasi", "komedi_krali", "gezgin_tr", "moda_guru",
+    "tech_master", "vlog_turkey", "egitim_plus", "spor_kocu",
+    "dans_queen", "guzellik_tr", "oyuncu_pro", "muzik_tr",
+    "chef_istanbul", "travel_antalya", "fitness_coach", "diy_master",
+    "comedy_king", "style_icon", "code_wizard", "nature_lover",
+  ];
+  const formats = ["Hikaye Anlatimi", "Tutorial", "POV", "Once/Sonra", "Get Ready With Me", "Mukbang", "Duet", "Challenge"];
+  const soundNames = ["Original Sound - Turkish Remix", "Anlatamam", "Ela Gozlum", "Street Food Beat", "Istanbul Nights", "Komedi Sound Effect", "Turkish Drill Beat", "Halay Remix 2024"];
+  const soundCreators = ["djturk_official", "tarkan", "emircan_igan", "beatmaker_ist", "dj_deep_tr", "soundfx_tr", "drill_ankara", "halay_king"];
+
+  const catHashtags: Record<string, string[]> = {
+    Yemek: ["#yemektarifi", "#turkmutfagi"],
+    Komedi: ["#komedi", "#mizah"],
+    Seyahat: ["#seyahat", "#turkiye"],
+    Moda: ["#moda", "#kombin"],
+    Teknoloji: ["#teknoloji", "#tech"],
+    Vlog: ["#vlog", "#gunluk"],
+    Egitim: ["#egitim", "#ogren"],
+    Spor: ["#spor", "#fitness"],
+    Muzik: ["#muzik", "#sarki"],
+    Dans: ["#dans", "#dance"],
+    Guzellik: ["#guzellik", "#makyaj"],
+    Oyun: ["#gaming", "#oyun"],
+  };
+
+  const descriptions: Record<string, string[]> = {
+    Yemek: ["Bu tarifi denemeyen kalmasin!", "En kolay ve lezzetli tarif burada", "Sokak lezzetleri turu"],
+    Komedi: ["Herkesin basina gelmistir", "Turk ailelerinde gercekler", "Bu duruma dusen tek ben miyim?"],
+    Seyahat: ["Turkiye'nin gizli cenneti!", "Bu yeri mutlaka gormelisiniz", "Kapadokya'da unutulmaz anlar"],
+    Moda: ["Bu sezonda herkes bunu giyecek", "Uygun fiyatli kombin onerileri", "Sokak modasi trendleri"],
+    Teknoloji: ["Bu ozelligi biliyor muydunuz?", "En iyi teknoloji urunleri", "Yapay zeka ile neler yapilabilir"],
+    Vlog: ["Bir gunum nasil geciyor?", "Sabah rutinimde degisiklik", "Ev turumu gormelisiniz"],
+    Egitim: ["Sinavda cikacak konular", "5 dakikada ogrenin", "Kimsenin anlatmadigi gercekler"],
+    Spor: ["30 gunluk donusum", "Evde yapilabilecek egzersizler", "Protein takviyesi rehberi"],
+    Muzik: ["Cover challenge kabul edildi!", "Bu sarki cok farkli oldu", "Sokak muzisyeni performansi"],
+    Dans: ["Yeni koreografi geldi!", "Bu dansi herkes yapiyor", "Tutorial ile adim adim"],
+    Guzellik: ["10 dakikada makyaj", "Cilt bakim rutinim", "Bu urun hayatimi degistirdi"],
+    Oyun: ["Bu oyunu oynamalisiniz!", "En iyi gaming anlari", "Efsane clutch ani"],
+  };
+
+  const srng = (seed: number, off: number) => {
+    const x = Math.sin(seed + off) * 10000;
+    return x - Math.floor(x);
+  };
+
+  const allVideos: VideoListItem[] = [];
+  const totalCount = 120;
+
+  for (let i = 0; i < totalCount; i++) {
+    const seed = i * 137 + 42;
+    const catIdx = Math.floor(srng(seed, 1) * CATEGORIES.length);
+    const cat = CATEGORIES[catIdx];
+    const creatorIdx = Math.floor(srng(seed, 2) * creators.length);
+    const formatIdx = Math.floor(srng(seed, 3) * formats.length);
+    const soundIdx = Math.floor(srng(seed, 4) * soundNames.length);
+    const views = Math.round(50000 + srng(seed, 5) * 5000000);
+    const likes = Math.round(views * (0.03 + srng(seed, 6) * 0.12));
+    const comments = Math.round(likes * (0.05 + srng(seed, 7) * 0.15));
+    const shares = Math.round(likes * (0.02 + srng(seed, 8) * 0.08));
+    const engRate = Math.round(((likes + comments + shares) / views) * 10000) / 100;
+    const pubDate = new Date();
+    pubDate.setDate(pubDate.getDate() - Math.floor(srng(seed, 9) * 21));
+    const duration = 15 + Math.floor(srng(seed, 10) * 50);
+
+    const hashtags = ["#kesfet", "#trend"];
+    if (catHashtags[cat]) hashtags.push(...catHashtags[cat]);
+
+    const catDescs = descriptions[cat] || ["Harika bir icerik!"];
+    const desc = catDescs[Math.floor(srng(seed, 11) * catDescs.length)] + " " + hashtags.join(" ");
+
+    const viralScore = Math.round(
+      (engRate / 15 * 0.35 + (views / 5000000) * 0.25 + srng(seed, 12) * 0.2 + Math.max(0, 1 - Math.floor(srng(seed, 9) * 21) / 21) * 0.2) * 100
+    ) / 10;
+
+    allVideos.push({
+      id: `v-${i}`,
+      tiktokId: `tt_${1000000 + i}`,
+      description: desc,
+      creator: creators[creatorIdx],
+      creatorAvatar: null,
+      thumbnailUrl: `https://picsum.photos/seed/vid${i}/400/700`,
+      videoUrl: `https://www.tiktok.com/@${creators[creatorIdx]}/video/${1000000 + i}`,
+      tiktokUrl: `https://www.tiktok.com/@${creators[creatorIdx]}/video/${1000000 + i}`,
+      views,
+      likes,
+      comments,
+      shares,
+      engagementRate: engRate,
+      viralScore: Math.min(10, Math.max(0.1, viralScore)),
+      duration,
+      format: formats[formatIdx],
+      category: cat,
+      soundId: `s-${soundIdx}`,
+      soundName: soundNames[soundIdx],
+      soundCreator: soundCreators[soundIdx],
+      publishedAt: pubDate.toISOString(),
+      hashtags,
+    });
+  }
+
+  const filtered = category ? allVideos.filter((v) => v.category === category) : [...allVideos];
+
+  filtered.sort((a, b) => {
+    const aVal = a[sortBy] as number | string;
+    const bVal = b[sortBy] as number | string;
+    if (typeof aVal === "string") return order === "desc" ? bVal.toString().localeCompare(aVal.toString()) : aVal.toString().localeCompare(bVal.toString());
+    return order === "desc" ? (bVal as number) - (aVal as number) : (aVal as number) - (bVal as number);
+  });
+
+  const total = filtered.length;
+  const paged = filtered.slice(offset, offset + limit);
+
+  return { videos: paged, total };
+}
+
 // Emerging trends detection
 export interface EmergingTrend {
   id: string;

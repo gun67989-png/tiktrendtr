@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { getVideos, getVideoCount } from "@/lib/db";
+import { generateVideos } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
@@ -11,8 +11,7 @@ export async function GET(request: NextRequest) {
   const sortBy = (searchParams.get("sortBy") || "viralScore") as "viralScore" | "views" | "engagementRate" | "publishedAt";
   const order = (searchParams.get("order") || "desc") as "asc" | "desc";
 
-  const videos = getVideos({ limit, offset, category, sortBy, order });
-  const total = getVideoCount(category);
+  const { videos, total } = generateVideos({ limit, offset, category, sortBy, order });
 
   return NextResponse.json({ videos, total, limit, offset });
 }
