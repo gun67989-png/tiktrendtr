@@ -1,0 +1,84 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model Video {
+  id            String   @id @default(cuid())
+  tiktokId      String   @unique
+  description   String
+  creator       String
+  creatorAvatar String?
+  thumbnailUrl  String
+  videoUrl      String
+  tiktokUrl     String
+  views         Int      @default(0)
+  likes         Int      @default(0)
+  comments      Int      @default(0)
+  shares        Int      @default(0)
+  engagementRate Float   @default(0)
+  viralScore    Float    @default(0)
+  duration      Int      @default(0) // seconds
+  format        String?  // Storytime, POV, Tutorial, etc.
+  category      String?
+  soundId       String?
+  sound         Sound?   @relation(fields: [soundId], references: [id])
+  publishedAt   DateTime @default(now())
+  collectedAt   DateTime @default(now())
+  createdAt     DateTime @default(now())
+
+  hashtags VideoHashtag[]
+
+  @@index([viralScore])
+  @@index([views])
+  @@index([publishedAt])
+  @@index([category])
+}
+
+model Hashtag {
+  id          String   @id @default(cuid())
+  name        String   @unique
+  totalUses   Int      @default(0)
+  weeklyGrowth Float   @default(0)
+  category    String?
+  viralScore  Float    @default(0)
+  isEmerging  Boolean  @default(false)
+  trend       String   @default("[]") // JSON array of 7 daily values
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  videos VideoHashtag[]
+
+  @@index([viralScore])
+  @@index([isEmerging])
+}
+
+model Sound {
+  id         String   @id @default(cuid())
+  name       String
+  creator    String
+  usageCount Int      @default(0)
+  growthRate Float    @default(0)
+  bpm        Int      @default(0)
+  duration   String?
+  genre      String?
+  viralScore Float    @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  videos Video[]
+
+  @@index([viralScore])
+}
+
+model VideoHashtag {
+  videoId   String
+  hashtagId String
+  video     Video   @relation(fields: [videoId], references: [id], onDelete: Cascade)
+  hashtag   Hashtag @relation(fields: [hashtagId], references: [id], onDelete: Cascade)
+
+  @@id([videoId, hashtagId])
+}
