@@ -4,7 +4,7 @@ import { getAllUsersPublic, createUser, seedDefaultAdmin } from "@/lib/db";
 export async function GET() {
   try {
     await seedDefaultAdmin();
-    const users = getAllUsersPublic();
+    const users = await getAllUsersPublic();
     return NextResponse.json({ users });
   } catch {
     return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });

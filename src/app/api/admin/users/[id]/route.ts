@@ -9,7 +9,7 @@ export async function PATCH(
     const { id } = params;
     const body = await request.json();
 
-    const existingUser = findUserById(id);
+    const existingUser = await findUserById(id);
     if (!existingUser) {
       return NextResponse.json(
         { error: "Kullanıcı bulunamadı" },
@@ -54,7 +54,7 @@ export async function PATCH(
       updateData.email = body.email;
     }
 
-    const updated = updateUser(id, updateData);
+    const updated = await updateUser(id, updateData);
     if (!updated) {
       return NextResponse.json(
         { error: "Güncelleme başarısız" },
@@ -79,7 +79,7 @@ export async function DELETE(
   try {
     const { id } = params;
 
-    const user = findUserById(id);
+    const user = await findUserById(id);
     if (!user) {
       return NextResponse.json(
         { error: "Kullanıcı bulunamadı" },
@@ -87,7 +87,7 @@ export async function DELETE(
       );
     }
 
-    const deleted = deleteUser(id);
+    const deleted = await deleteUser(id);
     if (!deleted) {
       return NextResponse.json(
         { error: "Silme başarısız" },

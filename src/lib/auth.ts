@@ -21,7 +21,7 @@ export async function verifyUserPassword(
   password: string
 ): Promise<User | null> {
   await seedDefaultAdmin();
-  const user = findUserByEmailOrUsername(identifier);
+  const user = await findUserByEmailOrUsername(identifier);
   if (!user) return null;
   if (user.disabled) return null;
   const valid = await bcrypt.compare(password, user.password);

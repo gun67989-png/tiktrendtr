@@ -2,6 +2,7 @@ import fs from "fs";
 import path from "path";
 import bcrypt from "bcryptjs";
 import { nanoid } from "nanoid";
+import { supabase, isSupabaseConfigured } from "./supabase";
 
 export interface User {
   id: string;
@@ -12,6 +13,10 @@ export interface User {
   disabled: boolean;
   created_at: string;
 }
+
+// ============================================================
+// JSON File Fallback (local development without Supabase)
+// ============================================================
 
 const DB_PATH = path.join(process.cwd(), "data", "users.json");
 
@@ -25,53 +30,89 @@ function ensureDbExists(): void {
   }
 }
 
-export function getUsers(): User[] {
+function getLocalUsers(): User[] {
   ensureDbExists();
-  const raw = fs.readFileSync(DB_PATH, "utf-8");
-  return JSON.parse(raw) as User[];
+  return JSON.parse(fs.readFileSync(DB_PATH, "utf-8")) as User[];
 }
 
-function saveUsers(users: User[]): void {
+function saveLocalUsers(users: User[]): void {
   ensureDbExists();
   fs.writeFileSync(DB_PATH, JSON.stringify(users, null, 2), "utf-8");
 }
 
+// ============================================================
+// Public API — automatically routes to Supabase or JSON file
+// ============================================================
+
 export async function seedDefaultAdmin(): Promise<void> {
-  const users = getUsers();
-  if (users.length > 0) return;
+  if (isSupabaseConfigured && supabase) {
+    const { count } = await supabase
+      .from("users")
+      .select("*", { count: "exact", head: true });
+    if (count && count > 0) return;
 
-  const hashedPassword = await bcrypt.hash("antmalya4407", 12);
-  const admin: User = {
-    id: nanoid(),
-    username: "admin",
-    email: "admin@tiktrendtr.com",
-    password: hashedPassword,
-    role: "admin",
-    disabled: false,
-    created_at: new Date().toISOString(),
-  };
-  saveUsers([admin]);
+    const hashedPassword = await bcrypt.hash("antmalya4407", 12);
+    await supabase.from("users").insert({
+      username: "admin",
+      email: "admin@tiktrendtr.com",
+      password: hashedPassword,
+      role: "admin",
+      disabled: false,
+    });
+  } else {
+    const users = getLocalUsers();
+    if (users.length > 0) return;
+
+    const hashedPassword = await bcrypt.hash("antmalya4407", 12);
+    saveLocalUsers([
+      {
+        id: nanoid(),
+        username: "admin",
+        email: "admin@tiktrendtr.com",
+        password: hashedPassword,
+        role: "admin",
+        disabled: false,
+        created_at: new Date().toISOString(),
+      },
+    ]);
+  }
 }
 
-export function findUserByEmail(email: string): User | undefined {
-  return getUsers().find((u) => u.email.toLowerCase() === email.toLowerCase());
-}
-
-export function findUserByUsername(username: string): User | undefined {
-  return getUsers().find(
-    (u) => u.username.toLowerCase() === username.toLowerCase()
-  );
-}
-
-export function findUserByEmailOrUsername(identifier: string): User | undefined {
+export async function findUserByEmailOrUsername(
+  identifier: string
+): Promise<User | null> {
   const lower = identifier.toLowerCase();
-  return getUsers().find(
-    (u) => u.email.toLowerCase() === lower || u.username.toLowerCase() === lower
+
+  if (isSupabaseConfigured && supabase) {
+    const { data } = await supabase
+      .from("users")
+      .select("*")
+      .or(`email.ilike.${lower},username.ilike.${lower}`)
+      .limit(1)
+      .single();
+    return data as User | null;
+  }
+
+  return (
+    getLocalUsers().find(
+      (u) =>
+        u.email.toLowerCase() === lower ||
+        u.username.toLowerCase() === lower
+    ) || null
   );
 }
 
-export function findUserById(id: string): User | undefined {
-  return getUsers().find((u) => u.id === id);
+export async function findUserById(id: string): Promise<User | null> {
+  if (isSupabaseConfigured && supabase) {
+    const { data } = await supabase
+      .from("users")
+      .select("*")
+      .eq("id", id)
+      .single();
+    return data as User | null;
+  }
+
+  return getLocalUsers().find((u) => u.id === id) || null;
 }
 
 export async function createUser(data: {
@@ -80,8 +121,45 @@ export async function createUser(data: {
   password: string;
   role?: "admin" | "user";
 }): Promise<User> {
-  const users = getUsers();
+  const hashedPassword = await bcrypt.hash(data.password, 12);
 
+  if (isSupabaseConfigured && supabase) {
+    const { data: existingEmail } = await supabase
+      .from("users")
+      .select("id")
+      .ilike("email", data.email)
+      .limit(1);
+    if (existingEmail && existingEmail.length > 0) {
+      throw new Error("Bu e-posta adresi zaten kullanılıyor");
+    }
+
+    const { data: existingUsername } = await supabase
+      .from("users")
+      .select("id")
+      .ilike("username", data.username)
+      .limit(1);
+    if (existingUsername && existingUsername.length > 0) {
+      throw new Error("Bu kullanıcı adı zaten kullanılıyor");
+    }
+
+    const { data: user, error } = await supabase
+      .from("users")
+      .insert({
+        username: data.username,
+        email: data.email.toLowerCase(),
+        password: hashedPassword,
+        role: data.role || "user",
+        disabled: false,
+      })
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+    return user as User;
+  }
+
+  // JSON fallback
+  const users = getLocalUsers();
   if (users.some((u) => u.email.toLowerCase() === data.email.toLowerCase())) {
     throw new Error("Bu e-posta adresi zaten kullanılıyor");
   }
@@ -93,7 +171,6 @@ export async function createUser(data: {
     throw new Error("Bu kullanıcı adı zaten kullanılıyor");
   }
 
-  const hashedPassword = await bcrypt.hash(data.password, 12);
   const user: User = {
     id: nanoid(),
     username: data.username,
@@ -103,17 +180,53 @@ export async function createUser(data: {
     disabled: false,
     created_at: new Date().toISOString(),
   };
-
   users.push(user);
-  saveUsers(users);
+  saveLocalUsers(users);
   return user;
 }
 
-export function updateUser(
+export async function updateUser(
   id: string,
   data: Partial<Pick<User, "role" | "disabled" | "username" | "email">>
-): User | null {
-  const users = getUsers();
+): Promise<User | null> {
+  if (isSupabaseConfigured && supabase) {
+    if (data.email) {
+      const { data: existing } = await supabase
+        .from("users")
+        .select("id")
+        .ilike("email", data.email)
+        .neq("id", id)
+        .limit(1);
+      if (existing && existing.length > 0) {
+        throw new Error("Bu e-posta adresi zaten kullanılıyor");
+      }
+      data.email = data.email.toLowerCase();
+    }
+    if (data.username) {
+      const { data: existing } = await supabase
+        .from("users")
+        .select("id")
+        .ilike("username", data.username)
+        .neq("id", id)
+        .limit(1);
+      if (existing && existing.length > 0) {
+        throw new Error("Bu kullanıcı adı zaten kullanılıyor");
+      }
+    }
+
+    const { data: user, error } = await supabase
+      .from("users")
+      .update(data)
+      .eq("id", id)
+      .select()
+      .single();
+
+    if (error) return null;
+    return user as User;
+  }
+
+  // JSON fallback
+  const users = getLocalUsers();
   const index = users.findIndex((u) => u.id === id);
   if (index === -1) return null;
 
@@ -124,29 +237,42 @@ export function updateUser(
     if (existing) throw new Error("Bu e-posta adresi zaten kullanılıyor");
     data.email = data.email.toLowerCase();
   }
-
   if (data.username) {
     const existing = users.find(
       (u) =>
-        u.username.toLowerCase() === data.username!.toLowerCase() && u.id !== id
+        u.username.toLowerCase() === data.username!.toLowerCase() &&
+        u.id !== id
     );
     if (existing) throw new Error("Bu kullanıcı adı zaten kullanılıyor");
   }
 
   users[index] = { ...users[index], ...data };
-  saveUsers(users);
+  saveLocalUsers(users);
   return users[index];
 }
 
-export function deleteUser(id: string): boolean {
-  const users = getUsers();
+export async function deleteUser(id: string): Promise<boolean> {
+  if (isSupabaseConfigured && supabase) {
+    const { error } = await supabase.from("users").delete().eq("id", id);
+    return !error;
+  }
+
+  const users = getLocalUsers();
   const filtered = users.filter((u) => u.id !== id);
   if (filtered.length === users.length) return false;
-  saveUsers(filtered);
+  saveLocalUsers(filtered);
   return true;
 }
 
-export function getAllUsersPublic(): Omit<User, "password">[] {
+export async function getAllUsersPublic(): Promise<Omit<User, "password">[]> {
+  if (isSupabaseConfigured && supabase) {
+    const { data } = await supabase
+      .from("users")
+      .select("id, username, email, role, disabled, created_at")
+      .order("created_at", { ascending: true });
+    return (data || []) as Omit<User, "password">[];
+  }
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  return getUsers().map(({ password: _pw, ...user }) => user);
+  return getLocalUsers().map(({ password: _pw, ...user }) => user);
 }
