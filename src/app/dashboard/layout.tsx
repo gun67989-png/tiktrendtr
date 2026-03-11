@@ -19,6 +19,7 @@ import {
   FiShield,
   FiUser,
   FiShoppingBag,
+  FiBarChart2,
 } from "react-icons/fi";
 
 const navItems = [
@@ -31,6 +32,9 @@ const navItems = [
   { href: "/dashboard/posting-times", label: "Paylaşım Zamanı", icon: FiClock },
   { href: "/dashboard/growth", label: "Büyüme Stratejisi", icon: FiTrendingUp },
   { href: "/dashboard/predictions", label: "Trend Tahminleri", icon: FiTarget },
+  { href: "/dashboard/competitor", label: "Rakip Analizi", icon: FiTarget },
+  { href: "/dashboard/hooks", label: "Hook Analizi", icon: FiZap },
+  { href: "/dashboard/reports", label: "Günlük Rapor", icon: FiBarChart2 },
 ];
 
 interface UserInfo {

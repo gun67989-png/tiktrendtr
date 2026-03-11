@@ -57,17 +57,27 @@ function categorizeVideo(caption: string, hashtags: string[]): string {
   return bestCategory;
 }
 
-// Format detection
+// Format detection - expanded with 6 new format types
 function detectFormat(caption: string): string {
   const text = caption.toLowerCase();
   if (text.includes("tutorial") || text.includes("nasil") || text.includes("rehber") || text.includes("adim adim")) return "Tutorial";
   if (text.includes("pov")) return "POV";
   if (text.includes("grwm") || text.includes("get ready")) return "Get Ready With Me";
-  if (text.includes("once") && text.includes("sonra")) return "Önce/Sonra";
+  // Expanded Önce/Sonra: transformation keywords
+  if ((text.includes("once") && text.includes("sonra")) || text.includes("dönüşüm") || text.includes("donusum") || text.includes("değişim") || text.includes("degisim") || text.includes("transformation")) return "Önce/Sonra";
   if (text.includes("mukbang")) return "Mukbang";
   if (text.includes("challenge")) return "Challenge";
   if (text.includes("duet")) return "Duet";
-  if (text.includes("storytime") || text.includes("hikaye")) return "Hikaye Anlatımı";
+  // Reaction / Reaksiyon
+  if (text.includes("reaction") || text.includes("reaksiyon") || text.includes("tepki") || text.includes("izledim ve")) return "Reaksiyon";
+  // Comedy Sketch / Komedi Skeçi
+  if (text.includes("sketch") || text.includes("skeç") || text.includes("skec") || text.includes("parodi") || text.includes("canlandırma") || text.includes("canlandirma")) return "Komedi Skeçi";
+  // Street Interview / Sokak Röportajı
+  if (text.includes("röportaj") || text.includes("roportaj") || text.includes("sorduk") || text.includes("mikrofon") || text.includes("sokakta sorduk")) return "Sokak Röportajı";
+  // List Format / Liste
+  if (text.includes("top 5") || text.includes("top 10") || text.includes("en iyi 10") || text.includes("en iyi 5") || text.includes("sıralama") || text.includes("siralama") || (text.includes("liste") && !text.includes("playlist"))) return "Liste";
+  // Expanded Hikaye Anlatımı: storytime keywords
+  if (text.includes("storytime") || text.includes("hikaye") || text.includes("hikayem") || text.includes("başıma gelen") || text.includes("basima gelen")) return "Hikaye Anlatımı";
   return "Kısa Video";
 }
 
@@ -139,10 +149,14 @@ const CATEGORY_PRESENCE: Record<string, number> = {
 const FORMAT_PRESENCE: Record<string, number> = {
   "Get Ready With Me": 95,
   "POV": 90,
+  "Reaksiyon": 88,
+  "Komedi Skeçi": 92,
+  "Sokak Röportajı": 95,
   "Hikaye Anlatımı": 85,
   "Mukbang": 80,
   "Challenge": 75,
   "Tutorial": 70,
+  "Liste": 55,
   "Duet": 65,
   "Önce/Sonra": 60,
   "Kısa Video": 50,
