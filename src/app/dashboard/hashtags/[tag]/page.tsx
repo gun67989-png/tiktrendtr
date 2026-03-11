@@ -243,21 +243,19 @@ export default function HashtagDetailPage() {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                   loading="lazy"
                 />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
                 <div className="absolute top-2 left-2 bg-neon-red/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
                   {video.viralScore.toFixed(0)}
                 </div>
-                <div className="absolute bottom-0 left-0 right-0 p-2">
-                  <div className="flex items-center gap-2 text-white/90 text-[10px]">
-                    <span className="flex items-center gap-0.5">
-                      <FiEye className="w-2.5 h-2.5" />{formatNumber(video.views)}
-                    </span>
-                  </div>
+                <div className="absolute bottom-0 left-0 right-0 px-2 py-1">
+                  <span className="text-white/90 text-[9px] flex items-center gap-0.5">
+                    <FiEye className="w-2.5 h-2.5" />{formatNumber(video.views)}
+                  </span>
                 </div>
               </div>
-              <div className="p-2 space-y-1">
-                <p className="text-[11px] text-text-primary font-medium truncate">@{video.creator}</p>
-                <div className="flex items-center justify-between">
+              <div className="px-2 py-1.5">
+                <p className="text-[10px] text-text-primary font-medium truncate">@{video.creator}</p>
+                <div className="flex items-center justify-between mt-0.5">
                   <span className="text-[9px] text-text-muted">{timeAgo(video.publishedAt)}</span>
                   <span className="text-[9px] text-neon-red font-medium">%{video.engagementRate.toFixed(1)}</span>
                 </div>

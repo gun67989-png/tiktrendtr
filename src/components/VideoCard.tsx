@@ -194,11 +194,11 @@ export default function VideoCard({
         )}
 
         {/* Bottom stats overlay */}
-        <div className="absolute bottom-0 left-0 right-0 p-3">
-          <div className="flex items-center gap-3 text-white/90 text-[11px]">
-            <span className="flex items-center gap-1"><FiEye className="w-3 h-3" />{formatNumber(video.views)}</span>
-            <span className="flex items-center gap-1"><FiHeart className="w-3 h-3" />{formatNumber(video.likes)}</span>
-            <span className="flex items-center gap-1"><FiMessageCircle className="w-3 h-3" />{formatNumber(video.comments)}</span>
+        <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5">
+          <div className="flex items-center gap-2 text-white/90 text-[10px]">
+            <span className="flex items-center gap-0.5"><FiEye className="w-2.5 h-2.5" />{formatNumber(video.views)}</span>
+            <span className="flex items-center gap-0.5"><FiHeart className="w-2.5 h-2.5" />{formatNumber(video.likes)}</span>
+            <span className="flex items-center gap-0.5"><FiMessageCircle className="w-2.5 h-2.5" />{formatNumber(video.comments)}</span>
           </div>
         </div>
       </div>

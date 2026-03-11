@@ -91,17 +91,17 @@ export default function PostingTimesPage() {
       </div>
 
       {/* Heatmap */}
-      <div className="bg-surface rounded-xl border border-border p-6 overflow-x-auto">
-        <h3 className="text-sm font-semibold text-text-primary mb-4">
+      <div className="bg-surface rounded-xl border border-border p-4 overflow-x-auto">
+        <h3 className="text-sm font-semibold text-text-primary mb-3">
           Haftalık Etkileşim Isı Haritası
         </h3>
-        <div className="min-w-[700px]">
+        <div className="min-w-[500px]">
           {/* Hour labels */}
-          <div className="flex items-center mb-2">
-            <div className="w-24 flex-shrink-0" />
-            <div className="flex-1 grid grid-cols-24 gap-0.5">
+          <div className="flex items-center mb-1">
+            <div className="w-16 flex-shrink-0" />
+            <div className="flex-1 grid grid-cols-24 gap-px">
               {HOURS.map((h) => (
-                <div key={h} className="text-center text-[9px] text-text-muted">
+                <div key={h} className="text-center text-[8px] text-text-muted">
                   {h % 3 === 0 ? `${String(h).padStart(2, "0")}` : ""}
                 </div>
               ))}
@@ -115,27 +115,24 @@ export default function PostingTimesPage() {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: di * 0.05 }}
-              className="flex items-center mb-1"
+              className="flex items-center mb-px"
             >
-              <div className="w-24 flex-shrink-0 text-xs text-text-secondary pr-3 text-right">
-                {day}
+              <div className="w-16 flex-shrink-0 text-[10px] text-text-secondary pr-2 text-right">
+                {day.slice(0, 3)}
               </div>
-              <div className="flex-1 grid grid-cols-24 gap-0.5">
+              <div className="flex-1 grid grid-cols-24 gap-px">
                 {HOURS.map((hour) => {
                   const engagement = getEngagement(day, hour);
                   return (
                     <div
                       key={hour}
-                      className={`aspect-square rounded-sm ${getColor(engagement)} cursor-pointer transition-all hover:scale-125 hover:z-10 relative group`}
+                      className={`h-5 rounded-[2px] ${getColor(engagement)} cursor-pointer transition-all hover:scale-110 hover:z-10 relative group`}
                       title={`${day} ${String(hour).padStart(2, "0")}:00 - %${engagement} etkileşim`}
                     >
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 hidden group-hover:block z-20">
-                        <div className="bg-surface-light border border-border rounded-lg px-3 py-2 text-xs whitespace-nowrap shadow-xl">
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-1 hidden group-hover:block z-20">
+                        <div className="bg-surface-light border border-border rounded-lg px-2 py-1.5 text-[10px] whitespace-nowrap shadow-xl">
                           <p className="font-medium text-text-primary">{day} {String(hour).padStart(2, "0")}:00</p>
-                          <p className="text-text-secondary">Etkileşim: %{engagement}</p>
-                          <p className={`${engagement >= 70 ? "text-neon-red" : engagement >= 40 ? "text-amber-400" : "text-text-muted"}`}>
-                            {getLabel(engagement)}
-                          </p>
+                          <p className="text-text-secondary">%{engagement} - {getLabel(engagement)}</p>
                         </div>
                       </div>
                     </div>
@@ -147,18 +144,18 @@ export default function PostingTimesPage() {
         </div>
 
         {/* Legend */}
-        <div className="flex items-center justify-center gap-4 mt-6 pt-4 border-t border-border/50">
-          <span className="text-xs text-text-muted">Düşük</span>
-          <div className="flex gap-1">
-            <div className="w-6 h-3 rounded-sm bg-surface-lighter" />
-            <div className="w-6 h-3 rounded-sm bg-teal/20" />
-            <div className="w-6 h-3 rounded-sm bg-teal/40" />
-            <div className="w-6 h-3 rounded-sm bg-amber-500/40" />
-            <div className="w-6 h-3 rounded-sm bg-amber-500/70" />
-            <div className="w-6 h-3 rounded-sm bg-neon-red/70" />
-            <div className="w-6 h-3 rounded-sm bg-neon-red" />
+        <div className="flex items-center justify-center gap-3 mt-3 pt-3 border-t border-border/50">
+          <span className="text-[10px] text-text-muted">Düşük</span>
+          <div className="flex gap-0.5">
+            <div className="w-5 h-2.5 rounded-sm bg-surface-lighter" />
+            <div className="w-5 h-2.5 rounded-sm bg-teal/20" />
+            <div className="w-5 h-2.5 rounded-sm bg-teal/40" />
+            <div className="w-5 h-2.5 rounded-sm bg-amber-500/40" />
+            <div className="w-5 h-2.5 rounded-sm bg-amber-500/70" />
+            <div className="w-5 h-2.5 rounded-sm bg-neon-red/70" />
+            <div className="w-5 h-2.5 rounded-sm bg-neon-red" />
           </div>
-          <span className="text-xs text-text-muted">Yüksek</span>
+          <span className="text-[10px] text-text-muted">Yüksek</span>
         </div>
       </div>
 

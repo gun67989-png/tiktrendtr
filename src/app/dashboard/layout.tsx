@@ -190,10 +190,6 @@ export default function DashboardLayout({
             </div>
           )}
 
-          <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-light">
-            <div className="w-2 h-2 rounded-full bg-teal animate-pulse" />
-            <span className="text-xs text-text-secondary">Veri toplama aktif</span>
-          </div>
           <button
             onClick={handleLogout}
             className="w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium text-text-secondary hover:text-neon-red hover:bg-neon-red/5 transition-all"
