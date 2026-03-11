@@ -34,8 +34,16 @@ export async function middleware(request: NextRequest) {
     pathname === "/login" ||
     pathname === "/register" ||
     pathname === "/pricing" ||
+    pathname === "/viral-tiktok-videos-turkey" ||
+    pathname === "/trending-hashtags-turkey" ||
+    pathname === "/tiktok-trend-report" ||
+    pathname === "/contact" ||
+    pathname === "/privacy-policy" ||
+    pathname === "/terms-of-service" ||
+    pathname === "/cookie-policy" ||
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/api/cron") ||
+    pathname.startsWith("/api/public") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon")
   ) {

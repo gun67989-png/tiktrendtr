@@ -16,7 +16,6 @@ import {
   FiUsers,
   FiActivity,
   FiSearch,
-  FiMail,
   FiMessageCircle,
 } from "react-icons/fi";
 
@@ -154,9 +153,10 @@ export default function LandingPage() {
             <span className="text-lg font-bold">TikTrend<span className="text-neon-red">TR</span></span>
           </Link>
           <div className="hidden md:flex items-center gap-8">
-            <a href="#features" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Ozellikler</a>
+            <Link href="/viral-tiktok-videos-turkey" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Viral Videolar</Link>
+            <Link href="/trending-hashtags-turkey" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Trend Hashtag&apos;ler</Link>
+            <Link href="/tiktok-trend-report" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Haftalik Rapor</Link>
             <a href="#pricing" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Fiyatlandirma</a>
-            <a href="#how-it-works" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Nasil Calisir</a>
           </div>
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm text-text-secondary hover:text-text-primary transition-colors px-4 py-2">
@@ -516,7 +516,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-border py-12 px-6">
         <div className="max-w-6xl mx-auto">
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+          <div className="grid grid-cols-1 md:grid-cols-5 gap-8 mb-8">
             <div>
               <div className="flex items-center gap-2 mb-3">
                 <div className="w-7 h-7 rounded-lg gradient-red flex items-center justify-center">
@@ -539,29 +539,33 @@ export default function LandingPage() {
             </div>
 
             <div>
+              <h4 className="text-xs font-semibold text-text-primary uppercase mb-3">Ucretsiz Araclar</h4>
+              <ul className="space-y-2">
+                <li><Link href="/viral-tiktok-videos-turkey" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Viral TikTok Videolari</Link></li>
+                <li><Link href="/trending-hashtags-turkey" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Trend Hashtag&apos;ler</Link></li>
+                <li><Link href="/tiktok-trend-report" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Haftalik Trend Raporu</Link></li>
+              </ul>
+            </div>
+
+            <div>
               <h4 className="text-xs font-semibold text-text-primary uppercase mb-3">Yasal</h4>
               <ul className="space-y-2">
-                <li><span className="text-xs text-text-secondary">Gizlilik Politikasi</span></li>
-                <li><span className="text-xs text-text-secondary">Kullanim Sartlari</span></li>
-                <li><span className="text-xs text-text-secondary">Cerez Politikasi</span></li>
+                <li><Link href="/privacy-policy" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Gizlilik Politikasi</Link></li>
+                <li><Link href="/terms-of-service" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Kullanim Sartlari</Link></li>
+                <li><Link href="/cookie-policy" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Cerez Politikasi</Link></li>
               </ul>
             </div>
 
             <div>
               <h4 className="text-xs font-semibold text-text-primary uppercase mb-3">Iletisim</h4>
               <ul className="space-y-2">
-                <li className="flex items-center gap-2 text-xs text-text-secondary">
-                  <FiMail className="w-3 h-3" /> info@tiktrendtr.com
-                </li>
-                <li className="flex items-center gap-2 text-xs text-text-secondary">
-                  <FiMessageCircle className="w-3 h-3" /> Destek
-                </li>
+                <li><Link href="/contact" className="text-xs text-text-secondary hover:text-text-primary transition-colors flex items-center gap-2"><FiMessageCircle className="w-3 h-3" /> Destek & Iletisim</Link></li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-border pt-6 flex items-center justify-between">
-            <p className="text-[10px] text-text-muted">&copy; 2024 TikTrendTR. Tum haklari saklidir.</p>
+            <p className="text-[10px] text-text-muted">&copy; 2026 TikTrendTR. Tum haklari saklidir.</p>
             <p className="text-[10px] text-text-muted">Turkiye&apos;de yapildi</p>
           </div>
         </div>
