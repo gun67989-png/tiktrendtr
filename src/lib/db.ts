@@ -150,7 +150,10 @@ export async function createUser(data: {
       throw new Error("Bu kullanıcı adı zaten kullanılıyor");
     }
 
-    const { data: user, error } = await supabase
+    // Try inserting with subscription field; fall back without it if column doesn't exist yet
+    let user;
+    let error;
+    ({ data: user, error } = await supabase
       .from("users")
       .insert({
         username: data.username,
@@ -161,7 +164,21 @@ export async function createUser(data: {
         subscription_type: "free",
       })
       .select()
-      .single();
+      .single());
+
+    if (error && error.message.includes("subscription_type")) {
+      ({ data: user, error } = await supabase
+        .from("users")
+        .insert({
+          username: data.username,
+          email: data.email.toLowerCase(),
+          password: hashedPassword,
+          role: data.role || "user",
+          disabled: false,
+        })
+        .select()
+        .single());
+    }
 
     if (error) throw new Error(error.message);
     return user as User;
