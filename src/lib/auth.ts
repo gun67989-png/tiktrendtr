@@ -12,6 +12,7 @@ export interface SessionPayload {
   username: string;
   email: string;
   role: "admin" | "user";
+  subscriptionType: "free" | "premium";
   iat: number;
   [key: string]: unknown;
 }
@@ -33,12 +34,14 @@ export async function createSession(user: {
   username: string;
   email: string;
   role: "admin" | "user";
+  subscription_type?: "free" | "premium";
 }): Promise<string> {
   const token = await new SignJWT({
     userId: user.id,
     username: user.username,
     email: user.email,
     role: user.role,
+    subscriptionType: user.subscription_type || "free",
     iat: Date.now(),
   } as SessionPayload)
     .setProtectedHeader({ alg: "HS256" })

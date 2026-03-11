@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { motion } from "framer-motion";
 import { FiTarget, FiTrendingUp, FiClock, FiHash, FiMusic, FiPlay } from "react-icons/fi";
 import { generateEmergingTrends } from "@/lib/data";
+import PremiumGate from "@/components/PremiumGate";
 
 const typeIcons: Record<string, typeof FiHash> = {
   hashtag: FiHash,
@@ -25,7 +26,7 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(hours / 24)} gün önce`;
 }
 
-export default function PredictionsPage() {
+function PredictionsContent() {
   const trends = useMemo(() => generateEmergingTrends(), []);
   const [filter, setFilter] = useState<"all" | "hashtag" | "sound" | "format">("all");
 
@@ -180,5 +181,13 @@ export default function PredictionsPage() {
         })}
       </div>
     </motion.div>
+  );
+}
+
+export default function PredictionsPage() {
+  return (
+    <PremiumGate featureName="Trend Tahminleri">
+      <PredictionsContent />
+    </PremiumGate>
   );
 }

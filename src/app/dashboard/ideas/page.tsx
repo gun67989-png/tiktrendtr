@@ -4,6 +4,7 @@ import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { FiZap, FiCopy, FiCheck, FiRefreshCw, FiHash, FiMusic, FiEye } from "react-icons/fi";
 import { generateContentIdeas } from "@/lib/data";
+import PremiumGate from "@/components/PremiumGate";
 
 const NICHES = [
   { id: "yemek", label: "Yemek", emoji: "🍳" },
@@ -14,7 +15,7 @@ const NICHES = [
   { id: "teknoloji", label: "Teknoloji", emoji: "💻" },
 ];
 
-export default function IdeasPage() {
+function IdeasContent() {
   const [selectedNiche, setSelectedNiche] = useState("komedi");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
@@ -200,5 +201,13 @@ export default function IdeasPage() {
         </motion.div>
       </AnimatePresence>
     </motion.div>
+  );
+}
+
+export default function IdeasPage() {
+  return (
+    <PremiumGate featureName="İçerik Fikirleri">
+      <IdeasContent />
+    </PremiumGate>
   );
 }

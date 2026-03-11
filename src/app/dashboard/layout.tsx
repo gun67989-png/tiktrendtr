@@ -3,6 +3,7 @@
 import { useState, useEffect } from "react";
 import { usePathname, useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
+import Link from "next/link";
 import {
   FiHome,
   FiHash,
@@ -20,7 +21,19 @@ import {
   FiUser,
   FiShoppingBag,
   FiBarChart2,
+  FiLock,
+  FiStar,
 } from "react-icons/fi";
+
+// Premium pages — free users see the PremiumGate inside these pages
+const PREMIUM_PATHS = [
+  "/dashboard/ideas",
+  "/dashboard/growth",
+  "/dashboard/predictions",
+  "/dashboard/competitor",
+  "/dashboard/hooks",
+  "/dashboard/reports",
+];
 
 const navItems = [
   { href: "/dashboard", label: "Genel Bakış", icon: FiHome },
@@ -28,8 +41,9 @@ const navItems = [
   { href: "/dashboard/ad-ideas", label: "Reklam Fikirleri", icon: FiShoppingBag },
   { href: "/dashboard/hashtags", label: "Hashtag'ler", icon: FiHash },
   { href: "/dashboard/sounds", label: "Sesler", icon: FiMusic },
-  { href: "/dashboard/ideas", label: "İçerik Fikirleri", icon: FiZap },
   { href: "/dashboard/posting-times", label: "Paylaşım Zamanı", icon: FiClock },
+  // — premium —
+  { href: "/dashboard/ideas", label: "İçerik Fikirleri", icon: FiZap },
   { href: "/dashboard/growth", label: "Büyüme Stratejisi", icon: FiTrendingUp },
   { href: "/dashboard/predictions", label: "Trend Tahminleri", icon: FiTarget },
   { href: "/dashboard/competitor", label: "Rakip Analizi", icon: FiTarget },
@@ -42,6 +56,7 @@ interface UserInfo {
   username: string;
   email: string;
   role: "admin" | "user";
+  subscriptionType: "free" | "premium";
 }
 
 export default function DashboardLayout({
@@ -75,6 +90,8 @@ export default function DashboardLayout({
     if (href === "/dashboard") return pathname === "/dashboard";
     return pathname.startsWith(href);
   };
+
+  const isPremium = user?.subscriptionType === "premium" || user?.role === "admin";
 
   return (
     <div className="min-h-screen bg-background flex">
@@ -118,6 +135,7 @@ export default function DashboardLayout({
         <nav className="flex-1 p-4 space-y-1 overflow-y-auto">
           {navItems.map((item) => {
             const active = isActive(item.href);
+            const isLocked = !isPremium && PREMIUM_PATHS.includes(item.href);
             return (
               <button
                 key={item.href}
@@ -132,11 +150,14 @@ export default function DashboardLayout({
                 }`}
               >
                 <item.icon className={`w-4 h-4 ${active ? "text-neon-red" : ""}`} />
-                {item.label}
-                {active && (
+                <span className="flex-1 text-left">{item.label}</span>
+                {isLocked && (
+                  <FiLock className="w-3 h-3 text-text-muted" />
+                )}
+                {active && !isLocked && (
                   <motion.div
                     layoutId="activeNav"
-                    className="ml-auto w-1.5 h-1.5 rounded-full bg-neon-red"
+                    className="w-1.5 h-1.5 rounded-full bg-neon-red"
                   />
                 )}
               </button>
@@ -177,6 +198,32 @@ export default function DashboardLayout({
 
         {/* User Info & Logout */}
         <div className="p-4 border-t border-border space-y-3">
+          {/* Plan badge */}
+          {user && (
+            <div className="px-3">
+              {isPremium ? (
+                <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20">
+                  <FiStar className="w-4 h-4 text-amber-400" />
+                  <div className="flex-1">
+                    <p className="text-xs font-semibold text-amber-400">Pro Plan</p>
+                    <p className="text-[10px] text-amber-400/60">Tüm özellikler aktif</p>
+                  </div>
+                </div>
+              ) : (
+                <Link
+                  href="/pricing"
+                  className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-light border border-border hover:border-neon-red/30 transition-all group"
+                >
+                  <FiZap className="w-4 h-4 text-text-muted group-hover:text-neon-red transition-colors" />
+                  <div className="flex-1">
+                    <p className="text-xs font-medium text-text-secondary group-hover:text-text-primary transition-colors">Free Plan</p>
+                    <p className="text-[10px] text-text-muted">Pro&apos;ya yükselt</p>
+                  </div>
+                </Link>
+              )}
+            </div>
+          )}
+
           {/* User info */}
           {user && (
             <div className="flex items-center gap-2 px-3 py-2 rounded-lg bg-surface-light">

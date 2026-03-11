@@ -30,8 +30,10 @@ export async function middleware(request: NextRequest) {
 
   // Public routes
   if (
+    pathname === "/" ||
     pathname === "/login" ||
     pathname === "/register" ||
+    pathname === "/pricing" ||
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/api/cron") ||
     pathname.startsWith("/_next") ||
@@ -41,7 +43,7 @@ export async function middleware(request: NextRequest) {
   }
 
   // Check auth for dashboard routes
-  if (pathname.startsWith("/dashboard") || pathname === "/") {
+  if (pathname.startsWith("/dashboard")) {
     const session = await getSessionFromRequest(request);
 
     if (!session) {
@@ -53,15 +55,12 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL("/dashboard", request.url));
     }
 
-    if (pathname === "/") {
-      return NextResponse.redirect(new URL("/dashboard", request.url));
-    }
-
     // Pass user info via headers for server components
     const response = NextResponse.next();
     response.headers.set("x-user-id", session.userId);
     response.headers.set("x-user-role", session.role);
     response.headers.set("x-user-name", session.username);
+    response.headers.set("x-subscription-type", (session as unknown as Record<string, string>).subscriptionType || "free");
     return response;
   }
 

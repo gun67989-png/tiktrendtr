@@ -11,6 +11,10 @@ export interface User {
   password: string;
   role: "admin" | "user";
   disabled: boolean;
+  subscription_type: "free" | "premium";
+  subscription_status: "active" | "expired" | "cancelled" | null;
+  subscription_start: string | null;
+  subscription_end: string | null;
   created_at: string;
 }
 
@@ -72,6 +76,10 @@ export async function seedDefaultAdmin(): Promise<void> {
         password: hashedPassword,
         role: "admin",
         disabled: false,
+        subscription_type: "premium",
+        subscription_status: "active",
+        subscription_start: new Date().toISOString(),
+        subscription_end: null,
         created_at: new Date().toISOString(),
       },
     ]);
@@ -150,6 +158,7 @@ export async function createUser(data: {
         password: hashedPassword,
         role: data.role || "user",
         disabled: false,
+        subscription_type: "free",
       })
       .select()
       .single();
@@ -178,6 +187,10 @@ export async function createUser(data: {
     password: hashedPassword,
     role: data.role || "user",
     disabled: false,
+    subscription_type: "free",
+    subscription_status: null,
+    subscription_start: null,
+    subscription_end: null,
     created_at: new Date().toISOString(),
   };
   users.push(user);
@@ -187,7 +200,7 @@ export async function createUser(data: {
 
 export async function updateUser(
   id: string,
-  data: Partial<Pick<User, "role" | "disabled" | "username" | "email">>
+  data: Partial<Pick<User, "role" | "disabled" | "username" | "email" | "subscription_type" | "subscription_status" | "subscription_start" | "subscription_end">>
 ): Promise<User | null> {
   if (isSupabaseConfigured && supabase) {
     if (data.email) {

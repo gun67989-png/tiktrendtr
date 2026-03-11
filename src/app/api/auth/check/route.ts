@@ -20,6 +20,7 @@ export async function GET(request: NextRequest) {
       username: session.username,
       email: session.email,
       role: session.role,
+      subscriptionType: session.subscriptionType || "free",
     },
   });
 }

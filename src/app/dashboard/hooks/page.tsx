@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import PremiumGate from "@/components/PremiumGate";
 import {
   FiZap,
   FiEye,
@@ -100,7 +101,7 @@ const PATTERN_COLORS: Record<string, string> = {
   emotional: "bg-pink-500/10 text-pink-400",
 };
 
-export default function HooksPage() {
+function HooksContent() {
   const [data, setData] = useState<HooksResponse | null>(null);
   const [loading, setLoading] = useState(true);
   const [category, setCategory] = useState("Tümü");
@@ -315,5 +316,13 @@ export default function HooksPage() {
         </div>
       </div>
     </motion.div>
+  );
+}
+
+export default function HooksPage() {
+  return (
+    <PremiumGate featureName="Hook Analizi">
+      <HooksContent />
+    </PremiumGate>
   );
 }

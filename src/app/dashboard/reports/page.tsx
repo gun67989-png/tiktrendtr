@@ -2,6 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
+import PremiumGate from "@/components/PremiumGate";
 import {
   FiBarChart2,
   FiEye,
@@ -84,7 +85,7 @@ interface DailyReport {
   }>;
 }
 
-export default function ReportsPage() {
+function ReportsContent() {
   const [data, setData] = useState<DailyReport | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -335,5 +336,13 @@ export default function ReportsPage() {
         )}
       </div>
     </motion.div>
+  );
+}
+
+export default function ReportsPage() {
+  return (
+    <PremiumGate featureName="Günlük Rapor">
+      <ReportsContent />
+    </PremiumGate>
   );
 }

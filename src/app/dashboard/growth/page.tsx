@@ -4,6 +4,7 @@ import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { FiTrendingUp, FiTarget, FiCalendar, FiUsers, FiZap, FiCheckCircle } from "react-icons/fi";
 import { getGrowthStages } from "@/lib/data";
+import PremiumGate from "@/components/PremiumGate";
 
 const stageColors = [
   { bg: "bg-neon-red/10", border: "border-neon-red/30", text: "text-neon-red", accent: "#ff3b5c" },
@@ -11,7 +12,7 @@ const stageColors = [
   { bg: "bg-purple-500/10", border: "border-purple-500/30", text: "text-purple-400", accent: "#a855f7" },
 ];
 
-export default function GrowthPage() {
+function GrowthContent() {
   const stages = useMemo(() => getGrowthStages(), []);
 
   return (
@@ -186,5 +187,13 @@ export default function GrowthPage() {
         </div>
       </motion.div>
     </motion.div>
+  );
+}
+
+export default function GrowthPage() {
+  return (
+    <PremiumGate featureName="Büyüme Stratejisi">
+      <GrowthContent />
+    </PremiumGate>
   );
 }

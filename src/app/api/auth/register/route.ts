@@ -59,6 +59,7 @@ export async function POST(request: NextRequest) {
       username: user.username,
       email: user.email,
       role: user.role,
+      subscription_type: user.subscription_type || "free",
     });
 
     const response = NextResponse.json({
@@ -68,6 +69,7 @@ export async function POST(request: NextRequest) {
         username: user.username,
         email: user.email,
         role: user.role,
+        subscriptionType: user.subscription_type || "free",
       },
     });
 

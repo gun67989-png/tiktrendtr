@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
+import PremiumGate from "@/components/PremiumGate";
 import {
   FiSearch,
   FiEye,
@@ -85,7 +86,7 @@ interface CompetitorData {
   bestHours: number[];
 }
 
-export default function CompetitorPage() {
+function CompetitorContent() {
   const [username, setUsername] = useState("");
   const [data, setData] = useState<CompetitorData | null>(null);
   const [loading, setLoading] = useState(false);
@@ -375,5 +376,13 @@ export default function CompetitorPage() {
         </div>
       )}
     </motion.div>
+  );
+}
+
+export default function CompetitorPage() {
+  return (
+    <PremiumGate featureName="Rakip Analizi">
+      <CompetitorContent />
+    </PremiumGate>
   );
 }
