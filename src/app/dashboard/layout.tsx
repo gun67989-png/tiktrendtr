@@ -18,11 +18,13 @@ import {
   FiPlay,
   FiShield,
   FiUser,
+  FiShoppingBag,
 } from "react-icons/fi";
 
 const navItems = [
   { href: "/dashboard", label: "Genel Bakış", icon: FiHome },
   { href: "/dashboard/trending-videos", label: "Trend Videolar", icon: FiPlay },
+  { href: "/dashboard/ad-ideas", label: "Reklam Fikirleri", icon: FiShoppingBag },
   { href: "/dashboard/hashtags", label: "Hashtag'ler", icon: FiHash },
   { href: "/dashboard/sounds", label: "Sesler", icon: FiMusic },
   { href: "/dashboard/ideas", label: "İçerik Fikirleri", icon: FiZap },

@@ -211,6 +211,28 @@ export default function VideoModal({
                 )}
               </div>
 
+              {/* Like Ratio & Ad Format */}
+              <div className="flex gap-3">
+                {video.likeRatio != null && (
+                  <div className={`flex-1 rounded-lg p-2 text-center ${
+                    video.likeRatio >= 8 ? "bg-teal/10" : "bg-surface-light"
+                  }`}>
+                    <p className={`text-sm font-bold ${
+                      video.likeRatio >= 8 ? "text-teal" : video.likeRatio >= 4 ? "text-text-primary" : "text-text-secondary"
+                    }`}>
+                      %{video.likeRatio.toFixed(2)}
+                    </p>
+                    <p className="text-[10px] text-text-muted">Beğeni Oranı</p>
+                  </div>
+                )}
+                {video.adFormat && (
+                  <div className="flex-1 bg-orange-400/10 rounded-lg p-2 text-center">
+                    <p className="text-sm font-bold text-orange-400">{video.adFormat}</p>
+                    <p className="text-[10px] text-text-muted">Reklam Formatı</p>
+                  </div>
+                )}
+              </div>
+
               {/* Sound */}
               {video.soundName && (
                 <div className="flex items-center gap-2 bg-surface-light rounded-lg p-2">

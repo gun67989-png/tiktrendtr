@@ -16,9 +16,11 @@ export interface VideoData {
   comments: number;
   shares: number;
   engagementRate: number;
+  likeRatio?: number;
   viralScore: number;
   duration: number;
   format: string | null;
+  adFormat?: string | null;
   category: string | null;
   contentType?: string;
   creatorPresenceScore?: number;
@@ -222,10 +224,28 @@ export default function VideoCard({
           </div>
         )}
 
+        {/* Ad format badge */}
+        {video.adFormat && (
+          <div className="flex items-center">
+            <span className="text-[10px] text-orange-400 bg-orange-400/10 px-1.5 py-0.5 rounded font-medium">
+              {video.adFormat}
+            </span>
+          </div>
+        )}
+
         {/* Footer */}
         <div className="flex items-center justify-between pt-1 border-t border-border/50">
           <span className="text-[10px] text-text-muted">{timeAgo(video.publishedAt)}</span>
-          <span className="text-[10px] text-neon-red font-medium">%{video.engagementRate.toFixed(1)} etkileşim</span>
+          <div className="flex items-center gap-2">
+            {video.likeRatio != null && (
+              <span className={`text-[10px] font-medium ${
+                video.likeRatio >= 8 ? "text-teal" : video.likeRatio >= 4 ? "text-text-secondary" : "text-text-muted"
+              }`}>
+                <FiHeart className="w-2.5 h-2.5 inline mr-0.5" />%{video.likeRatio.toFixed(1)}
+              </span>
+            )}
+            <span className="text-[10px] text-neon-red font-medium">%{video.engagementRate.toFixed(1)}</span>
+          </div>
         </div>
       </div>
     </motion.div>

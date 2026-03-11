@@ -18,6 +18,7 @@ export interface ScrapedVideo {
   sound_creator: string;
   category: string;
   format: string;
+  ad_format: string | null; // null = not an ad, otherwise the ad type
   creator_presence_score: number; // 0-100: estimates if a human creator is visible on camera
   scraped_at: string;
 }
@@ -68,6 +69,49 @@ function detectFormat(caption: string): string {
   if (text.includes("duet")) return "Duet";
   if (text.includes("storytime") || text.includes("hikaye")) return "Hikaye Anlatımı";
   return "Kısa Video";
+}
+
+// Ad format detection - identifies if a video is an ad/product promotion
+const AD_KEYWORDS = [
+  // Product / purchase
+  "ürün", "urun", "aldım", "aldim", "satin", "satın", "sipariş", "siparis",
+  "bunu aldım", "bunu denedim", "haul", "unboxing", "kutu açılımı", "kutu acilimi",
+  // Review / recommendation
+  "inceleme", "review", "tavsiye", "öneri", "oneri", "denedim", "test ettim",
+  "favorilerim", "favori ürünlerim",
+  // Promotion / ad
+  "reklam", "sponsor", "işbirliği", "isbirligi", "tanıtım", "tanitim",
+  "ad", "sponsored", "collab",
+  // Shopping / deals
+  "indirim", "kampanya", "fırsat", "firsat", "alışveriş", "alisveris",
+  "link", "linkte", "bioda", "bio'da",
+  // Before/after product
+  "sonuç", "sonuc", "etkisi", "kullanım", "kullanim",
+];
+
+function detectAdFormat(caption: string, hashtags: string[]): string | null {
+  const text = (caption + " " + hashtags.join(" ")).toLowerCase().replace(/[#_]/g, " ");
+
+  // Count ad keyword matches
+  let adScore = 0;
+  for (const kw of AD_KEYWORDS) {
+    if (text.includes(kw)) adScore++;
+  }
+
+  // Not an ad if no ad keywords found
+  if (adScore === 0) return null;
+
+  // Detect specific ad format
+  if (text.includes("haul") || text.includes("alışveriş") || text.includes("alisveris")) return "Haul";
+  if (text.includes("unboxing") || text.includes("kutu açılımı") || text.includes("kutu acilimi")) return "Unboxing";
+  if (text.includes("inceleme") || text.includes("review") || text.includes("test ettim")) return "Ürün İnceleme";
+  if ((text.includes("önce") || text.includes("once")) && (text.includes("sonra") || text.includes("sonuc"))) return "Önce/Sonra";
+  if (text.includes("denedim") || text.includes("bunu aldım") || text.includes("bunu aldim")) return "Ürün Deneyimi";
+  if (text.includes("reklam") || text.includes("sponsor") || text.includes("işbirliği") || text.includes("isbirligi")) return "Sponsorlu";
+  if (text.includes("tavsiye") || text.includes("öneri") || text.includes("oneri") || text.includes("favorilerim")) return "Tavsiye";
+  if (text.includes("indirim") || text.includes("kampanya") || text.includes("fırsat") || text.includes("firsat")) return "Kampanya";
+
+  return "UGC Reklam";
 }
 
 // ==========================================
@@ -289,19 +333,20 @@ async function fetchTikWMVideos(keyword: string, count: number = 30): Promise<Sc
       return [];
     }
 
-    // Filter: only videos from last 7 days
-    const sevenDaysAgo = Math.floor(Date.now() / 1000) - 7 * 24 * 60 * 60;
+    // Filter: only videos from last 14 days
+    const fourteenDaysAgo = Math.floor(Date.now() / 1000) - 14 * 24 * 60 * 60;
 
     for (const v of result.data.videos) {
       if (!v.video_id || !v.author?.unique_id) continue;
 
-      // Skip old videos - only keep last 7 days
-      if (v.create_time && v.create_time < sevenDaysAgo) continue;
+      // Skip old videos - only keep last 14 days
+      if (v.create_time && v.create_time < fourteenDaysAgo) continue;
 
       const caption = v.title || "";
       const hashtags = extractHashtags(caption);
       const category = categorizeVideo(caption, hashtags);
       const format = detectFormat(caption);
+      const adFormat = detectAdFormat(caption, hashtags);
       const soundName = v.music_info?.title || "Original Sound";
       const soundCreator = v.music_info?.author || v.author.unique_id;
 
@@ -332,6 +377,7 @@ async function fetchTikWMVideos(keyword: string, count: number = 30): Promise<Sc
         sound_creator: soundCreator,
         category,
         format,
+        ad_format: adFormat,
         creator_presence_score: creatorPresenceScore,
         scraped_at: publishDate,
       });
@@ -346,50 +392,108 @@ async function fetchTikWMVideos(keyword: string, count: number = 30): Promise<Sc
 }
 
 // Main scraping function - fetches from TikWM API with Turkish keywords
+// Uses parallel batch processing (6 concurrent requests) to stay within Vercel timeout
 export async function scrapeTrendingVideos(): Promise<ScrapedVideo[]> {
   const allVideos: ScrapedVideo[] = [];
   const seenIds = new Set<string>();
 
-  // Turkish keywords covering all categories
+  // Expanded Turkish keywords for ~200 videos
   const keywordsToSearch = [
+    // General trending
     { keyword: "türkiye trend", category: null },
     { keyword: "keşfet", category: null },
+    { keyword: "türk tiktok viral", category: null },
+    { keyword: "tiktok türkiye", category: null },
+    { keyword: "popüler video türkiye", category: null },
+    { keyword: "fyp türk", category: null },
+    // Yemek (Food) - multiple sub-keywords
     { keyword: "yemek tarifi türk", category: "Yemek" },
+    { keyword: "kahvaltı tarifi", category: "Yemek" },
+    { keyword: "tatlı tarifi", category: "Yemek" },
+    { keyword: "sokak lezzetleri türkiye", category: "Yemek" },
+    { keyword: "ev yemekleri kolay", category: "Yemek" },
+    // Komedi (Comedy)
     { keyword: "komedi türk", category: "Komedi" },
+    { keyword: "komik video türkçe", category: "Komedi" },
+    { keyword: "türk komedisi", category: "Komedi" },
+    // Seyahat (Travel)
     { keyword: "istanbul gezi", category: "Seyahat" },
+    { keyword: "türkiye gezi rehberi", category: "Seyahat" },
+    { keyword: "antalya tatil", category: "Seyahat" },
+    // Moda (Fashion)
     { keyword: "moda kombin", category: "Moda" },
+    { keyword: "outfit türk", category: "Moda" },
+    { keyword: "alışveriş haul", category: "Moda" },
+    // Teknoloji (Tech)
     { keyword: "teknoloji türkçe", category: "Teknoloji" },
+    { keyword: "telefon inceleme türk", category: "Teknoloji" },
+    { keyword: "uygulama önerisi", category: "Teknoloji" },
+    // Vlog
     { keyword: "günlük vlog türk", category: "Vlog" },
+    { keyword: "bir günüm vlog", category: "Vlog" },
+    // Eğitim (Education)
     { keyword: "eğitim türkçe", category: "Eğitim" },
+    { keyword: "YKS hazırlık", category: "Eğitim" },
+    { keyword: "ingilizce öğren", category: "Eğitim" },
+    // Spor (Sports)
     { keyword: "spor fitness türk", category: "Spor" },
+    { keyword: "gym motivasyon türk", category: "Spor" },
+    // Müzik (Music)
     { keyword: "türkçe müzik", category: "Müzik" },
+    { keyword: "cover türkçe şarkı", category: "Müzik" },
+    // Dans (Dance)
     { keyword: "dans türk", category: "Dans" },
+    // Güzellik (Beauty)
     { keyword: "makyaj güzellik", category: "Güzellik" },
+    { keyword: "cilt bakımı rutin", category: "Güzellik" },
+    { keyword: "saç modeli", category: "Güzellik" },
+    // Oyun (Gaming)
     { keyword: "oyun gaming türk", category: "Oyun" },
+    // Reklam / Ürün (Ads & Products)
+    { keyword: "ürün tanıtım türk", category: null },
+    { keyword: "bunu aldım tiktok", category: null },
+    { keyword: "unboxing türk", category: null },
+    { keyword: "ürün inceleme", category: null },
+    { keyword: "haul türkçe", category: null },
+    { keyword: "denedim türk", category: null },
   ];
 
-  for (const { keyword, category } of keywordsToSearch) {
-    if (allVideos.length >= 200) break;
+  const BATCH_SIZE = 6; // 6 concurrent requests per batch
 
-    try {
-      const videos = await fetchTikWMVideos(keyword, 30);
+  for (let i = 0; i < keywordsToSearch.length; i += BATCH_SIZE) {
+    if (allVideos.length >= 300) break;
 
-      for (const v of videos) {
-        if (!seenIds.has(v.video_id)) {
-          seenIds.add(v.video_id);
-          // Override category if search was category-specific
-          if (category) {
-            v.category = category;
+    const batch = keywordsToSearch.slice(i, i + BATCH_SIZE);
+
+    // Run batch in parallel
+    const batchResults = await Promise.allSettled(
+      batch.map(({ keyword }) => fetchTikWMVideos(keyword, 30))
+    );
+
+    // Process results
+    for (let j = 0; j < batchResults.length; j++) {
+      const result = batchResults[j];
+      const category = batch[j].category;
+
+      if (result.status === "fulfilled") {
+        for (const v of result.value) {
+          if (!seenIds.has(v.video_id)) {
+            seenIds.add(v.video_id);
+            if (category) {
+              v.category = category;
+            }
+            allVideos.push(v);
           }
-          allVideos.push(v);
         }
+      } else {
+        console.error(`[SCRAPER] Batch keyword "${batch[j].keyword}" failed:`, result.reason);
       }
-    } catch (e) {
-      console.error(`[SCRAPER] Error fetching keyword "${keyword}":`, e);
     }
 
-    // Small delay between requests
-    await new Promise(resolve => setTimeout(resolve, 500));
+    // Small delay between batches (not between individual requests)
+    if (i + BATCH_SIZE < keywordsToSearch.length) {
+      await new Promise(resolve => setTimeout(resolve, 300));
+    }
   }
 
   console.log(`[SCRAPER] Total unique videos scraped: ${allVideos.length}`);

@@ -37,6 +37,7 @@ async function ensureTable(): Promise<boolean> {
             sound_creator TEXT,
             category TEXT DEFAULT 'Vlog',
             format TEXT,
+            ad_format TEXT,
             creator_presence_score INTEGER DEFAULT 50,
             scraped_at TIMESTAMPTZ DEFAULT NOW(),
             created_at TIMESTAMPTZ DEFAULT NOW()
@@ -49,10 +50,18 @@ async function ensureTable(): Promise<boolean> {
       }
     }
 
-    // Ensure creator_presence_score column exists (migration for existing tables)
+    // Ensure columns exist (migration for existing tables)
     try {
       await supabase.rpc("exec_sql", {
         sql: `ALTER TABLE trending_videos ADD COLUMN IF NOT EXISTS creator_presence_score INTEGER DEFAULT 50;`,
+      });
+    } catch {
+      // Column likely already exists, ignore
+    }
+
+    try {
+      await supabase.rpc("exec_sql", {
+        sql: `ALTER TABLE trending_videos ADD COLUMN IF NOT EXISTS ad_format TEXT;`,
       });
     } catch {
       // Column likely already exists, ignore
@@ -87,6 +96,7 @@ async function storeVideos(videos: ScrapedVideo[]): Promise<number> {
       sound_creator: v.sound_creator,
       category: v.category,
       format: v.format,
+      ad_format: v.ad_format,
       creator_presence_score: v.creator_presence_score,
       scraped_at: v.scraped_at,
     }));
@@ -114,18 +124,18 @@ async function storeVideos(videos: ScrapedVideo[]): Promise<number> {
   }
 }
 
-// Clean old videos (keep only last 7 days)
+// Clean old videos (keep only last 14 days)
 async function cleanOldVideos(): Promise<number> {
   if (!isSupabaseConfigured || !supabase) return 0;
 
   try {
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    const fourteenDaysAgo = new Date();
+    fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
 
     const { data, error } = await supabase
       .from("trending_videos")
       .delete()
-      .lt("scraped_at", sevenDaysAgo.toISOString())
+      .lt("scraped_at", fourteenDaysAgo.toISOString())
       .select("video_id");
 
     if (error) {

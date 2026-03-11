@@ -9,6 +9,7 @@ import VideoModal from "@/components/VideoModal";
 const CATEGORIES = ["Tümü", "Yemek", "Komedi", "Seyahat", "Moda", "Teknoloji", "Vlog", "Eğitim", "Spor", "Müzik", "Dans", "Güzellik", "Oyun"];
 const SORT_OPTIONS = [
   { value: "viralScore", label: "Viral Skor" },
+  { value: "likeRatio", label: "Beğeni Oranı" },
   { value: "views", label: "Görüntülenme" },
   { value: "engagementRate", label: "Etkileşim" },
   { value: "publishedAt", label: "En Yeni" },
