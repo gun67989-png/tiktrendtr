@@ -1,114 +1,134 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { scrapeTrendingVideos, type ScrapedVideo } from "@/lib/tiktok-scraper";
 
 export const dynamic = "force-dynamic";
+export const maxDuration = 60; // Allow up to 60s for scraping
 
-// ============================================================
-// Video data schema — required fields for every collected video
-// ============================================================
-interface CollectedVideo {
-  video_id: string;
-  creator_username: string;
-  caption: string;
-  hashtags: string[];
-  view_count: number;
-  like_count: number;
-  tiktok_url: string;
-  collected_at: string;
+// Create the trending_videos table if it doesn't exist
+async function ensureTable(): Promise<boolean> {
+  if (!isSupabaseConfigured || !supabase) return false;
+
+  try {
+    // Try a simple select to see if table exists
+    const { error } = await supabase
+      .from("trending_videos")
+      .select("video_id")
+      .limit(1);
+
+    if (error && error.code === "42P01") {
+      // Table doesn't exist, create it via SQL
+      const { error: createError } = await supabase.rpc("exec_sql", {
+        sql: `
+          CREATE TABLE IF NOT EXISTS trending_videos (
+            video_id TEXT PRIMARY KEY,
+            creator_username TEXT NOT NULL,
+            creator_nickname TEXT,
+            caption TEXT,
+            hashtags TEXT[],
+            view_count BIGINT DEFAULT 0,
+            like_count BIGINT DEFAULT 0,
+            comment_count BIGINT DEFAULT 0,
+            share_count BIGINT DEFAULT 0,
+            tiktok_url TEXT NOT NULL,
+            thumbnail_url TEXT,
+            duration INTEGER DEFAULT 0,
+            sound_name TEXT,
+            sound_creator TEXT,
+            category TEXT DEFAULT 'Vlog',
+            format TEXT,
+            scraped_at TIMESTAMPTZ DEFAULT NOW(),
+            created_at TIMESTAMPTZ DEFAULT NOW()
+          );
+        `,
+      });
+
+      if (createError) {
+        console.warn("[CRON] Could not create table via RPC, trying direct insert:", createError.message);
+        // Table might already exist or RPC not available - that's ok
+      }
+    }
+
+    return true;
+  } catch (e) {
+    console.warn("[CRON] Table check failed:", e);
+    return false;
+  }
 }
 
-// ============================================================
-// Validation: reject any video without a real creator username
-// ============================================================
-function isValidCreator(username: string | null | undefined): boolean {
-  if (!username || typeof username !== "string") return false;
-  const trimmed = username.trim().toLowerCase();
-  // Reject generic / placeholder usernames
-  if (trimmed === "user" || trimmed === "" || trimmed === "unknown") return false;
-  return true;
-}
+// Store videos in Supabase
+async function storeVideos(videos: ScrapedVideo[]): Promise<number> {
+  if (!isSupabaseConfigured || !supabase || videos.length === 0) return 0;
 
-function buildTiktokUrl(creatorUsername: string, videoId: string): string {
-  return `https://www.tiktok.com/@${creatorUsername}/video/${videoId}`;
-}
+  try {
+    const rows = videos.map((v) => ({
+      video_id: v.video_id,
+      creator_username: v.creator_username,
+      creator_nickname: v.creator_nickname,
+      caption: v.caption,
+      hashtags: v.hashtags,
+      view_count: v.view_count,
+      like_count: v.like_count,
+      comment_count: v.comment_count,
+      share_count: v.share_count,
+      tiktok_url: v.tiktok_url,
+      thumbnail_url: v.thumbnail_url,
+      duration: v.duration,
+      sound_name: v.sound_name,
+      sound_creator: v.sound_creator,
+      category: v.category,
+      format: v.format,
+      scraped_at: v.scraped_at,
+    }));
 
-// ============================================================
-// Database cleanup — remove entries with invalid usernames
-// ============================================================
-async function cleanInvalidEntries(): Promise<number> {
-  if (!isSupabaseConfigured || !supabase) return 0;
+    // Upsert in batches of 50
+    let stored = 0;
+    for (let i = 0; i < rows.length; i += 50) {
+      const batch = rows.slice(i, i + 50);
+      const { data, error } = await supabase
+        .from("trending_videos")
+        .upsert(batch, { onConflict: "video_id" })
+        .select("video_id");
 
-  // Delete rows where creator_username is "user", null, or empty
-  const { data, error } = await supabase
-    .from("collected_videos")
-    .delete()
-    .or("creator_username.is.null,creator_username.eq.user,creator_username.eq.")
-    .select("video_id");
+      if (error) {
+        console.warn(`[CRON] Batch insert failed:`, error.message);
+      } else {
+        stored += data?.length ?? 0;
+      }
+    }
 
-  if (error) {
-    console.warn("[CRON] Cleanup query failed (table may not exist yet):", error.message);
+    return stored;
+  } catch (e) {
+    console.error("[CRON] Store failed:", e);
     return 0;
   }
-
-  return data?.length ?? 0;
 }
 
-// ============================================================
-// Simulated collection pipeline
-// ============================================================
-function simulateCollectedVideos(): CollectedVideo[] {
-  // In production this would scrape TikTok Creative Center / public APIs.
-  // The simulation guarantees every entry has a real creator username.
-  const sampleCreators = [
-    "yemek_ustasi", "komedi_krali", "gezgin_tr", "moda_guru",
-    "tech_master", "vlog_turkey", "egitim_plus", "spor_kocu",
-    "dans_queen", "guzellik_tr", "oyuncu_pro", "muzik_tr",
-    "chef_istanbul", "travel_antalya", "fitness_coach", "diy_master",
-  ];
+// Clean old videos (keep only last 7 days)
+async function cleanOldVideos(): Promise<number> {
+  if (!isSupabaseConfigured || !supabase) return 0;
 
-  const sampleCaptions = [
-    "Bu tarifi denemeyen kalmasin! #yemektarifi #kesfet",
-    "Herkesin basina gelen komik anlar #komedi #mizah",
-    "Turkiye'nin en guzel gizli koyleri #seyahat #kesfet",
-    "Bu sezon trend olan kombinler #moda #ootd",
-    "iPhone gizli ozellikleri #teknoloji #tech",
-    "Sabah rutinim #vlog #gunluk",
-    "YKS icin matematik hileleri #egitim #yks",
-    "30 gunluk fitness donusumum #spor #fitness",
-  ];
+  try {
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
-  const now = new Date().toISOString();
-  const videos: CollectedVideo[] = [];
+    const { data, error } = await supabase
+      .from("trending_videos")
+      .delete()
+      .lt("scraped_at", sevenDaysAgo.toISOString())
+      .select("video_id");
 
-  for (let i = 0; i < 20; i++) {
-    const creator = sampleCreators[i % sampleCreators.length];
-    const caption = sampleCaptions[i % sampleCaptions.length];
-    const videoId = `${Date.now()}_${Math.random().toString(36).slice(2, 10)}`;
+    if (error) {
+      console.warn("[CRON] Cleanup failed:", error.message);
+      return 0;
+    }
 
-    // Extract hashtags from caption
-    const hashtags = caption.match(/#\w+/g) || [];
-
-    // Only include videos with valid creator usernames
-    if (!isValidCreator(creator)) continue;
-
-    videos.push({
-      video_id: videoId,
-      creator_username: creator,
-      caption,
-      hashtags,
-      view_count: Math.round(Math.random() * 5000000 + 50000),
-      like_count: Math.round(Math.random() * 500000 + 5000),
-      tiktok_url: buildTiktokUrl(creator, videoId),
-      collected_at: now,
-    });
+    return data?.length ?? 0;
+  } catch {
+    return 0;
   }
-
-  return videos;
 }
 
-// ============================================================
-// Main cron handler
-// ============================================================
 export async function GET(request: NextRequest) {
   // Verify cron secret
   const authHeader = request.headers.get("authorization");
@@ -122,66 +142,33 @@ export async function GET(request: NextRequest) {
     const timestamp = new Date().toISOString();
     console.log(`[CRON] Data collection started at ${timestamp}`);
 
-    // Step 1: Clean existing database entries with invalid usernames
-    const cleanedCount = await cleanInvalidEntries();
-    if (cleanedCount > 0) {
-      console.log(`[CRON] Cleaned ${cleanedCount} entries with invalid usernames`);
-    }
+    // Step 1: Ensure database table exists
+    await ensureTable();
 
-    // Step 2: Collect new video data (simulated — replace with real scraper)
-    const collectedVideos = simulateCollectedVideos();
+    // Step 2: Scrape real TikTok data
+    console.log("[CRON] Starting TikTok scraping...");
+    const scrapedVideos = await scrapeTrendingVideos();
+    console.log(`[CRON] Scraped ${scrapedVideos.length} videos`);
 
-    // Step 3: Validate — every video MUST have a real creator username
-    const validVideos = collectedVideos.filter((v) => {
-      if (!isValidCreator(v.creator_username)) {
-        console.warn(`[CRON] Skipping video ${v.video_id}: invalid creator "${v.creator_username}"`);
-        return false;
-      }
-      return true;
-    });
+    // Step 3: Store in database
+    const storedCount = await storeVideos(scrapedVideos);
+    console.log(`[CRON] Stored ${storedCount} videos in database`);
 
-    const skippedCount = collectedVideos.length - validVideos.length;
-
-    // Step 4: Store valid videos in database (if Supabase configured)
-    let storedCount = 0;
-    if (isSupabaseConfigured && supabase && validVideos.length > 0) {
-      const { data, error } = await supabase
-        .from("collected_videos")
-        .upsert(
-          validVideos.map((v) => ({
-            video_id: v.video_id,
-            creator_username: v.creator_username,
-            caption: v.caption,
-            hashtags: v.hashtags,
-            view_count: v.view_count,
-            like_count: v.like_count,
-            tiktok_url: v.tiktok_url,
-            collected_at: v.collected_at,
-          })),
-          { onConflict: "video_id" }
-        )
-        .select("video_id");
-
-      if (error) {
-        console.warn("[CRON] DB insert failed (table may not exist yet):", error.message);
-      }
-      storedCount = data?.length ?? 0;
-    }
+    // Step 4: Clean old entries
+    const cleanedCount = await cleanOldVideos();
 
     const results = {
       timestamp,
-      hashtagsCollected: 40,
-      soundsCollected: 20,
-      videosAnalyzed: Math.round(Math.random() * 5000 + 8000),
-      videosCollected: validVideos.length,
-      videosSkipped: skippedCount,
+      videosScraped: scrapedVideos.length,
       videosStored: storedCount,
-      entriesCleaned: cleanedCount,
-      trendsDetected: Math.round(Math.random() * 10 + 5),
-      status: "success",
+      videosCleanedUp: cleanedCount,
+      status: scrapedVideos.length > 0 ? "success" : "no_data",
+      message: scrapedVideos.length > 0
+        ? `Successfully scraped ${scrapedVideos.length} real TikTok videos`
+        : "Could not scrape TikTok data (may be blocked). Will retry next cycle.",
     };
 
-    console.log(`[CRON] Data collection completed:`, results);
+    console.log(`[CRON] Collection completed:`, results);
 
     return NextResponse.json(results);
   } catch (error) {
