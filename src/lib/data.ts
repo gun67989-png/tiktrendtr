@@ -682,14 +682,16 @@ export function generateHashtagDetail(tag: string): HashtagDetail | null {
     const engRate = ((likes + comments + shares) / views) * 100;
     const pubDate = new Date();
     pubDate.setDate(pubDate.getDate() - Math.floor(Math.random() * 14));
+    const videoCreator = creators[Math.floor(Math.random() * creators.length)];
+    const videoTiktokId = Math.random().toString(36).slice(2, 12);
 
     return {
       id: `hv-${tag}-${i}`,
-      tiktokId: `${Math.random().toString(36).slice(2, 12)}`,
+      tiktokId: videoTiktokId,
       description: `${cleanTag} ile ilgili viral video #kesfet #trend`,
-      creator: creators[Math.floor(Math.random() * creators.length)],
+      creator: videoCreator,
       thumbnailUrl: `https://picsum.photos/seed/${tag}${i}/400/700`,
-      tiktokUrl: `https://www.tiktok.com/@user/video/${Date.now() + i}`,
+      tiktokUrl: `https://www.tiktok.com/@${videoCreator}/video/${videoTiktokId}`,
       views,
       likes,
       comments,
@@ -767,14 +769,16 @@ export function generateSoundDetail(soundId: string): SoundDetail | null {
     const engRate = ((likes + comments + shares) / views) * 100;
     const pubDate = new Date();
     pubDate.setDate(pubDate.getDate() - Math.floor(Math.random() * 14));
+    const videoCreator = creators[Math.floor(Math.random() * creators.length)];
+    const videoTiktokId = Math.random().toString(36).slice(2, 12);
 
     return {
       id: `sv-${soundId}-${i}`,
-      tiktokId: `${Math.random().toString(36).slice(2, 12)}`,
+      tiktokId: videoTiktokId,
       description: `${sound.name} sesini kullanan viral video`,
-      creator: creators[Math.floor(Math.random() * creators.length)],
+      creator: videoCreator,
       thumbnailUrl: `https://picsum.photos/seed/sound${soundId}${i}/400/700`,
-      tiktokUrl: `https://www.tiktok.com/@user/video/${Date.now() + i}`,
+      tiktokUrl: `https://www.tiktok.com/@${videoCreator}/video/${videoTiktokId}`,
       views,
       likes,
       comments,
@@ -833,38 +837,37 @@ export function generateVideoAnalytics(videoId: string): VideoAnalytics | null {
     return x - Math.floor(x);
   };
 
-  const creators = [
-    "yemek_ustasi", "komedi_krali", "gezgin_tr", "moda_guru",
-    "tech_master", "vlog_turkey", "egitim_plus", "spor_kocu",
-  ];
+  // Pick a category, then use its coherent profile for all metadata
   const categories = CATEGORIES;
-  const formats = ["Hikaye Anlatimi", "Tutorial", "POV", "Once/Sonra", "Get Ready With Me", "Mukbang"];
-  const soundNames = ["Original Sound - Turkish Remix", "Anlatamam", "Ela Gozlum", "Street Food Beat", "Istanbul Nights"];
-  const soundCreators = ["djturk_official", "tarkan", "emircan_igan", "beatmaker_ist", "dj_deep_tr"];
+  const catIdx = Math.floor(rng(5) * categories.length);
+  const cat = categories[catIdx];
+  const profile = CATEGORY_PROFILES[cat];
 
   const views = Math.round(100000 + rng(1) * 5000000);
   const likes = Math.round(views * (0.03 + rng(2) * 0.12));
   const comments = Math.round(likes * (0.05 + rng(3) * 0.15));
   const shares = Math.round(likes * (0.02 + rng(4) * 0.08));
   const engRate = ((likes + comments + shares) / views) * 100;
-  const catIdx = Math.floor(rng(5) * categories.length);
-  const soundIdx = Math.floor(rng(8) * soundNames.length);
   const pubDate = new Date();
   pubDate.setDate(pubDate.getDate() - Math.floor(rng(9) * 14));
 
+  // Use category-specific hashtags
   const hashtags = ["#kesfet", "#trend"];
-  const catHashtags: Record<string, string[]> = {
-    Yemek: ["#yemektarifi", "#türkmutfağı"],
-    Komedi: ["#komedi", "#mizah"],
-    Seyahat: ["#seyahat", "#türkiye"],
-    Moda: ["#moda", "#kombin"],
-    Teknoloji: ["#teknoloji", "#tech"],
-    Dans: ["#dans", "#dance"],
-    Eğitim: ["#eğitim", "#öğren"],
-    Spor: ["#spor", "#fitness"],
-  };
-  const cat = categories[catIdx];
-  if (catHashtags[cat]) hashtags.push(...catHashtags[cat]);
+  if (profile) {
+    const shuffled = [...profile.hashtags].sort(() => rng(15) - 0.5);
+    hashtags.push(...shuffled.slice(0, 3));
+  }
+
+  // Use category-specific creator, format, sound
+  const creator = profile
+    ? profile.creators[Math.floor(rng(6) * profile.creators.length)]
+    : "content_creator";
+  const format = profile
+    ? profile.formats[Math.floor(rng(7) * profile.formats.length)]
+    : "Tutorial";
+  const soundEntry = profile
+    ? profile.sounds[Math.floor(rng(8) * profile.sounds.length)]
+    : { name: "Original Sound - Turkish Remix", creator: "djturk_official" };
 
   const viewsOverTime = Array.from({ length: 14 }, (_, i) => {
     const date = new Date(pubDate);
@@ -892,13 +895,18 @@ export function generateVideoAnalytics(videoId: string): VideoAnalytics | null {
   else if (views > 1000000) growthSpeed = "Hizli";
   else if (views < 200000) growthSpeed = "Yavas";
 
+  // Use category-specific description
+  const descText = profile
+    ? profile.descriptions[Math.floor(rng(11) * profile.descriptions.length)]
+    : `Bu harika ${cat.toLowerCase()} icerigi ile trend oldum!`;
+
   return {
     id: videoId,
     tiktokId: `tt_${videoId}`,
-    description: `Bu harika ${cat.toLowerCase()} icerigi ile trend oldum! ${hashtags.join(" ")}`,
-    creator: creators[Math.floor(rng(6) * creators.length)],
+    description: `${descText} ${hashtags.join(" ")}`,
+    creator,
     thumbnailUrl: `https://picsum.photos/seed/vid${videoId}/400/700`,
-    tiktokUrl: `https://www.tiktok.com/@user/video/${Date.now()}`,
+    tiktokUrl: `https://www.tiktok.com/@${creator}/video/${Date.now()}`,
     views,
     likes,
     comments,
@@ -906,12 +914,12 @@ export function generateVideoAnalytics(videoId: string): VideoAnalytics | null {
     engagementRate: Math.round(engRate * 100) / 100,
     viralScore: Math.round((engRate * 0.4 + (views / 5000000) * 60) * 10) / 10,
     duration: 15 + Math.floor(rng(7) * 50),
-    format: formats[Math.floor(rng(7) * formats.length)],
+    format,
     category: cat,
     publishedAt: pubDate.toISOString(),
-    soundName: soundNames[soundIdx],
-    soundCreator: soundCreators[soundIdx],
-    soundId: `s-${soundIdx}`,
+    soundName: soundEntry.name,
+    soundCreator: soundEntry.creator,
+    soundId: `s-${Math.floor(rng(8) * 8)}`,
     hashtags,
     viewsOverTime,
     engagementOverTime,
@@ -921,6 +929,285 @@ export function generateVideoAnalytics(videoId: string): VideoAnalytics | null {
     bestPostingHour: 19 + Math.floor(rng(60) * 4),
   };
 }
+
+// Content type classification - prioritize active creator content
+export type ContentType = "creator_oncam" | "tutorial" | "storytelling" | "comedy_skit" | "challenge" | "duet";
+
+// Category profiles: each category gets its own coherent set of creators, formats, sounds, hashtags, and descriptions
+// This ensures that when a user selects a category, every video truly belongs to that topic
+const CATEGORY_PROFILES: Record<string, {
+  creators: string[];
+  formats: string[];
+  sounds: { name: string; creator: string }[];
+  hashtags: string[];
+  descriptions: string[];
+  contentTypes: ContentType[];
+}> = {
+  Yemek: {
+    creators: ["yemek_ustasi", "chef_istanbul", "sokak_lezzet", "gurme_anne", "tarif_dunyasi", "mutfak_sirlari", "asci_basi_tr", "lezzet_duragi", "ev_yemekleri", "pasta_sanatcisi"],
+    formats: ["Tutorial", "Mukbang", "Hikaye Anlatimi", "Once/Sonra", "POV"],
+    sounds: [
+      { name: "Street Food Beat", creator: "beatmaker_ist" },
+      { name: "Kahvalti Vibes", creator: "morning_tr" },
+      { name: "Original Sound - Turkish Remix", creator: "djturk_official" },
+      { name: "Nostalji 90lar", creator: "retro_tr" },
+    ],
+    hashtags: ["#yemektarifi", "#turkmutfagi", "#lezzet", "#tarif", "#yemek", "#kahvalti", "#tatli", "#sofrasi"],
+    descriptions: [
+      "Bu tarifi denemeyen kalmasin! Adim adim anlatiyorum",
+      "En kolay ve lezzetli tarif burada, hadi mutfaga!",
+      "Sokak lezzetleri turu - bu tadi baska yerde bulamazsiniz",
+      "Babaannemin gizli tarifi, nesiller boyu aktarilan lezzet",
+      "5 dakikada hazirlanan pratik tarif geldi!",
+      "Bu yemegi yapinca herkes sasirdi, cok lezzetli!",
+      "Evde restoran kalitesinde yemek yapmak bu kadar kolay",
+      "Kahvalti sofraniz icin mukemmel tarif onerisi",
+    ],
+    contentTypes: ["creator_oncam", "tutorial", "storytelling"],
+  },
+  Komedi: {
+    creators: ["komedi_krali", "comedy_king", "mizahsor_tr", "gulme_krizi", "espri_ustasi", "parodi_tr", "sketch_master", "capsci_official", "kahkaha_club", "sahne_tr"],
+    formats: ["POV", "Hikaye Anlatimi", "Duet", "Challenge"],
+    sounds: [
+      { name: "Komedi Sound Effect", creator: "soundfx_tr" },
+      { name: "Turkish Drill Beat", creator: "drill_ankara" },
+      { name: "Anlatamam", creator: "tarkan" },
+      { name: "Original Sound - Turkish Remix", creator: "djturk_official" },
+    ],
+    hashtags: ["#komedi", "#mizah", "#caps", "#eglence", "#gulumseten", "#turkkomedin", "#sketch", "#parodi"],
+    descriptions: [
+      "Herkesin basina gelmistir, cok komik durum!",
+      "Turk ailelerinde gercekler - anneler vs babalar",
+      "Bu duruma dusen tek ben miyim? Yorumlara yazin!",
+      "Turk annesi olmanin zorluklari, herkes bilir!",
+      "Yurt hayatinin kimsenin anlatmadigi gercekleri",
+      "Sinif ortaminda yasananlar, hepimiz oradaydik",
+      "Turk dugunlerinde yasanan klasik anlar",
+      "Patronla calisan arasindaki gercekler",
+    ],
+    contentTypes: ["comedy_skit", "creator_oncam", "storytelling"],
+  },
+  Seyahat: {
+    creators: ["gezgin_tr", "travel_antalya", "anadolu_gezgini", "rota_tr", "kesfet_turkiye", "yolcu_vlog", "tatilci_rehber", "mekan_onerir", "gezi_rehberi", "macera_tr"],
+    formats: ["POV", "Hikaye Anlatimi", "Tutorial", "Once/Sonra"],
+    sounds: [
+      { name: "Istanbul Nights", creator: "dj_deep_tr" },
+      { name: "Anadolu Rock", creator: "rocktr" },
+      { name: "Original Sound - Turkish Remix", creator: "djturk_official" },
+      { name: "Ela Gozlum", creator: "emircan_igan" },
+    ],
+    hashtags: ["#seyahat", "#turkiye", "#gezi", "#tatil", "#kesfet", "#travel", "#istanbul", "#kapadokya"],
+    descriptions: [
+      "Turkiye'nin gizli cenneti - bu mekan inanilmaz!",
+      "Bu yeri mutlaka gormelisiniz, rehber videom geldi",
+      "Kapadokya'da unutulmaz anlar, nasil gidilir anlatiyorum",
+      "100 TL ile bir gun gezisi, butce dostu seyahat",
+      "Istanbul'un bilinmeyen sokaklari, yerel rehber",
+      "Bu rotayi bilen cok az, gizli cennet buldum",
+      "Antalya tatil rehberi - en iyi mekanlar",
+      "24 saatte sehir turu, hadi benimle gelin!",
+    ],
+    contentTypes: ["creator_oncam", "storytelling", "tutorial"],
+  },
+  Moda: {
+    creators: ["moda_guru", "style_icon", "kombin_tr", "ootd_queen", "sokak_modasi", "trend_setter_tr", "vintage_lover", "butik_tr", "stilist_maya", "gardrob_tr"],
+    formats: ["Get Ready With Me", "Once/Sonra", "Tutorial", "POV"],
+    sounds: [
+      { name: "Gece Gunduz", creator: "edis" },
+      { name: "Nostalji 90lar", creator: "retro_tr" },
+      { name: "Turkish Drill Beat", creator: "drill_ankara" },
+      { name: "Original Sound - Turkish Remix", creator: "djturk_official" },
+    ],
+    hashtags: ["#moda", "#kombin", "#ootd", "#stil", "#trend", "#sokakmodasi", "#vintage", "#grwm"],
+    descriptions: [
+      "Bu sezonda herkes bunu giyecek, trend alarm!",
+      "Uygun fiyatli kombin onerileri, butce dostu sikilik",
+      "Sokak modasi trendleri - kameraya yakalandim!",
+      "Okul kombini 7 gun challenge, hangisi en iyi?",
+      "Vintage vs modern kombin karsilastirmasi",
+      "50 TL ile sik kombin mumkun mu? Ispatliyorum!",
+      "Bu sezonun en trend parcalari, hepsi uzerinde",
+      "GRWM - is icin hazirlaniyor, kombin onerisi",
+    ],
+    contentTypes: ["creator_oncam", "tutorial", "challenge"],
+  },
+  Teknoloji: {
+    creators: ["tech_master", "code_wizard", "dijital_tr", "yazilimci_ali", "gadget_guru_tr", "teknoloji_tr", "app_review_tr", "oyun_pc", "yapay_zeka_tr", "siber_guvenlik"],
+    formats: ["Tutorial", "Hikaye Anlatimi", "POV", "Once/Sonra"],
+    sounds: [
+      { name: "Gaming Hype", creator: "gamer_sounds" },
+      { name: "Original Sound - Turkish Remix", creator: "djturk_official" },
+      { name: "Turkish Drill Beat", creator: "drill_ankara" },
+      { name: "Istanbul Nights", creator: "dj_deep_tr" },
+    ],
+    hashtags: ["#teknoloji", "#tech", "#iphone", "#yapayZeka", "#yazilim", "#gadget", "#bilisim", "#uygulama"],
+    descriptions: [
+      "Bu ozelligi biliyor muydunuz? Gizli iPhone hileleri",
+      "En iyi teknoloji urunleri, detayli inceleme",
+      "Yapay zeka ile neler yapilabilir, gosterdim!",
+      "Bu uygulamayi herkes indirmeli, hayat kurtariyor",
+      "Telefon almadan once bilmeniz gereken 5 sey",
+      "Yazilimci olarak bir gunum nasil geciyor",
+      "En iyi butce telefon incelemesi, sok olacaksiniz",
+      "Bu teknoloji hilesi hayatinizi degistirecek",
+    ],
+    contentTypes: ["creator_oncam", "tutorial", "storytelling"],
+  },
+  Vlog: {
+    creators: ["vlog_turkey", "gunluk_hayat", "rutin_tr", "ev_turu_tr", "istanbul_vlog", "ogrenci_vlog", "cift_vlog", "anne_vlog", "yasam_kocu", "minimalist_tr"],
+    formats: ["Hikaye Anlatimi", "POV", "Get Ready With Me", "Tutorial"],
+    sounds: [
+      { name: "Kahvalti Vibes", creator: "morning_tr" },
+      { name: "Slow Turkish", creator: "slowmusic_tr" },
+      { name: "Nostalji 90lar", creator: "retro_tr" },
+      { name: "Original Sound - Turkish Remix", creator: "djturk_official" },
+    ],
+    hashtags: ["#vlog", "#gunluk", "#rutin", "#hayat", "#evturu", "#sabahrutini", "#yasam", "#birgunumhayat"],
+    descriptions: [
+      "Bir gunum nasil geciyor? Sabahtan aksama kadar",
+      "Sabah rutinimde degisiklik, yeni duzenim",
+      "Ev turumu gormelisiniz, yeni dekorasyon",
+      "Universite ogrencisi olarak bir gunum",
+      "Hafta sonu rutinim, benimle bir gun gecirin",
+      "Yeni evimize tasindik! Ev turu geldi",
+      "Calisan bir annenin gunluk rutini",
+      "Minimalist yasam deneyi, 30 gunluk sonuclar",
+    ],
+    contentTypes: ["creator_oncam", "storytelling", "tutorial"],
+  },
+  "Eğitim": {
+    creators: ["egitim_plus", "diy_master", "hoca_online", "matematik_tr", "ingilizce_ogret", "bilim_tr", "universite_rehber", "sinav_kocu", "tarih_anlat", "ogretmen_can"],
+    formats: ["Tutorial", "Hikaye Anlatimi", "POV", "Once/Sonra"],
+    sounds: [
+      { name: "Motivasyon Konusmasi", creator: "motivasyon_tr" },
+      { name: "Slow Turkish", creator: "slowmusic_tr" },
+      { name: "Kahvalti Vibes", creator: "morning_tr" },
+      { name: "Original Sound - Turkish Remix", creator: "djturk_official" },
+    ],
+    hashtags: ["#egitim", "#ogren", "#yks", "#sinav", "#matematik", "#ingilizce", "#universite", "#ogrenci"],
+    descriptions: [
+      "Sinavda cikacak konular, mutlaka izleyin!",
+      "5 dakikada ogrenin, en kolay anlatim",
+      "Kimsenin anlatmadigi gercekler, egitim serisi",
+      "YKS matematik hilesi, 10 soru daha fazla coz!",
+      "Ingilizce ogrenmenin en kolay yolu, 3 ayda ogren",
+      "Universite hayatta kalma rehberi, yeni baslayanlara",
+      "Bu konuyu boyle anlatsalar herkes anlar!",
+      "Calisma teknikleri, verimli ders calismak icin",
+    ],
+    contentTypes: ["creator_oncam", "tutorial", "storytelling"],
+  },
+  Spor: {
+    creators: ["spor_kocu", "fitness_coach", "fit_yasam", "gym_turkiye", "personal_trainer_tr", "saglikli_yasam", "kosu_tr", "pilates_tr", "beslenme_kocu", "antrenor_murat"],
+    formats: ["Tutorial", "Once/Sonra", "Challenge", "POV"],
+    sounds: [
+      { name: "Spor Motivasyon", creator: "gym_sounds" },
+      { name: "Turkish Drill Beat", creator: "drill_ankara" },
+      { name: "Motivasyon Konusmasi", creator: "motivasyon_tr" },
+      { name: "Gaming Hype", creator: "gamer_sounds" },
+    ],
+    hashtags: ["#spor", "#fitness", "#antrenman", "#saglik", "#gym", "#egzersiz", "#donusum", "#motivasyon"],
+    descriptions: [
+      "30 gunluk donusum, once ve sonra sonuclari",
+      "Evde yapilabilecek egzersizler, ekipmansiz",
+      "Protein takviyesi rehberi, dogru beslenme",
+      "Karin kasi programi, 4 haftalik plan",
+      "Sabah antrenmanim, benimle birlikte yapin!",
+      "Bu egzersizi yapmayanlar cok sey kaybediyor",
+      "Yeni baslayanlar icin fitness rehberi",
+      "Beslenme ve antrenman programim, detayli anlatim",
+    ],
+    contentTypes: ["creator_oncam", "tutorial", "challenge"],
+  },
+  "Müzik": {
+    creators: ["muzik_tr", "gitar_dersi", "ses_sanati", "cover_krali", "sokak_muzisyen", "piyano_tr", "sarkici_deniz", "beatbox_tr", "akustik_sahne", "turkce_pop"],
+    formats: ["Duet", "Challenge", "Hikaye Anlatimi", "Tutorial"],
+    sounds: [
+      { name: "Anlatamam", creator: "tarkan" },
+      { name: "Ela Gozlum", creator: "emircan_igan" },
+      { name: "Halay Remix 2024", creator: "halay_king" },
+      { name: "Anadolu Rock", creator: "rocktr" },
+    ],
+    hashtags: ["#muzik", "#sarki", "#cover", "#gitar", "#piyano", "#turkpop", "#akustik", "#ses"],
+    descriptions: [
+      "Cover challenge kabul edildi! Bu sarki cok ozel",
+      "Bu sarki cok farkli oldu, akustik versiyon",
+      "Sokak muzisyeni performansi, inanilmaz yetenek",
+      "Gitar dersi - bu akorlari hemen ogrenin",
+      "Yeni sarkim cikageldi, ilk kez burada!",
+      "Bu sarknin hikayesini biliyor muydunuz?",
+      "Piyano ile Turk pop klasikleri, canli performans",
+      "Duet challenge, sesinizi duymak istiyorum!",
+    ],
+    contentTypes: ["creator_oncam", "duet", "tutorial"],
+  },
+  Dans: {
+    creators: ["dans_queen", "dans_atolye", "koreografi_tr", "zeybek_modern", "hip_hop_tr", "salsa_istanbul", "balet_tr", "dans_hocasi", "ritim_tr", "dans_okulu"],
+    formats: ["Tutorial", "Challenge", "Duet", "POV"],
+    sounds: [
+      { name: "Halay Remix 2024", creator: "halay_king" },
+      { name: "Turkish Drill Beat", creator: "drill_ankara" },
+      { name: "Gece Gunduz", creator: "edis" },
+      { name: "Original Sound - Turkish Remix", creator: "djturk_official" },
+    ],
+    hashtags: ["#dans", "#dance", "#koreografi", "#challenge", "#halay", "#zeybek", "#dansdersi", "#ritim"],
+    descriptions: [
+      "Yeni koreografi geldi! Adim adim ogretiyorum",
+      "Bu dansi herkes yapiyor, sen de dene!",
+      "Tutorial ile adim adim dans dersi",
+      "Halay challenge - kim daha iyi yapiyor?",
+      "Bu koreografiyi ogrenmen lazim, trend oldu!",
+      "Dans hocasi ile ders, baslangic seviyesi",
+      "Zeybek modern yorumuyla karsinizda",
+      "Dans challenge kabul edildi, sonuc inanilmaz!",
+    ],
+    contentTypes: ["creator_oncam", "tutorial", "challenge"],
+  },
+  "Güzellik": {
+    creators: ["guzellik_tr", "makyaj_ustasi", "cilt_bakim_tr", "kozmetik_tr", "beauty_guru_ist", "sac_stilleri", "tirnak_sanati", "doktor_cilt", "parfum_rehber", "dogal_bakim"],
+    formats: ["Get Ready With Me", "Tutorial", "Once/Sonra", "POV"],
+    sounds: [
+      { name: "Gece Gunduz", creator: "edis" },
+      { name: "Slow Turkish", creator: "slowmusic_tr" },
+      { name: "Nostalji 90lar", creator: "retro_tr" },
+      { name: "Original Sound - Turkish Remix", creator: "djturk_official" },
+    ],
+    hashtags: ["#guzellik", "#makyaj", "#ciltbakim", "#skincare", "#grwm", "#kozmetik", "#beauty", "#sacbakim"],
+    descriptions: [
+      "10 dakikada makyaj, hizli ve pratik teknikler",
+      "Cilt bakim rutinim, sabah ve aksam adimlari",
+      "Bu urun hayatimi degistirdi, detayli inceleme",
+      "GRWM - ozel bir gece icin hazirlaniyor",
+      "Makyaj donusumu, once ve sonra inanilmaz fark",
+      "Butce dostu cilt bakim urunleri, hepsi ise yariyor",
+      "Sac bakim rutinim ve onerilerim",
+      "Doktorun onerileri ile dogru cilt bakimi",
+    ],
+    contentTypes: ["creator_oncam", "tutorial", "storytelling"],
+  },
+  Oyun: {
+    creators: ["oyuncu_pro", "gamer_tr", "esports_ist", "minecraft_tr", "valorant_king", "mobile_gamer", "retro_oyuncu", "strateji_tr", "cosplay_tr", "oyun_inceleme"],
+    formats: ["POV", "Challenge", "Hikaye Anlatimi", "Tutorial"],
+    sounds: [
+      { name: "Gaming Hype", creator: "gamer_sounds" },
+      { name: "Turkish Drill Beat", creator: "drill_ankara" },
+      { name: "Original Sound - Turkish Remix", creator: "djturk_official" },
+      { name: "Komedi Sound Effect", creator: "soundfx_tr" },
+    ],
+    hashtags: ["#gaming", "#oyun", "#gamer", "#esports", "#valorant", "#minecraft", "#mobiloyun", "#gameplay"],
+    descriptions: [
+      "Bu oyunu oynamalisiniz! Detayli inceleme",
+      "En iyi gaming anlari, efsane oynanis",
+      "Efsane clutch ani, inanilmaz geri donus!",
+      "Yeni cikan oyun incelemesi, almali mi?",
+      "Bu taktik ile her maçi kazanirsiniz",
+      "Gaming setup turu, butce dostu kurulum",
+      "Turnuva finali, son an geri donus!",
+      "Oyun hileleri ve ipuclari, pro gibi oyna",
+    ],
+    contentTypes: ["creator_oncam", "tutorial", "challenge"],
+  },
+};
 
 // Generate mock video list for trending videos page
 export interface VideoListItem {
@@ -941,6 +1228,7 @@ export interface VideoListItem {
   duration: number;
   format: string | null;
   category: string | null;
+  contentType: ContentType;
   soundId: string | null;
   soundName: string | null;
   soundCreator: string | null;
@@ -957,105 +1245,78 @@ export function generateVideos(options: {
 } = {}): { videos: VideoListItem[]; total: number } {
   const { limit = 20, offset = 0, category, sortBy = "viralScore", order = "desc" } = options;
 
-  const creators = [
-    "yemek_ustasi", "komedi_krali", "gezgin_tr", "moda_guru",
-    "tech_master", "vlog_turkey", "egitim_plus", "spor_kocu",
-    "dans_queen", "guzellik_tr", "oyuncu_pro", "muzik_tr",
-    "chef_istanbul", "travel_antalya", "fitness_coach", "diy_master",
-    "comedy_king", "style_icon", "code_wizard", "nature_lover",
-  ];
-  const formats = ["Hikaye Anlatimi", "Tutorial", "POV", "Once/Sonra", "Get Ready With Me", "Mukbang", "Duet", "Challenge"];
-  const soundNames = ["Original Sound - Turkish Remix", "Anlatamam", "Ela Gozlum", "Street Food Beat", "Istanbul Nights", "Komedi Sound Effect", "Turkish Drill Beat", "Halay Remix 2024"];
-  const soundCreators = ["djturk_official", "tarkan", "emircan_igan", "beatmaker_ist", "dj_deep_tr", "soundfx_tr", "drill_ankara", "halay_king"];
-
-  const catHashtags: Record<string, string[]> = {
-    Yemek: ["#yemektarifi", "#turkmutfagi"],
-    Komedi: ["#komedi", "#mizah"],
-    Seyahat: ["#seyahat", "#turkiye"],
-    Moda: ["#moda", "#kombin"],
-    Teknoloji: ["#teknoloji", "#tech"],
-    Vlog: ["#vlog", "#gunluk"],
-    Egitim: ["#egitim", "#ogren"],
-    Spor: ["#spor", "#fitness"],
-    Muzik: ["#muzik", "#sarki"],
-    Dans: ["#dans", "#dance"],
-    Guzellik: ["#guzellik", "#makyaj"],
-    Oyun: ["#gaming", "#oyun"],
-  };
-
-  const descriptions: Record<string, string[]> = {
-    Yemek: ["Bu tarifi denemeyen kalmasin!", "En kolay ve lezzetli tarif burada", "Sokak lezzetleri turu"],
-    Komedi: ["Herkesin basina gelmistir", "Turk ailelerinde gercekler", "Bu duruma dusen tek ben miyim?"],
-    Seyahat: ["Turkiye'nin gizli cenneti!", "Bu yeri mutlaka gormelisiniz", "Kapadokya'da unutulmaz anlar"],
-    Moda: ["Bu sezonda herkes bunu giyecek", "Uygun fiyatli kombin onerileri", "Sokak modasi trendleri"],
-    Teknoloji: ["Bu ozelligi biliyor muydunuz?", "En iyi teknoloji urunleri", "Yapay zeka ile neler yapilabilir"],
-    Vlog: ["Bir gunum nasil geciyor?", "Sabah rutinimde degisiklik", "Ev turumu gormelisiniz"],
-    Egitim: ["Sinavda cikacak konular", "5 dakikada ogrenin", "Kimsenin anlatmadigi gercekler"],
-    Spor: ["30 gunluk donusum", "Evde yapilabilecek egzersizler", "Protein takviyesi rehberi"],
-    Muzik: ["Cover challenge kabul edildi!", "Bu sarki cok farkli oldu", "Sokak muzisyeni performansi"],
-    Dans: ["Yeni koreografi geldi!", "Bu dansi herkes yapiyor", "Tutorial ile adim adim"],
-    Guzellik: ["10 dakikada makyaj", "Cilt bakim rutinim", "Bu urun hayatimi degistirdi"],
-    Oyun: ["Bu oyunu oynamalisiniz!", "En iyi gaming anlari", "Efsane clutch ani"],
-  };
-
   const srng = (seed: number, off: number) => {
     const x = Math.sin(seed + off) * 10000;
     return x - Math.floor(x);
   };
 
   const allVideos: VideoListItem[] = [];
-  const totalCount = 120;
+  // Generate 10 videos per category to ensure even distribution
+  const videosPerCategory = 10;
 
-  for (let i = 0; i < totalCount; i++) {
-    const seed = i * 137 + 42;
-    const catIdx = Math.floor(srng(seed, 1) * CATEGORIES.length);
+  for (let catIdx = 0; catIdx < CATEGORIES.length; catIdx++) {
     const cat = CATEGORIES[catIdx];
-    const creatorIdx = Math.floor(srng(seed, 2) * creators.length);
-    const formatIdx = Math.floor(srng(seed, 3) * formats.length);
-    const soundIdx = Math.floor(srng(seed, 4) * soundNames.length);
-    const views = Math.round(50000 + srng(seed, 5) * 5000000);
-    const likes = Math.round(views * (0.03 + srng(seed, 6) * 0.12));
-    const comments = Math.round(likes * (0.05 + srng(seed, 7) * 0.15));
-    const shares = Math.round(likes * (0.02 + srng(seed, 8) * 0.08));
-    const engRate = Math.round(((likes + comments + shares) / views) * 10000) / 100;
-    const pubDate = new Date();
-    pubDate.setDate(pubDate.getDate() - Math.floor(srng(seed, 9) * 21));
-    const duration = 15 + Math.floor(srng(seed, 10) * 50);
+    const profile = CATEGORY_PROFILES[cat];
+    if (!profile) continue;
 
-    const hashtags = ["#kesfet", "#trend"];
-    if (catHashtags[cat]) hashtags.push(...catHashtags[cat]);
+    for (let j = 0; j < videosPerCategory; j++) {
+      const i = catIdx * videosPerCategory + j;
+      const seed = i * 137 + 42;
 
-    const catDescs = descriptions[cat] || ["Harika bir icerik!"];
-    const desc = catDescs[Math.floor(srng(seed, 11) * catDescs.length)] + " " + hashtags.join(" ");
+      // Pick creator, format, sound, description FROM the category's own pool
+      const creator = profile.creators[Math.floor(srng(seed, 2) * profile.creators.length)];
+      const format = profile.formats[Math.floor(srng(seed, 3) * profile.formats.length)];
+      const soundEntry = profile.sounds[Math.floor(srng(seed, 4) * profile.sounds.length)];
+      const contentType = profile.contentTypes[Math.floor(srng(seed, 13) * profile.contentTypes.length)];
 
-    const viralScore = Math.round(
-      (engRate / 15 * 0.35 + (views / 5000000) * 0.25 + srng(seed, 12) * 0.2 + Math.max(0, 1 - Math.floor(srng(seed, 9) * 21) / 21) * 0.2) * 100
-    ) / 10;
+      const views = Math.round(50000 + srng(seed, 5) * 5000000);
+      const likes = Math.round(views * (0.03 + srng(seed, 6) * 0.12));
+      const comments = Math.round(likes * (0.05 + srng(seed, 7) * 0.15));
+      const shares = Math.round(likes * (0.02 + srng(seed, 8) * 0.08));
+      const engRate = Math.round(((likes + comments + shares) / views) * 10000) / 100;
+      const pubDate = new Date();
+      pubDate.setDate(pubDate.getDate() - Math.floor(srng(seed, 9) * 21));
+      const duration = 15 + Math.floor(srng(seed, 10) * 50);
 
-    allVideos.push({
-      id: `v-${i}`,
-      tiktokId: `tt_${1000000 + i}`,
-      description: desc,
-      creator: creators[creatorIdx],
-      creatorAvatar: null,
-      thumbnailUrl: `https://picsum.photos/seed/vid${i}/400/700`,
-      videoUrl: `https://www.tiktok.com/@${creators[creatorIdx]}/video/${1000000 + i}`,
-      tiktokUrl: `https://www.tiktok.com/@${creators[creatorIdx]}/video/${1000000 + i}`,
-      views,
-      likes,
-      comments,
-      shares,
-      engagementRate: engRate,
-      viralScore: Math.min(10, Math.max(0.1, viralScore)),
-      duration,
-      format: formats[formatIdx],
-      category: cat,
-      soundId: `s-${soundIdx}`,
-      soundName: soundNames[soundIdx],
-      soundCreator: soundCreators[soundIdx],
-      publishedAt: pubDate.toISOString(),
-      hashtags,
-    });
+      // Build hashtags from the category's own pool + generic tags
+      const hashtags = ["#kesfet", "#trend"];
+      const numCatHashtags = 2 + Math.floor(srng(seed, 14) * 3);
+      const shuffled = [...profile.hashtags].sort(() => srng(seed, 15) - 0.5);
+      hashtags.push(...shuffled.slice(0, numCatHashtags));
+
+      // Description from the category's own pool
+      const desc = profile.descriptions[Math.floor(srng(seed, 11) * profile.descriptions.length)] + " " + hashtags.join(" ");
+
+      const viralScore = Math.round(
+        (engRate / 15 * 0.35 + (views / 5000000) * 0.25 + srng(seed, 12) * 0.2 + Math.max(0, 1 - Math.floor(srng(seed, 9) * 21) / 21) * 0.2) * 100
+      ) / 10;
+
+      allVideos.push({
+        id: `v-${i}`,
+        tiktokId: `tt_${1000000 + i}`,
+        description: desc,
+        creator,
+        creatorAvatar: null,
+        thumbnailUrl: `https://picsum.photos/seed/vid${i}/400/700`,
+        videoUrl: `https://www.tiktok.com/@${creator}/video/${1000000 + i}`,
+        tiktokUrl: `https://www.tiktok.com/@${creator}/video/${1000000 + i}`,
+        views,
+        likes,
+        comments,
+        shares,
+        engagementRate: engRate,
+        viralScore: Math.min(10, Math.max(0.1, viralScore)),
+        duration,
+        format,
+        category: cat,
+        contentType,
+        soundId: `s-${Math.floor(srng(seed, 4) * 8)}`,
+        soundName: soundEntry.name,
+        soundCreator: soundEntry.creator,
+        publishedAt: pubDate.toISOString(),
+        hashtags,
+      });
+    }
   }
 
   const filtered = category ? allVideos.filter((v) => v.category === category) : [...allVideos];

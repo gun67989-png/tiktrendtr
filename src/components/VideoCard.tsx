@@ -19,6 +19,7 @@ export interface VideoData {
   duration: number;
   format: string | null;
   category: string | null;
+  contentType?: string;
   publishedAt: string;
   soundName: string | null;
   soundCreator: string | null;
