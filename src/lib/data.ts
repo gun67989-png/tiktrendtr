@@ -1229,6 +1229,7 @@ export interface VideoListItem {
   format: string | null;
   category: string | null;
   contentType: ContentType;
+  creatorPresenceScore: number;
   soundId: string | null;
   soundName: string | null;
   soundCreator: string | null;
@@ -1287,8 +1288,26 @@ export function generateVideos(options: {
       // Description from the category's own pool
       const desc = profile.descriptions[Math.floor(srng(seed, 11) * profile.descriptions.length)] + " " + hashtags.join(" ");
 
+      // Creator Presence Score for generated data
+      const catPresenceMap: Record<string, number> = {
+        Komedi: 90, Vlog: 85, "Eğitim": 80, "Güzellik": 80, Moda: 75,
+        Spor: 70, Yemek: 65, "Müzik": 65, Dans: 60, Teknoloji: 55,
+        Seyahat: 40, Oyun: 25,
+      };
+      const fmtPresenceMap: Record<string, number> = {
+        "Get Ready With Me": 95, "POV": 90, "Hikaye Anlatimi": 85,
+        "Mukbang": 80, "Challenge": 75, "Tutorial": 70, "Duet": 65,
+        "Önce/Sonra": 60, "Kısa Video": 50,
+      };
+      const creatorPresenceScore = Math.max(0, Math.min(100, Math.round(
+        (catPresenceMap[cat] ?? 50) * 0.45 +
+        (fmtPresenceMap[format] ?? 50) * 0.40 +
+        (30 + srng(seed, 16) * 40) * 0.15
+      )));
+
+      const presenceBoost = creatorPresenceScore / 100;
       const viralScore = Math.round(
-        (engRate / 15 * 0.35 + (views / 5000000) * 0.25 + srng(seed, 12) * 0.2 + Math.max(0, 1 - Math.floor(srng(seed, 9) * 21) / 21) * 0.2) * 100
+        (engRate / 15 * 0.30 + (views / 5000000) * 0.25 + presenceBoost * 0.25 + Math.max(0, 1 - Math.floor(srng(seed, 9) * 21) / 21) * 0.20) * 100
       ) / 10;
 
       allVideos.push({
@@ -1310,6 +1329,7 @@ export function generateVideos(options: {
         format,
         category: cat,
         contentType,
+        creatorPresenceScore,
         soundId: `s-${Math.floor(srng(seed, 4) * 8)}`,
         soundName: soundEntry.name,
         soundCreator: soundEntry.creator,

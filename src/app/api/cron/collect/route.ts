@@ -37,6 +37,7 @@ async function ensureTable(): Promise<boolean> {
             sound_creator TEXT,
             category TEXT DEFAULT 'Vlog',
             format TEXT,
+            creator_presence_score INTEGER DEFAULT 50,
             scraped_at TIMESTAMPTZ DEFAULT NOW(),
             created_at TIMESTAMPTZ DEFAULT NOW()
           );
@@ -45,8 +46,16 @@ async function ensureTable(): Promise<boolean> {
 
       if (createError) {
         console.warn("[CRON] Could not create table via RPC, trying direct insert:", createError.message);
-        // Table might already exist or RPC not available - that's ok
       }
+    }
+
+    // Ensure creator_presence_score column exists (migration for existing tables)
+    try {
+      await supabase.rpc("exec_sql", {
+        sql: `ALTER TABLE trending_videos ADD COLUMN IF NOT EXISTS creator_presence_score INTEGER DEFAULT 50;`,
+      });
+    } catch {
+      // Column likely already exists, ignore
     }
 
     return true;
@@ -78,6 +87,7 @@ async function storeVideos(videos: ScrapedVideo[]): Promise<number> {
       sound_creator: v.sound_creator,
       category: v.category,
       format: v.format,
+      creator_presence_score: v.creator_presence_score,
       scraped_at: v.scraped_at,
     }));
 

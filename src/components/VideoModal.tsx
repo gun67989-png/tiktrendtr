@@ -108,7 +108,7 @@ export default function VideoModal({
                 </div>
               </div>
 
-              {/* Engagement & Duration */}
+              {/* Engagement, Duration & Creator Presence */}
               <div className="flex gap-3">
                 <div className="flex-1 bg-neon-red/10 rounded-lg p-2 text-center">
                   <p className="text-sm font-bold text-neon-red">%{video.engagementRate.toFixed(2)}</p>
@@ -118,6 +118,18 @@ export default function VideoModal({
                   <p className="text-sm font-bold text-text-primary">{formatDuration(video.duration)}</p>
                   <p className="text-[10px] text-text-muted">Süre</p>
                 </div>
+                {video.creatorPresenceScore != null && (
+                  <div className={`flex-1 rounded-lg p-2 text-center ${
+                    video.creatorPresenceScore >= 70 ? "bg-teal/10" : "bg-surface-light"
+                  }`}>
+                    <p className={`text-sm font-bold ${
+                      video.creatorPresenceScore >= 70 ? "text-teal" : "text-text-secondary"
+                    }`}>
+                      {video.creatorPresenceScore}
+                    </p>
+                    <p className="text-[10px] text-text-muted">Oluşturucu Skoru</p>
+                  </div>
+                )}
               </div>
 
               {/* Sound */}

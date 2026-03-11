@@ -21,6 +21,7 @@ interface DBVideo {
   sound_creator: string;
   category: string;
   format: string;
+  creator_presence_score: number;
   scraped_at: string;
 }
 
@@ -75,8 +76,16 @@ async function getRealVideos(options: {
         ? Math.round(((v.like_count + v.comment_count + v.share_count) / v.view_count) * 10000) / 100
         : 0;
 
+      // Creator presence boost: normalize 0-100 to 0-1
+      const presenceBoost = (v.creator_presence_score ?? 50) / 100;
+
       const viralScore = Math.min(10, Math.max(0.1,
-        Math.round((engRate / 15 * 0.35 + (v.view_count / 5000000) * 0.25 + 0.2 + 0.1) * 100) / 10
+        Math.round((
+          engRate / 15 * 0.30 +
+          (v.view_count / 5000000) * 0.25 +
+          presenceBoost * 0.25 +
+          0.20
+        ) * 100) / 10
       ));
 
       return {
@@ -98,6 +107,7 @@ async function getRealVideos(options: {
         format: v.format,
         category: v.category,
         contentType: "creator_oncam",
+        creatorPresenceScore: v.creator_presence_score ?? 50,
         soundId: null,
         soundName: v.sound_name,
         soundCreator: v.sound_creator,

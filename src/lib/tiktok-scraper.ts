@@ -18,6 +18,7 @@ export interface ScrapedVideo {
   sound_creator: string;
   category: string;
   format: string;
+  creator_presence_score: number; // 0-100: estimates if a human creator is visible on camera
   scraped_at: string;
 }
 
@@ -67,6 +68,150 @@ function detectFormat(caption: string): string {
   if (text.includes("duet")) return "Duet";
   if (text.includes("storytime") || text.includes("hikaye")) return "Hikaye Anlatımı";
   return "Kısa Video";
+}
+
+// ==========================================
+// Creator Presence Score (0-100)
+// Estimates how likely a human creator is visible/speaking on camera
+// ==========================================
+
+// Category-based presence likelihood
+const CATEGORY_PRESENCE: Record<string, number> = {
+  Komedi: 90,
+  Vlog: 85,
+  "Eğitim": 80,
+  "Güzellik": 80,
+  Moda: 75,
+  Spor: 70,
+  Yemek: 65,
+  "Müzik": 65,
+  Dans: 60,
+  Teknoloji: 55,
+  Seyahat: 40,
+  Oyun: 25,
+};
+
+// Format-based presence likelihood
+const FORMAT_PRESENCE: Record<string, number> = {
+  "Get Ready With Me": 95,
+  "POV": 90,
+  "Hikaye Anlatımı": 85,
+  "Mukbang": 80,
+  "Challenge": 75,
+  "Tutorial": 70,
+  "Duet": 65,
+  "Önce/Sonra": 60,
+  "Kısa Video": 50,
+};
+
+// Turkish keywords that indicate creator is on camera / speaking
+const HIGH_PRESENCE_KEYWORDS = [
+  // Talking to camera
+  "anlatiyorum", "anlatıyorum", "gosteriyorum", "gösteriyorum",
+  "soyluyorum", "söylüyorum", "ogretiyorum", "öğretiyorum",
+  "paylasiyorum", "paylaşıyorum",
+  // First person
+  "benim", "benimle", "hayatim", "hayatım", "gunum", "günüm", "rutinim",
+  // Direct address to viewer
+  "izleyin", "dinleyin", "bakin", "bakın", "deneyin",
+  "takip edin", "yorumlara yazin", "yorumlara yazın",
+  // On-camera indicators
+  "grwm", "get ready", "hazirlaniyorum", "hazırlanıyorum",
+  "kameraya", "kamerada", "canli", "canlı",
+  "vlog", "storytime", "hikayem",
+  // Performance / speaking
+  "soyledim", "söyledim", "okudum", "seslendirdim",
+  "performans", "cover", "konustum", "konuştum",
+  // Comedy sketch / acting
+  "sketch", "parodi", "canlandirma", "canlandırma",
+  "rol", "oynadim", "oynadım", "taklit",
+  // Transformation
+  "donusum", "dönüşüm", "degisim", "değişim",
+  // Reaction
+  "reaksiyon", "reaction", "tepki",
+];
+
+// Keywords that indicate NO human creator on screen
+const LOW_PRESENCE_KEYWORDS = [
+  // Scenery / landscape
+  "manzara", "drone", "doga", "doğa", "gokyuzu", "gökyüzü",
+  "timelapse", "time lapse",
+  // Stock / impersonal
+  "infografik", "grafik", "istatistik", "haber",
+  // Screen-based
+  "gameplay", "screen recording", "ekran kaydi", "ekran kaydı",
+  // Compilation / repost
+  "derleme", "compilation",
+  // Animal / object focused
+  "kedi", "kopek", "köpek", "hayvan",
+];
+
+function calcCaptionPresence(caption: string, hashtags: string[]): number {
+  const text = (caption + " " + hashtags.join(" ")).toLowerCase().replace(/[#_]/g, " ");
+  let score = 50; // neutral baseline
+
+  for (const kw of HIGH_PRESENCE_KEYWORDS) {
+    if (text.includes(kw)) score += 12;
+  }
+  for (const kw of LOW_PRESENCE_KEYWORDS) {
+    if (text.includes(kw)) score -= 15;
+  }
+
+  return Math.max(0, Math.min(100, score));
+}
+
+function calcSoundPresence(soundName: string, soundCreator: string, creatorUsername: string): number {
+  const sn = soundName.toLowerCase();
+  const sc = soundCreator.toLowerCase();
+  const cu = creatorUsername.toLowerCase();
+
+  // Creator's own sound = very likely talking
+  if (sc === cu || sn.includes("original sound") || sn.includes("orijinal ses")) return 90;
+  // Speech / narration sounds
+  if (sn.includes("konuşma") || sn.includes("konusma") || sn.includes("motivasyon")) return 75;
+  // Sound effects = likely comedic, creator visible
+  if (sn.includes("sound effect") || sn.includes("efekt")) return 70;
+  // Named popular music = more likely dance/lip-sync
+  return 35;
+}
+
+function calcDurationPresence(duration: number): number {
+  if (duration <= 5) return 15;
+  if (duration <= 10) return 30;
+  if (duration <= 15) return 50;
+  if (duration <= 30) return 70;
+  if (duration <= 60) return 80;
+  if (duration <= 90) return 75;
+  if (duration <= 120) return 60;
+  if (duration <= 180) return 45;
+  return 30;
+}
+
+function calculateCreatorPresence(
+  caption: string,
+  hashtags: string[],
+  category: string,
+  format: string,
+  duration: number,
+  soundName: string,
+  soundCreator: string,
+  creatorUsername: string
+): number {
+  const categorySignal = CATEGORY_PRESENCE[category] ?? 50;
+  const formatSignal = FORMAT_PRESENCE[format] ?? 50;
+  const captionSignal = calcCaptionPresence(caption, hashtags);
+  const soundSignal = calcSoundPresence(soundName, soundCreator, creatorUsername);
+  const durationSignal = calcDurationPresence(duration);
+
+  const score = Math.round(
+    formatSignal * 0.30 +
+    categorySignal * 0.25 +
+    captionSignal * 0.20 +
+    soundSignal * 0.15 +
+    durationSignal * 0.10
+  );
+
+  return Math.max(0, Math.min(100, score));
 }
 
 // Extract hashtags from caption
@@ -151,6 +296,13 @@ async function fetchTikWMVideos(keyword: string, count: number = 30): Promise<Sc
       const hashtags = extractHashtags(caption);
       const category = categorizeVideo(caption, hashtags);
       const format = detectFormat(caption);
+      const soundName = v.music_info?.title || "Original Sound";
+      const soundCreator = v.music_info?.author || v.author.unique_id;
+
+      const creatorPresenceScore = calculateCreatorPresence(
+        caption, hashtags, category, format,
+        v.duration || 0, soundName, soundCreator, v.author.unique_id
+      );
 
       videos.push({
         video_id: v.video_id,
@@ -165,10 +317,11 @@ async function fetchTikWMVideos(keyword: string, count: number = 30): Promise<Sc
         tiktok_url: `https://www.tiktok.com/@${v.author.unique_id}/video/${v.video_id}`,
         thumbnail_url: v.origin_cover || v.cover || "",
         duration: v.duration || 0,
-        sound_name: v.music_info?.title || "Original Sound",
-        sound_creator: v.music_info?.author || v.author.unique_id,
+        sound_name: soundName,
+        sound_creator: soundCreator,
         category,
         format,
+        creator_presence_score: creatorPresenceScore,
         scraped_at: now,
       });
     }

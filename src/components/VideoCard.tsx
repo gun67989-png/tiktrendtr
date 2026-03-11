@@ -1,7 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
-import { FiEye, FiHeart, FiMessageCircle, FiClock } from "react-icons/fi";
+import { FiEye, FiHeart, FiMessageCircle, FiClock, FiUser } from "react-icons/fi";
 
 export interface VideoData {
   id: string;
@@ -20,6 +20,7 @@ export interface VideoData {
   format: string | null;
   category: string | null;
   contentType?: string;
+  creatorPresenceScore?: number;
   publishedAt: string;
   soundName: string | null;
   soundCreator: string | null;
@@ -92,6 +93,20 @@ export default function VideoCard({
         {video.format && (
           <div className="absolute bottom-12 left-2 bg-teal/80 text-white text-[10px] px-1.5 py-0.5 rounded">
             {video.format}
+          </div>
+        )}
+
+        {/* Creator Presence badge */}
+        {video.creatorPresenceScore != null && (
+          <div className={`absolute bottom-12 right-2 text-[10px] px-1.5 py-0.5 rounded flex items-center gap-0.5 ${
+            video.creatorPresenceScore >= 70
+              ? "bg-teal/80 text-white"
+              : video.creatorPresenceScore >= 40
+              ? "bg-surface-lighter/80 text-text-secondary"
+              : "bg-black/50 text-text-muted"
+          }`}>
+            <FiUser className="w-2.5 h-2.5" />
+            {video.creatorPresenceScore}
           </div>
         )}
 
