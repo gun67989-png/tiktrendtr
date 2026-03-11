@@ -1,8 +1,9 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { FiX, FiEye, FiHeart, FiMessageCircle, FiShare2, FiExternalLink, FiMusic, FiBarChart2 } from "react-icons/fi";
+import { FiX, FiEye, FiHeart, FiMessageCircle, FiShare2, FiExternalLink, FiMusic, FiBarChart2, FiInfo } from "react-icons/fi";
 import { useRouter } from "next/navigation";
+import { useState } from "react";
 import type { VideoData } from "./VideoCard";
 
 function formatNumber(n: number): string {
@@ -17,6 +18,22 @@ function formatDuration(seconds: number): string {
   return `${m}:${s.toString().padStart(2, "0")}`;
 }
 
+function getViralLabel(score: number): string {
+  if (score >= 8) return "Çok Yüksek";
+  if (score >= 6) return "Yüksek";
+  if (score >= 4) return "Orta";
+  if (score >= 2) return "Düşük";
+  return "Çok Düşük";
+}
+
+function getPresenceLabel(score: number): string {
+  if (score >= 80) return "Çok Yüksek";
+  if (score >= 60) return "Yüksek";
+  if (score >= 40) return "Orta";
+  if (score >= 20) return "Düşük";
+  return "Çok Düşük";
+}
+
 export default function VideoModal({
   video,
   onClose,
@@ -25,6 +42,10 @@ export default function VideoModal({
   onClose: () => void;
 }) {
   const router = useRouter();
+  const [showViralInfo, setShowViralInfo] = useState(false);
+  const [showPresenceInfo, setShowPresenceInfo] = useState(false);
+  const [showFormatInfo, setShowFormatInfo] = useState(false);
+  const [showEngagementInfo, setShowEngagementInfo] = useState(false);
 
   if (!video) return null;
 
@@ -70,12 +91,42 @@ export default function VideoModal({
                 alt={video.description}
                 className="w-full aspect-[9/16] max-h-[400px] object-cover"
               />
-              <div className="absolute top-3 left-3 bg-neon-red text-white text-xs font-bold px-2 py-1 rounded">
-                Viral Score: {video.viralScore.toFixed(0)}
+              <div className="absolute top-3 left-3">
+                <div
+                  onClick={() => setShowViralInfo(!showViralInfo)}
+                  className="bg-neon-red text-white text-xs font-bold px-2 py-1 rounded cursor-help hover:bg-red-500 transition-colors flex items-center gap-1"
+                >
+                  Viral Skor: {video.viralScore.toFixed(1)} <FiInfo className="w-3 h-3 opacity-70" />
+                </div>
+                {showViralInfo && (
+                  <div className="absolute top-full left-0 mt-1 w-56 bg-surface border border-border rounded-lg p-3 shadow-xl z-10">
+                    <p className="text-[11px] text-text-primary font-semibold mb-1">
+                      Viral Skor: {video.viralScore.toFixed(1)}/10 ({getViralLabel(video.viralScore)})
+                    </p>
+                    <p className="text-[10px] text-text-secondary leading-relaxed">
+                      Etkileşim oranı, görüntülenme sayısı ve içerik üretici puanına göre 0-10 arasında hesaplanır. Yüksek skor = daha viral potansiyel.
+                    </p>
+                  </div>
+                )}
               </div>
               {video.format && (
-                <div className="absolute top-3 right-3 bg-teal text-white text-xs px-2 py-1 rounded">
-                  {video.format}
+                <div className="absolute top-3 right-3">
+                  <div
+                    onClick={() => setShowFormatInfo(!showFormatInfo)}
+                    className="bg-teal text-white text-xs px-2 py-1 rounded cursor-help hover:bg-teal/80 transition-colors flex items-center gap-1"
+                  >
+                    {video.format} <FiInfo className="w-3 h-3 opacity-70" />
+                  </div>
+                  {showFormatInfo && (
+                    <div className="absolute top-full right-0 mt-1 w-52 bg-surface border border-border rounded-lg p-3 shadow-xl z-10">
+                      <p className="text-[11px] text-text-primary font-semibold mb-1">
+                        Video Formatı: {video.format}
+                      </p>
+                      <p className="text-[10px] text-text-secondary leading-relaxed">
+                        Videonun içerik türünü belirtir (Tutorial, POV, Challenge, GRWM vb.). Format, videonun yapısını ve sunum tarzını gösterir.
+                      </p>
+                    </div>
+                  )}
                 </div>
               )}
             </div>
@@ -110,24 +161,52 @@ export default function VideoModal({
 
               {/* Engagement, Duration & Creator Presence */}
               <div className="flex gap-3">
-                <div className="flex-1 bg-neon-red/10 rounded-lg p-2 text-center">
-                  <p className="text-sm font-bold text-neon-red">%{video.engagementRate.toFixed(2)}</p>
+                <div
+                  className="flex-1 bg-neon-red/10 rounded-lg p-2 text-center cursor-help relative"
+                  onClick={() => setShowEngagementInfo(!showEngagementInfo)}
+                >
+                  <p className="text-sm font-bold text-neon-red flex items-center justify-center gap-1">
+                    %{video.engagementRate.toFixed(2)} <FiInfo className="w-3 h-3 opacity-50" />
+                  </p>
                   <p className="text-[10px] text-text-muted">Etkileşim Oranı</p>
+                  {showEngagementInfo && (
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 bg-surface border border-border rounded-lg p-3 shadow-xl z-10 text-left">
+                      <p className="text-[11px] text-text-primary font-semibold mb-1">
+                        Etkileşim Oranı: %{video.engagementRate.toFixed(2)}
+                      </p>
+                      <p className="text-[10px] text-text-secondary leading-relaxed">
+                        (Beğeni + Yorum + Paylaşım) / Görüntülenme oranıdır. Yüksek oran, izleyicilerin videoyla daha fazla etkileşime girdiğini gösterir.
+                      </p>
+                    </div>
+                  )}
                 </div>
                 <div className="flex-1 bg-surface-light rounded-lg p-2 text-center">
                   <p className="text-sm font-bold text-text-primary">{formatDuration(video.duration)}</p>
                   <p className="text-[10px] text-text-muted">Süre</p>
                 </div>
                 {video.creatorPresenceScore != null && (
-                  <div className={`flex-1 rounded-lg p-2 text-center ${
-                    video.creatorPresenceScore >= 70 ? "bg-teal/10" : "bg-surface-light"
-                  }`}>
-                    <p className={`text-sm font-bold ${
+                  <div
+                    className={`flex-1 rounded-lg p-2 text-center cursor-help relative ${
+                      video.creatorPresenceScore >= 70 ? "bg-teal/10" : "bg-surface-light"
+                    }`}
+                    onClick={() => setShowPresenceInfo(!showPresenceInfo)}
+                  >
+                    <p className={`text-sm font-bold flex items-center justify-center gap-1 ${
                       video.creatorPresenceScore >= 70 ? "text-teal" : "text-text-secondary"
                     }`}>
-                      {video.creatorPresenceScore}
+                      {video.creatorPresenceScore} <FiInfo className="w-3 h-3 opacity-50" />
                     </p>
                     <p className="text-[10px] text-text-muted">Oluşturucu Skoru</p>
+                    {showPresenceInfo && (
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 bg-surface border border-border rounded-lg p-3 shadow-xl z-10 text-left">
+                        <p className="text-[11px] text-text-primary font-semibold mb-1">
+                          İçerik Üretici Skoru: {video.creatorPresenceScore}/100 ({getPresenceLabel(video.creatorPresenceScore)})
+                        </p>
+                        <p className="text-[10px] text-text-secondary leading-relaxed">
+                          Videoda gerçek bir kişinin kamera karşısında görünme olasılığını tahmin eder. Yüksek skor = içerik üretici büyük ihtimalle videoda görünüyor.
+                        </p>
+                      </div>
+                    )}
                   </div>
                 )}
               </div>

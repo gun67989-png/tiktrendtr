@@ -1,7 +1,8 @@
 "use client";
 
-import { motion } from "framer-motion";
-import { FiEye, FiHeart, FiMessageCircle, FiClock, FiUser } from "react-icons/fi";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { FiEye, FiHeart, FiMessageCircle, FiClock, FiUser, FiX } from "react-icons/fi";
 
 export interface VideoData {
   id: string;
@@ -49,6 +50,46 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(days / 30)} ay önce`;
 }
 
+function getViralScoreLabel(score: number): string {
+  if (score >= 8) return "Çok Yüksek";
+  if (score >= 6) return "Yüksek";
+  if (score >= 4) return "Orta";
+  if (score >= 2) return "Düşük";
+  return "Çok Düşük";
+}
+
+function getPresenceLabel(score: number): string {
+  if (score >= 80) return "Çok Yüksek";
+  if (score >= 60) return "Yüksek";
+  if (score >= 40) return "Orta";
+  if (score >= 20) return "Düşük";
+  return "Çok Düşük";
+}
+
+// Tooltip component that shows on click
+function BadgeTooltip({ text, onClose }: { text: string; onClose: () => void }) {
+  return (
+    <AnimatePresence>
+      <motion.div
+        initial={{ opacity: 0, y: 4 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0 }}
+        className="absolute z-50 bottom-full left-1/2 -translate-x-1/2 mb-2 w-48 bg-surface border border-border rounded-lg p-2.5 shadow-xl"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={(e) => { e.stopPropagation(); onClose(); }}
+          className="absolute top-1 right-1 text-text-muted hover:text-text-primary"
+        >
+          <FiX className="w-3 h-3" />
+        </button>
+        <p className="text-[11px] text-text-secondary leading-relaxed pr-3">{text}</p>
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-1/2 rotate-45 w-2 h-2 bg-surface border-r border-b border-border" />
+      </motion.div>
+    </AnimatePresence>
+  );
+}
+
 export default function VideoCard({
   video,
   onSelect,
@@ -58,13 +99,20 @@ export default function VideoCard({
   onSelect?: (video: VideoData) => void;
   index?: number;
 }) {
+  const [activeTooltip, setActiveTooltip] = useState<string | null>(null);
+
+  const toggleTooltip = (id: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    setActiveTooltip(activeTooltip === id ? null : id);
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
       whileHover={{ scale: 1.02, y: -4 }}
-      onClick={() => onSelect?.(video)}
+      onClick={() => { setActiveTooltip(null); onSelect?.(video); }}
       className="bg-surface rounded-xl border border-border overflow-hidden cursor-pointer hover:border-neon-red/30 transition-all group"
     >
       {/* Thumbnail */}
@@ -84,29 +132,62 @@ export default function VideoCard({
           {formatDuration(video.duration)}
         </div>
 
-        {/* Viral score badge */}
-        <div className="absolute top-2 left-2 bg-neon-red/90 text-white text-[10px] font-bold px-1.5 py-0.5 rounded">
-          {video.viralScore.toFixed(0)}
+        {/* Viral score badge - clickable with tooltip */}
+        <div className="absolute top-2 left-2 relative">
+          <div
+            onClick={(e) => toggleTooltip("viral", e)}
+            className="bg-neon-red/90 text-white text-[10px] font-bold px-1.5 py-0.5 rounded cursor-help hover:bg-neon-red transition-colors"
+          >
+            {video.viralScore.toFixed(0)}
+          </div>
+          {activeTooltip === "viral" && (
+            <BadgeTooltip
+              text={`Viral Skor: ${video.viralScore.toFixed(1)}/10 (${getViralScoreLabel(video.viralScore)}). Etkileşim oranı, görüntülenme sayısı ve içerik üretici puanına göre hesaplanır.`}
+              onClose={() => setActiveTooltip(null)}
+            />
+          )}
         </div>
 
-        {/* Format badge */}
+        {/* Format badge - clickable with tooltip */}
         {video.format && (
-          <div className="absolute bottom-12 left-2 bg-teal/80 text-white text-[10px] px-1.5 py-0.5 rounded">
-            {video.format}
+          <div className="absolute bottom-12 left-2 relative">
+            <div
+              onClick={(e) => toggleTooltip("format", e)}
+              className="bg-teal/80 text-white text-[10px] px-1.5 py-0.5 rounded cursor-help hover:bg-teal transition-colors"
+            >
+              {video.format}
+            </div>
+            {activeTooltip === "format" && (
+              <BadgeTooltip
+                text={`Video Formatı: ${video.format}. Videonun içerik türünü belirtir (Tutorial, POV, Challenge vb.)`}
+                onClose={() => setActiveTooltip(null)}
+              />
+            )}
           </div>
         )}
 
-        {/* Creator Presence badge */}
+        {/* Creator Presence badge - clickable with tooltip */}
         {video.creatorPresenceScore != null && (
-          <div className={`absolute bottom-12 right-2 text-[10px] px-1.5 py-0.5 rounded flex items-center gap-0.5 ${
-            video.creatorPresenceScore >= 70
-              ? "bg-teal/80 text-white"
-              : video.creatorPresenceScore >= 40
-              ? "bg-surface-lighter/80 text-text-secondary"
-              : "bg-black/50 text-text-muted"
-          }`}>
-            <FiUser className="w-2.5 h-2.5" />
-            {video.creatorPresenceScore}
+          <div className="absolute bottom-12 right-2 relative">
+            <div
+              onClick={(e) => toggleTooltip("presence", e)}
+              className={`text-[10px] px-1.5 py-0.5 rounded flex items-center gap-0.5 cursor-help transition-colors ${
+                video.creatorPresenceScore >= 70
+                  ? "bg-teal/80 text-white hover:bg-teal"
+                  : video.creatorPresenceScore >= 40
+                  ? "bg-surface-lighter/80 text-text-secondary hover:bg-surface-lighter"
+                  : "bg-black/50 text-text-muted hover:bg-black/70"
+              }`}
+            >
+              <FiUser className="w-2.5 h-2.5" />
+              {video.creatorPresenceScore}
+            </div>
+            {activeTooltip === "presence" && (
+              <BadgeTooltip
+                text={`İçerik Üretici Skoru: ${video.creatorPresenceScore}/100 (${getPresenceLabel(video.creatorPresenceScore)}). Videoda gerçek bir kişinin kamera karşısında görünme olasılığını tahmin eder.`}
+                onClose={() => setActiveTooltip(null)}
+              />
+            )}
           </div>
         )}
 

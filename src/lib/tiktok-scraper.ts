@@ -289,8 +289,14 @@ async function fetchTikWMVideos(keyword: string, count: number = 30): Promise<Sc
       return [];
     }
 
+    // Filter: only videos from last 7 days
+    const sevenDaysAgo = Math.floor(Date.now() / 1000) - 7 * 24 * 60 * 60;
+
     for (const v of result.data.videos) {
       if (!v.video_id || !v.author?.unique_id) continue;
+
+      // Skip old videos - only keep last 7 days
+      if (v.create_time && v.create_time < sevenDaysAgo) continue;
 
       const caption = v.title || "";
       const hashtags = extractHashtags(caption);
@@ -303,6 +309,11 @@ async function fetchTikWMVideos(keyword: string, count: number = 30): Promise<Sc
         caption, hashtags, category, format,
         v.duration || 0, soundName, soundCreator, v.author.unique_id
       );
+
+      // Use real video publish date if available
+      const publishDate = v.create_time
+        ? new Date(v.create_time * 1000).toISOString()
+        : now;
 
       videos.push({
         video_id: v.video_id,
@@ -322,7 +333,7 @@ async function fetchTikWMVideos(keyword: string, count: number = 30): Promise<Sc
         category,
         format,
         creator_presence_score: creatorPresenceScore,
-        scraped_at: now,
+        scraped_at: publishDate,
       });
     }
 
@@ -361,7 +372,7 @@ export async function scrapeTrendingVideos(): Promise<ScrapedVideo[]> {
     if (allVideos.length >= 200) break;
 
     try {
-      const videos = await fetchTikWMVideos(keyword, 20);
+      const videos = await fetchTikWMVideos(keyword, 30);
 
       for (const v of videos) {
         if (!seenIds.has(v.video_id)) {
