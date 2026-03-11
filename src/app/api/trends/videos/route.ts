@@ -70,7 +70,7 @@ async function getRealVideos(options: {
     if (error || !data || data.length === 0) return null;
 
     // Transform DB rows to frontend video format
-    const videos = (data as DBVideo[]).map((v, i) => {
+    const videos = (data as DBVideo[]).map((v) => {
       const engRate = v.view_count > 0
         ? Math.round(((v.like_count + v.comment_count + v.share_count) / v.view_count) * 10000) / 100
         : 0;
