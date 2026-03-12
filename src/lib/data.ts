@@ -59,7 +59,119 @@ export interface GrowthStage {
   duration: string;
 }
 
-// Viral Score Calculation
+// Viral Threshold Constants for Turkey Market
+export const VIRAL_THRESHOLDS = {
+  MIN_VIEWS: 500_000,
+  MIN_LIKES: 50_000,
+  MIN_ENGAGEMENT: 3.0,
+  RELAXED_MIN_VIEWS: 200_000,
+  RELAXED_MIN_LIKES: 20_000,
+  TIERS: {
+    MEGA_VIRAL: { minViews: 5_000_000, minLikes: 500_000, minSurprise: 1.5, label: "Mega Viral" },
+    VIRAL: { minViews: 1_000_000, minLikes: 100_000, minSurprise: 0.8, label: "Viral" },
+    TREND: { minViews: 500_000, minLikes: 50_000, minSurprise: 0, label: "Trend" },
+    RISING: { minViews: 100_000, minLikes: 10_000, minSurprise: 2.0, label: "Yükselen Trend" },
+  },
+} as const;
+
+// Viral tier type
+export type ViralTier = "mega_viral" | "viral" | "trend" | "rising" | null;
+
+// Calculate Surprise Factor: how much a video outperforms creator's follower base
+export function calcSurpriseFactor(likes: number, followerCount: number): number {
+  return Math.round(Math.log10(likes / (followerCount + 1)) * 100) / 100;
+}
+
+// Calculate Engagement Velocity: engagement per day since posting
+export function calcEngagementVelocity(likes: number, comments: number, shares: number, publishedAt: string): number {
+  const daysSincePosted = Math.max(1, (Date.now() - new Date(publishedAt).getTime()) / (1000 * 60 * 60 * 24));
+  return Math.round((likes + comments + shares) / daysSincePosted);
+}
+
+// Calculate Discovery Score: how far beyond follower base the content reached
+export function calcDiscoveryScore(views: number, followerCount: number): number {
+  return Math.round((views / (followerCount + 1)) * 100) / 100;
+}
+
+// Determine viral tier based on metrics + surprise factor
+export function getViralTier(views: number, likes: number, surpriseFactor: number): ViralTier {
+  const t = VIRAL_THRESHOLDS.TIERS;
+  if (views >= t.MEGA_VIRAL.minViews && likes >= t.MEGA_VIRAL.minLikes && surpriseFactor >= t.MEGA_VIRAL.minSurprise)
+    return "mega_viral";
+  if (views >= t.VIRAL.minViews && likes >= t.VIRAL.minLikes && surpriseFactor >= t.VIRAL.minSurprise)
+    return "viral";
+  if (views >= t.TREND.minViews && likes >= t.TREND.minLikes)
+    return "trend";
+  if (views >= t.RISING.minViews && likes >= t.RISING.minLikes && surpriseFactor >= t.RISING.minSurprise)
+    return "rising";
+  return null;
+}
+
+// Graduated view score - rewards high view counts progressively
+export function calcViewScore(views: number): number {
+  if (views >= 10_000_000) return 1.0;
+  if (views >= 5_000_000) return 0.90 + (views - 5_000_000) / 5_000_000 * 0.10;
+  if (views >= 1_000_000) return 0.70 + (views - 1_000_000) / 4_000_000 * 0.20;
+  if (views >= 500_000) return 0.50 + (views - 500_000) / 500_000 * 0.20;
+  if (views >= 200_000) return 0.30 + (views - 200_000) / 300_000 * 0.20;
+  if (views >= 100_000) return 0.15 + (views - 100_000) / 100_000 * 0.15;
+  if (views >= 50_000) return 0.05 + (views - 50_000) / 50_000 * 0.10;
+  return views / 50_000 * 0.05;
+}
+
+// Compute full viral score with all new metrics
+export function calcViralScore(opts: {
+  views: number;
+  likes: number;
+  comments: number;
+  shares: number;
+  followerCount: number;
+  creatorPresenceScore: number;
+  publishedAt: string;
+}): { viralScore: number; surpriseFactor: number; engagementVelocity: number; discoveryScore: number; tier: ViralTier } {
+  const { views, likes, comments, shares, followerCount, creatorPresenceScore, publishedAt } = opts;
+
+  const engRate = views > 0 ? ((likes + comments + shares) / views) * 100 : 0;
+  const likeRatio = views > 0 ? (likes / views) * 100 : 0;
+  const shareRatio = views > 0 ? (shares / views) * 100 : 0;
+
+  const surpriseFactor = calcSurpriseFactor(likes, followerCount);
+  const engagementVelocity = calcEngagementVelocity(likes, comments, shares, publishedAt);
+  const discoveryScore = calcDiscoveryScore(views, followerCount);
+
+  // Normalized components (0-1 scale)
+  const viewScoreNorm = calcViewScore(views);
+  const likeRatioNorm = Math.min(1, likeRatio / 10);
+  const engRateNorm = Math.min(1, engRate / 15);
+  const presenceNorm = creatorPresenceScore / 100;
+  const shareNorm = Math.min(1, shareRatio / 2);
+  // Surprise: 0=expected, 1=strong discovery, 2+=algorithm explosion
+  const surpriseNorm = Math.min(1, Math.max(0, surpriseFactor / 2.5));
+  // Velocity: normalize to 100K engagement/day = 1.0
+  const velocityNorm = Math.min(1, engagementVelocity / 100_000);
+  // Discovery: 100x follower reach = 1.0
+  const discoveryNorm = Math.min(1, discoveryScore / 100);
+
+  // New weighted formula
+  const viralScore = Math.min(10, Math.max(0.1,
+    Math.round((
+      viewScoreNorm * 0.15 +
+      likeRatioNorm * 0.10 +
+      engRateNorm * 0.10 +
+      presenceNorm * 0.10 +
+      shareNorm * 0.10 +
+      surpriseNorm * 0.20 +
+      velocityNorm * 0.15 +
+      discoveryNorm * 0.10
+    ) * 100) / 10
+  ));
+
+  const tier = getViralTier(views, likes, surpriseFactor);
+
+  return { viralScore, surpriseFactor, engagementVelocity, discoveryScore, tier };
+}
+
+// Legacy viral score calculation (for hashtags/sounds)
 export function calculateViralScore(
   engagementRate: number,
   growthRate: number,
@@ -1224,7 +1336,13 @@ export interface VideoListItem {
   comments: number;
   shares: number;
   engagementRate: number;
+  likeRatio?: number;
   viralScore: number;
+  surpriseFactor: number;
+  engagementVelocity: number;
+  discoveryScore: number;
+  followerCount: number;
+  tier: ViralTier;
   duration: number;
   format: string | null;
   category: string | null;
@@ -1270,13 +1388,23 @@ export function generateVideos(options: {
       const soundEntry = profile.sounds[Math.floor(srng(seed, 4) * profile.sounds.length)];
       const contentType = profile.contentTypes[Math.floor(srng(seed, 13) * profile.contentTypes.length)];
 
-      const views = Math.round(50000 + srng(seed, 5) * 5000000);
-      const likes = Math.round(views * (0.03 + srng(seed, 6) * 0.12));
-      const comments = Math.round(likes * (0.05 + srng(seed, 7) * 0.15));
-      const shares = Math.round(likes * (0.02 + srng(seed, 8) * 0.08));
+      // Power-law distribution: 500K - 15M views (skewed high for viral content)
+      const rawRandom = srng(seed, 5);
+      const views = Math.round(500_000 + Math.pow(rawRandom, 0.5) * 14_500_000);
+      const likes = Math.round(views * (0.05 + srng(seed, 6) * 0.13));
+      const comments = Math.round(likes * (0.08 + srng(seed, 7) * 0.15));
+      const shares = Math.round(likes * (0.03 + srng(seed, 8) * 0.10));
       const engRate = Math.round(((likes + comments + shares) / views) * 10000) / 100;
       const pubDate = new Date();
-      pubDate.setDate(pubDate.getDate() - Math.floor(srng(seed, 9) * 21));
+      pubDate.setDate(pubDate.getDate() - Math.floor(srng(seed, 9) * 14));
+
+      // Realistic follower distribution: 60% small (1K-50K), 25% mid (50K-500K), 15% large (500K-5M)
+      const followerRng = srng(seed, 17);
+      const followerCount = followerRng < 0.60
+        ? Math.round(1_000 + srng(seed, 18) * 49_000)          // 1K-50K
+        : followerRng < 0.85
+          ? Math.round(50_000 + srng(seed, 18) * 450_000)      // 50K-500K
+          : Math.round(500_000 + srng(seed, 18) * 4_500_000);  // 500K-5M
       const duration = 15 + Math.floor(srng(seed, 10) * 50);
 
       // Build hashtags from the category's own pool + generic tags
@@ -1305,10 +1433,16 @@ export function generateVideos(options: {
         (30 + srng(seed, 16) * 40) * 0.15
       )));
 
-      const presenceBoost = creatorPresenceScore / 100;
-      const viralScore = Math.round(
-        (engRate / 15 * 0.30 + (views / 5000000) * 0.25 + presenceBoost * 0.25 + Math.max(0, 1 - Math.floor(srng(seed, 9) * 21) / 21) * 0.20) * 100
-      ) / 10;
+      // Calculate all viral metrics using the new scoring system
+      const scoreResult = calcViralScore({
+        views,
+        likes,
+        comments,
+        shares,
+        followerCount,
+        creatorPresenceScore,
+        publishedAt: pubDate.toISOString(),
+      });
 
       allVideos.push({
         id: `v-${i}`,
@@ -1324,7 +1458,12 @@ export function generateVideos(options: {
         comments,
         shares,
         engagementRate: engRate,
-        viralScore: Math.min(10, Math.max(0.1, viralScore)),
+        viralScore: scoreResult.viralScore,
+        surpriseFactor: scoreResult.surpriseFactor,
+        engagementVelocity: scoreResult.engagementVelocity,
+        discoveryScore: scoreResult.discoveryScore,
+        followerCount,
+        tier: scoreResult.tier,
         duration,
         format,
         category: cat,

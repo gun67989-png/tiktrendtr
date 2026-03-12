@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { generateVideos } from "@/lib/data";
+import { generateVideos, calcViralScore } from "@/lib/data";
 
 export const dynamic = "force-dynamic";
 
@@ -14,6 +14,7 @@ interface DBVideo {
   like_count: number;
   comment_count: number;
   share_count: number;
+  follower_count: number;
   tiktok_url: string;
   thumbnail_url: string;
   duration: number;
@@ -24,17 +25,6 @@ interface DBVideo {
   ad_format: string | null;
   creator_presence_score: number;
   scraped_at: string;
-}
-
-// Graduated view score - rewards 50K+ views progressively
-function calcViewScore(views: number): number {
-  if (views >= 5_000_000) return 1.0;
-  if (views >= 1_000_000) return 0.85 + (views - 1_000_000) / 4_000_000 * 0.15;
-  if (views >= 500_000) return 0.7 + (views - 500_000) / 500_000 * 0.15;
-  if (views >= 200_000) return 0.5 + (views - 200_000) / 300_000 * 0.2;
-  if (views >= 50_000) return 0.3 + (views - 50_000) / 150_000 * 0.2;
-  if (views >= 10_000) return 0.1 + (views - 10_000) / 40_000 * 0.2;
-  return views / 10_000 * 0.1;
 }
 
 // Try to fetch real scraped videos from Supabase
@@ -90,44 +80,26 @@ async function getRealVideos(options: {
     const { data, error } = await query;
     if (error || !data || data.length === 0) return null;
 
-    // Transform DB rows to frontend video format
+    // Transform DB rows to frontend video format with new scoring
     const videos = (data as DBVideo[]).map((v) => {
       const engRate = v.view_count > 0
         ? Math.round(((v.like_count + v.comment_count + v.share_count) / v.view_count) * 10000) / 100
         : 0;
 
-      // Like-to-view ratio (percentage)
       const likeRatio = v.view_count > 0
         ? Math.round((v.like_count / v.view_count) * 10000) / 100
         : 0;
 
-      // Share ratio (percentage) - key viral spread indicator
-      const shareRatio = v.view_count > 0
-        ? Math.round((v.share_count / v.view_count) * 10000) / 100
-        : 0;
-
-      // Creator presence boost: normalize 0-100 to 0-1
-      const presenceBoost = (v.creator_presence_score ?? 50) / 100;
-
-      // Graduated view score
-      const viewScore = calcViewScore(v.view_count);
-
-      // Like ratio score (normalized: 10% = 1.0)
-      const likeRatioScore = Math.min(1, likeRatio / 10);
-
-      // Share boost (normalized: 2% = 1.0)
-      const shareBoost = Math.min(1, shareRatio / 2);
-
-      // New viral score formula
-      const viralScore = Math.min(10, Math.max(0.1,
-        Math.round((
-          likeRatioScore * 0.25 +
-          engRate / 15 * 0.20 +
-          viewScore * 0.20 +
-          presenceBoost * 0.20 +
-          shareBoost * 0.15
-        ) * 100) / 10
-      ));
+      // Use the new comprehensive scoring system
+      const scoreResult = calcViralScore({
+        views: v.view_count,
+        likes: v.like_count,
+        comments: v.comment_count,
+        shares: v.share_count,
+        followerCount: v.follower_count ?? 0,
+        creatorPresenceScore: v.creator_presence_score ?? 50,
+        publishedAt: v.scraped_at,
+      });
 
       return {
         id: v.video_id,
@@ -144,7 +116,12 @@ async function getRealVideos(options: {
         shares: v.share_count,
         engagementRate: engRate,
         likeRatio,
-        viralScore,
+        viralScore: scoreResult.viralScore,
+        surpriseFactor: scoreResult.surpriseFactor,
+        engagementVelocity: scoreResult.engagementVelocity,
+        discoveryScore: scoreResult.discoveryScore,
+        followerCount: v.follower_count ?? 0,
+        tier: scoreResult.tier,
         duration: v.duration,
         format: v.format,
         adFormat: v.ad_format,

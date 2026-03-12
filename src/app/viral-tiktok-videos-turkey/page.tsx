@@ -18,6 +18,8 @@ import {
   FiFileText,
 } from "react-icons/fi";
 
+type ViralTier = "mega_viral" | "viral" | "trend" | "rising" | null;
+
 interface Video {
   id: string;
   creator: string;
@@ -28,12 +30,25 @@ interface Video {
   likes: number;
   comments: number;
   shares: number;
+  followerCount?: number;
   engagementRate: number;
+  viralScore?: number;
+  surpriseFactor?: number;
+  engagementVelocity?: number;
+  discoveryScore?: number;
+  tier?: ViralTier;
   format: string;
   category: string;
   hashtags: string[];
   publishedAt: string;
 }
+
+const TIER_CONFIG: Record<string, { label: string; color: string; bg: string }> = {
+  mega_viral: { label: "Mega Viral", color: "text-white", bg: "bg-neon-red" },
+  viral: { label: "Viral", color: "text-white", bg: "bg-orange-500" },
+  trend: { label: "Trend", color: "text-white", bg: "bg-teal" },
+  rising: { label: "Yükselen", color: "text-white", bg: "bg-purple-500" },
+};
 
 function formatNumber(num: number): string {
   if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + "M";
@@ -181,8 +196,15 @@ export default function ViralVideosPage() {
                       <FiEye className="w-2.5 h-2.5" />
                       {formatNumber(video.views)}
                     </div>
-                    <div className="absolute top-2 right-2 bg-neon-red/90 text-white text-[10px] px-2 py-0.5 rounded-full">
-                      #{i + 1}
+                    <div className="absolute top-2 right-2 flex items-center gap-1">
+                      {video.tier && TIER_CONFIG[video.tier] && (
+                        <span className={`${TIER_CONFIG[video.tier].bg} ${TIER_CONFIG[video.tier].color} text-[9px] font-semibold px-1.5 py-0.5 rounded-full`}>
+                          {TIER_CONFIG[video.tier].label}
+                        </span>
+                      )}
+                      <span className="bg-black/70 text-white text-[10px] px-2 py-0.5 rounded-full">
+                        #{i + 1}
+                      </span>
                     </div>
                     <div className="absolute bottom-2 left-2 right-2">
                       <div className="bg-black/70 text-[10px] text-white px-2 py-1 rounded-lg truncate">

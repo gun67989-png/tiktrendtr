@@ -39,6 +39,7 @@ async function ensureTable(): Promise<boolean> {
             format TEXT,
             ad_format TEXT,
             creator_presence_score INTEGER DEFAULT 50,
+            follower_count BIGINT DEFAULT 0,
             scraped_at TIMESTAMPTZ DEFAULT NOW(),
             created_at TIMESTAMPTZ DEFAULT NOW()
           );
@@ -62,6 +63,14 @@ async function ensureTable(): Promise<boolean> {
     try {
       await supabase.rpc("exec_sql", {
         sql: `ALTER TABLE trending_videos ADD COLUMN IF NOT EXISTS ad_format TEXT;`,
+      });
+    } catch {
+      // Column likely already exists, ignore
+    }
+
+    try {
+      await supabase.rpc("exec_sql", {
+        sql: `ALTER TABLE trending_videos ADD COLUMN IF NOT EXISTS follower_count BIGINT DEFAULT 0;`,
       });
     } catch {
       // Column likely already exists, ignore
@@ -98,6 +107,7 @@ async function storeVideos(videos: ScrapedVideo[]): Promise<number> {
       format: v.format,
       ad_format: v.ad_format,
       creator_presence_score: v.creator_presence_score,
+      follower_count: v.follower_count || 0,
       scraped_at: v.scraped_at,
     }));
 

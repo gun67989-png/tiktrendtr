@@ -11,6 +11,7 @@ export interface ScrapedVideo {
   like_count: number;
   comment_count: number;
   share_count: number;
+  follower_count: number;
   tiktok_url: string;
   thumbnail_url: string;
   duration: number;
@@ -384,6 +385,7 @@ async function fetchTikWMVideos(keyword: string, count: number = 30): Promise<Sc
         like_count: v.digg_count || 0,
         comment_count: v.comment_count || 0,
         share_count: v.share_count || 0,
+        follower_count: 0, // Will be enriched later
         tiktok_url: `https://www.tiktok.com/@${v.author.unique_id}/video/${v.video_id}`,
         thumbnail_url: v.origin_cover || v.cover || "",
         duration: v.duration || 0,
@@ -403,6 +405,70 @@ async function fetchTikWMVideos(keyword: string, count: number = 30): Promise<Sc
     console.error(`[SCRAPER] TikWM fetch failed for keyword: ${keyword}`, e);
     return [];
   }
+}
+
+// Fetch follower count for a creator via TikWM user info API
+async function fetchFollowerCount(username: string): Promise<number> {
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 8000);
+
+    const response = await fetch("https://www.tikwm.com/api/user/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/x-www-form-urlencoded",
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+      },
+      body: `unique_id=${encodeURIComponent(username)}&count=1`,
+      signal: controller.signal,
+    });
+
+    clearTimeout(timeout);
+
+    if (!response.ok) return 0;
+
+    const result = await response.json() as { code: number; data?: { author?: { follower_count?: number } } };
+    return result.data?.author?.follower_count ?? 0;
+  } catch {
+    return 0;
+  }
+}
+
+// Batch fetch follower counts for unique creators (3 concurrent, 500ms delay)
+async function enrichWithFollowerCounts(videos: ScrapedVideo[]): Promise<void> {
+  const uniqueCreators = new Map<string, number>();
+  for (const v of videos) {
+    if (!uniqueCreators.has(v.creator_username)) {
+      uniqueCreators.set(v.creator_username, 0);
+    }
+  }
+
+  const usernames = Array.from(uniqueCreators.keys());
+  const BATCH_SIZE = 3;
+
+  for (let i = 0; i < usernames.length; i += BATCH_SIZE) {
+    const batch = usernames.slice(i, i + BATCH_SIZE);
+    const results = await Promise.allSettled(
+      batch.map(u => fetchFollowerCount(u))
+    );
+
+    for (let j = 0; j < results.length; j++) {
+      if (results[j].status === "fulfilled") {
+        uniqueCreators.set(batch[j], (results[j] as PromiseFulfilledResult<number>).value);
+      }
+    }
+
+    if (i + BATCH_SIZE < usernames.length) {
+      await new Promise(resolve => setTimeout(resolve, 500));
+    }
+  }
+
+  // Apply follower counts to all videos
+  for (const v of videos) {
+    v.follower_count = uniqueCreators.get(v.creator_username) ?? 0;
+  }
+
+  console.log(`[SCRAPER] Enriched ${uniqueCreators.size} unique creators with follower counts`);
 }
 
 // Main scraping function - fetches from TikWM API with Turkish keywords
@@ -511,5 +577,13 @@ export async function scrapeTrendingVideos(): Promise<ScrapedVideo[]> {
   }
 
   console.log(`[SCRAPER] Total unique videos scraped: ${allVideos.length}`);
+
+  // Enrich videos with follower counts (best-effort, non-blocking)
+  try {
+    await enrichWithFollowerCounts(allVideos);
+  } catch (e) {
+    console.warn("[SCRAPER] Follower enrichment failed, continuing without:", e);
+  }
+
   return allVideos;
 }
