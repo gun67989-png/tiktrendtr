@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { scrapeTrendingVideos, type ScrapedVideo } from "@/lib/tiktok-scraper";
+import { scrapeTrendingVideos, scrapeTrendingVideosBatch, type ScrapedVideo } from "@/lib/tiktok-scraper";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60; // Allow up to 60s for scraping
@@ -170,32 +170,42 @@ export async function GET(request: NextRequest) {
 
   try {
     const timestamp = new Date().toISOString();
-    console.log(`[CRON] Data collection started at ${timestamp}`);
+
+    // Batch parametresi: ?batch=1 veya ?batch=2 (Vercel cron için)
+    // Parametre yoksa tam scrape yapar (lokal/manual)
+    const { searchParams } = new URL(request.url);
+    const batchParam = searchParams.get("batch");
+    const batchNum = batchParam === "1" ? 1 : batchParam === "2" ? 2 : null;
+
+    console.log(`[CRON] Data collection started at ${timestamp} (batch: ${batchNum ?? "full"})`);
 
     // Step 1: Ensure database table exists
     await ensureTable();
 
     // Step 2: Scrape real TikTok data
     console.log("[CRON] Starting TikTok scraping...");
-    const scrapedVideos = await scrapeTrendingVideos();
+    const scrapedVideos = batchNum
+      ? await scrapeTrendingVideosBatch(batchNum)
+      : await scrapeTrendingVideos();
     console.log(`[CRON] Scraped ${scrapedVideos.length} videos`);
 
     // Step 3: Store in database
     const storedCount = await storeVideos(scrapedVideos);
     console.log(`[CRON] Stored ${storedCount} videos in database`);
 
-    // Step 4: Clean old entries
-    const cleanedCount = await cleanOldVideos();
+    // Step 4: Sadece batch 2'de veya full scrape'de eski kayıtları temizle
+    const cleanedCount = (!batchNum || batchNum === 2) ? await cleanOldVideos() : 0;
 
     const results = {
       timestamp,
+      batch: batchNum ?? "full",
       videosScraped: scrapedVideos.length,
       videosStored: storedCount,
       videosCleanedUp: cleanedCount,
       status: scrapedVideos.length > 0 ? "success" : "no_data",
       message: scrapedVideos.length > 0
-        ? `Successfully scraped ${scrapedVideos.length} real TikTok videos`
-        : "Could not scrape TikTok data (may be blocked). Will retry next cycle.",
+        ? `Batch ${batchNum ?? "full"}: ${scrapedVideos.length} video çekildi`
+        : "Veri çekilemedi. Sonraki döngüde tekrar denenecek.",
     };
 
     console.log(`[CRON] Collection completed:`, results);

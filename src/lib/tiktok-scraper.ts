@@ -520,113 +520,118 @@ async function enrichWithFollowerCounts(videos: ScrapedVideo[]): Promise<void> {
 
 // Main scraping function - fetches from TikWM API with Turkish keywords
 // Uses parallel batch processing (6 concurrent requests) to stay within Vercel timeout
+// ── Tüm keyword'ler — 2 batch'e bölünmüş ──
+const ALL_KEYWORDS = [
+  // ── General trending & popular hashtags ──
+  { keyword: "türkiye trend", category: null },
+  { keyword: "keşfet", category: null },
+  { keyword: "türk tiktok viral", category: null },
+  { keyword: "tiktok türkiye", category: null },
+  { keyword: "popüler video türkiye", category: null },
+  { keyword: "fyp türk", category: null },
+  { keyword: "#kesfet", category: null },
+  { keyword: "#fyp türkiye", category: null },
+  { keyword: "#viral türk", category: null },
+  { keyword: "#trend türkiye 2024", category: null },
+  // ── Yemek (Food) ──
+  { keyword: "yemek tarifi türk", category: "Yemek" },
+  { keyword: "kahvaltı tarifi", category: "Yemek" },
+  { keyword: "tatlı tarifi", category: "Yemek" },
+  { keyword: "sokak lezzetleri türkiye", category: "Yemek" },
+  { keyword: "ev yemekleri kolay", category: "Yemek" },
+  { keyword: "türk mutfağı", category: "Yemek" },
+  { keyword: "mukbang türk", category: "Yemek" },
+  // ── Komedi (Comedy) ──
+  { keyword: "komedi türk", category: "Komedi" },
+  { keyword: "komik video türkçe", category: "Komedi" },
+  { keyword: "türk komedisi", category: "Komedi" },
+  { keyword: "caps komik türk", category: "Komedi" },
+  { keyword: "sketch türkçe", category: "Komedi" },
+  // ── Seyahat (Travel) ──
+  { keyword: "istanbul gezi", category: "Seyahat" },
+  { keyword: "türkiye gezi rehberi", category: "Seyahat" },
+  { keyword: "antalya tatil", category: "Seyahat" },
+  { keyword: "kapadokya vlog", category: "Seyahat" },
+  { keyword: "bodrum tatil", category: "Seyahat" },
+  // ── Moda (Fashion) ──
+  { keyword: "moda kombin", category: "Moda" },
+  { keyword: "outfit türk", category: "Moda" },
+  { keyword: "alışveriş haul", category: "Moda" },
+  { keyword: "grwm türk", category: "Moda" },
+  { keyword: "vintage moda türkiye", category: "Moda" },
+  // ── Teknoloji (Tech) ──
+  { keyword: "teknoloji türkçe", category: "Teknoloji" },
+  { keyword: "telefon inceleme türk", category: "Teknoloji" },
+  { keyword: "uygulama önerisi", category: "Teknoloji" },
+  { keyword: "yapay zeka türkçe", category: "Teknoloji" },
+  // ── Vlog ──                                          ← BATCH 2 buradan başlar
+  { keyword: "günlük vlog türk", category: "Vlog" },
+  { keyword: "bir günüm vlog", category: "Vlog" },
+  { keyword: "ev turu türk", category: "Vlog" },
+  { keyword: "sabah rutinim", category: "Vlog" },
+  // ── Eğitim (Education) ──
+  { keyword: "eğitim türkçe", category: "Eğitim" },
+  { keyword: "YKS hazırlık", category: "Eğitim" },
+  { keyword: "ingilizce öğren", category: "Eğitim" },
+  { keyword: "matematik kolay", category: "Eğitim" },
+  { keyword: "üniversite hayatı", category: "Eğitim" },
+  // ── Spor (Sports) ──
+  { keyword: "spor fitness türk", category: "Spor" },
+  { keyword: "gym motivasyon türk", category: "Spor" },
+  { keyword: "futbol türkiye", category: "Spor" },
+  { keyword: "evde egzersiz", category: "Spor" },
+  // ── Müzik (Music) ──
+  { keyword: "türkçe müzik", category: "Müzik" },
+  { keyword: "cover türkçe şarkı", category: "Müzik" },
+  { keyword: "rap türk", category: "Müzik" },
+  { keyword: "akustik cover türk", category: "Müzik" },
+  // ── Dans (Dance) ──
+  { keyword: "dans türk", category: "Dans" },
+  { keyword: "koreografi türk", category: "Dans" },
+  { keyword: "halay düğün", category: "Dans" },
+  // ── Güzellik (Beauty) ──
+  { keyword: "makyaj güzellik", category: "Güzellik" },
+  { keyword: "cilt bakımı rutin", category: "Güzellik" },
+  { keyword: "saç modeli", category: "Güzellik" },
+  { keyword: "kozmetik önerisi türk", category: "Güzellik" },
+  // ── Oyun (Gaming) ──
+  { keyword: "oyun gaming türk", category: "Oyun" },
+  { keyword: "valorant türk", category: "Oyun" },
+  { keyword: "pubg mobile türk", category: "Oyun" },
+  // ── Reklam / Ürün (Ads & Products) ──
+  { keyword: "ürün tanıtım türk", category: null },
+  { keyword: "bunu aldım tiktok", category: null },
+  { keyword: "unboxing türk", category: null },
+  { keyword: "ürün inceleme", category: null },
+  { keyword: "haul türkçe", category: null },
+  { keyword: "denedim türk", category: null },
+  { keyword: "trendyol haul", category: null },
+  { keyword: "hepsiburada inceleme", category: null },
+];
+
+// Batch 1 ve 2 bölme noktası (ilk 36, son 32)
+const BATCH_SPLIT = 36;
+
+/**
+ * Tam scrape — tüm keyword'ler, 2 sayfa/keyword, follower enrichment
+ * Lokal kullanım (dev server, manual trigger) için
+ */
 export async function scrapeTrendingVideos(): Promise<ScrapedVideo[]> {
   const allVideos: ScrapedVideo[] = [];
   const seenIds = new Set<string>();
 
-  // Expanded Turkish keywords for ~500 videos — covers popular hashtags & niches
-  const keywordsToSearch = [
-    // ── General trending & popular hashtags ──
-    { keyword: "türkiye trend", category: null },
-    { keyword: "keşfet", category: null },
-    { keyword: "türk tiktok viral", category: null },
-    { keyword: "tiktok türkiye", category: null },
-    { keyword: "popüler video türkiye", category: null },
-    { keyword: "fyp türk", category: null },
-    { keyword: "#kesfet", category: null },
-    { keyword: "#fyp türkiye", category: null },
-    { keyword: "#viral türk", category: null },
-    { keyword: "#trend türkiye 2024", category: null },
-    // ── Yemek (Food) ──
-    { keyword: "yemek tarifi türk", category: "Yemek" },
-    { keyword: "kahvaltı tarifi", category: "Yemek" },
-    { keyword: "tatlı tarifi", category: "Yemek" },
-    { keyword: "sokak lezzetleri türkiye", category: "Yemek" },
-    { keyword: "ev yemekleri kolay", category: "Yemek" },
-    { keyword: "türk mutfağı", category: "Yemek" },
-    { keyword: "mukbang türk", category: "Yemek" },
-    // ── Komedi (Comedy) ──
-    { keyword: "komedi türk", category: "Komedi" },
-    { keyword: "komik video türkçe", category: "Komedi" },
-    { keyword: "türk komedisi", category: "Komedi" },
-    { keyword: "caps komik türk", category: "Komedi" },
-    { keyword: "sketch türkçe", category: "Komedi" },
-    // ── Seyahat (Travel) ──
-    { keyword: "istanbul gezi", category: "Seyahat" },
-    { keyword: "türkiye gezi rehberi", category: "Seyahat" },
-    { keyword: "antalya tatil", category: "Seyahat" },
-    { keyword: "kapadokya vlog", category: "Seyahat" },
-    { keyword: "bodrum tatil", category: "Seyahat" },
-    // ── Moda (Fashion) ──
-    { keyword: "moda kombin", category: "Moda" },
-    { keyword: "outfit türk", category: "Moda" },
-    { keyword: "alışveriş haul", category: "Moda" },
-    { keyword: "grwm türk", category: "Moda" },
-    { keyword: "vintage moda türkiye", category: "Moda" },
-    // ── Teknoloji (Tech) ──
-    { keyword: "teknoloji türkçe", category: "Teknoloji" },
-    { keyword: "telefon inceleme türk", category: "Teknoloji" },
-    { keyword: "uygulama önerisi", category: "Teknoloji" },
-    { keyword: "yapay zeka türkçe", category: "Teknoloji" },
-    // ── Vlog ──
-    { keyword: "günlük vlog türk", category: "Vlog" },
-    { keyword: "bir günüm vlog", category: "Vlog" },
-    { keyword: "ev turu türk", category: "Vlog" },
-    { keyword: "sabah rutinim", category: "Vlog" },
-    // ── Eğitim (Education) ──
-    { keyword: "eğitim türkçe", category: "Eğitim" },
-    { keyword: "YKS hazırlık", category: "Eğitim" },
-    { keyword: "ingilizce öğren", category: "Eğitim" },
-    { keyword: "matematik kolay", category: "Eğitim" },
-    { keyword: "üniversite hayatı", category: "Eğitim" },
-    // ── Spor (Sports) ──
-    { keyword: "spor fitness türk", category: "Spor" },
-    { keyword: "gym motivasyon türk", category: "Spor" },
-    { keyword: "futbol türkiye", category: "Spor" },
-    { keyword: "evde egzersiz", category: "Spor" },
-    // ── Müzik (Music) ──
-    { keyword: "türkçe müzik", category: "Müzik" },
-    { keyword: "cover türkçe şarkı", category: "Müzik" },
-    { keyword: "rap türk", category: "Müzik" },
-    { keyword: "akustik cover türk", category: "Müzik" },
-    // ── Dans (Dance) ──
-    { keyword: "dans türk", category: "Dans" },
-    { keyword: "koreografi türk", category: "Dans" },
-    { keyword: "halay düğün", category: "Dans" },
-    // ── Güzellik (Beauty) ──
-    { keyword: "makyaj güzellik", category: "Güzellik" },
-    { keyword: "cilt bakımı rutin", category: "Güzellik" },
-    { keyword: "saç modeli", category: "Güzellik" },
-    { keyword: "kozmetik önerisi türk", category: "Güzellik" },
-    // ── Oyun (Gaming) ──
-    { keyword: "oyun gaming türk", category: "Oyun" },
-    { keyword: "valorant türk", category: "Oyun" },
-    { keyword: "pubg mobile türk", category: "Oyun" },
-    // ── Reklam / Ürün (Ads & Products) ──
-    { keyword: "ürün tanıtım türk", category: null },
-    { keyword: "bunu aldım tiktok", category: null },
-    { keyword: "unboxing türk", category: null },
-    { keyword: "ürün inceleme", category: null },
-    { keyword: "haul türkçe", category: null },
-    { keyword: "denedim türk", category: null },
-    { keyword: "trendyol haul", category: null },
-    { keyword: "hepsiburada inceleme", category: null },
-  ];
-
   const BATCH_SIZE = 6;
-  const MAX_VIDEOS = 500; // increased from 300
+  const MAX_VIDEOS = 500;
 
-  for (let i = 0; i < keywordsToSearch.length; i += BATCH_SIZE) {
+  for (let i = 0; i < ALL_KEYWORDS.length; i += BATCH_SIZE) {
     if (allVideos.length >= MAX_VIDEOS) break;
 
-    const batch = keywordsToSearch.slice(i, i + BATCH_SIZE);
+    const batch = ALL_KEYWORDS.slice(i, i + BATCH_SIZE);
 
-    // Run batch in parallel — each keyword fetches 2 pages of 30 via cursor
     const batchResults = await Promise.allSettled(
       batch.map(({ keyword }) => fetchTikWMVideos(keyword, 30, 2))
     );
 
-    // Process results
     for (let j = 0; j < batchResults.length; j++) {
       const result = batchResults[j];
       const category = batch[j].category;
@@ -635,9 +640,7 @@ export async function scrapeTrendingVideos(): Promise<ScrapedVideo[]> {
         for (const v of result.value) {
           if (!seenIds.has(v.video_id)) {
             seenIds.add(v.video_id);
-            if (category) {
-              v.category = category;
-            }
+            if (category) v.category = category;
             allVideos.push(v);
           }
         }
@@ -646,20 +649,70 @@ export async function scrapeTrendingVideos(): Promise<ScrapedVideo[]> {
       }
     }
 
-    // Delay between batches to respect rate limits (2-3s)
-    if (i + BATCH_SIZE < keywordsToSearch.length) {
+    if (i + BATCH_SIZE < ALL_KEYWORDS.length) {
       await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 1000));
     }
   }
 
   console.log(`[SCRAPER] Total unique videos scraped: ${allVideos.length}`);
 
-  // Enrich videos with follower counts (best-effort, non-blocking)
   try {
     await enrichWithFollowerCounts(allVideos);
   } catch (e) {
     console.warn("[SCRAPER] Follower enrichment failed, continuing without:", e);
   }
 
+  return allVideos;
+}
+
+/**
+ * Vercel cron için hafif batch scrape
+ * batch=1: İlk yarı keyword'ler (General, Yemek, Komedi, Seyahat, Moda, Teknoloji)
+ * batch=2: İkinci yarı keyword'ler (Vlog, Eğitim, Spor, Müzik, Dans, Güzellik, Oyun, Reklam)
+ * 1 sayfa/keyword, kısa delay, follower enrichment yok → ~25 saniye
+ */
+export async function scrapeTrendingVideosBatch(batchNum: 1 | 2): Promise<ScrapedVideo[]> {
+  const keywords = batchNum === 1
+    ? ALL_KEYWORDS.slice(0, BATCH_SPLIT)
+    : ALL_KEYWORDS.slice(BATCH_SPLIT);
+
+  console.log(`[SCRAPER] Batch ${batchNum} başlıyor — ${keywords.length} keyword`);
+
+  const allVideos: ScrapedVideo[] = [];
+  const seenIds = new Set<string>();
+  const BATCH_SIZE = 6;
+
+  for (let i = 0; i < keywords.length; i += BATCH_SIZE) {
+    const batch = keywords.slice(i, i + BATCH_SIZE);
+
+    // Cron mode: 1 sayfa per keyword (hızlı)
+    const batchResults = await Promise.allSettled(
+      batch.map(({ keyword }) => fetchTikWMVideos(keyword, 30, 1))
+    );
+
+    for (let j = 0; j < batchResults.length; j++) {
+      const result = batchResults[j];
+      const category = batch[j].category;
+
+      if (result.status === "fulfilled") {
+        for (const v of result.value) {
+          if (!seenIds.has(v.video_id)) {
+            seenIds.add(v.video_id);
+            if (category) v.category = category;
+            allVideos.push(v);
+          }
+        }
+      } else {
+        console.error(`[SCRAPER] Batch keyword "${batch[j].keyword}" failed:`, result.reason);
+      }
+    }
+
+    // Kısa delay (1-1.5s) — Vercel timeout'a sığmak için
+    if (i + BATCH_SIZE < keywords.length) {
+      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 500));
+    }
+  }
+
+  console.log(`[SCRAPER] Batch ${batchNum} tamamlandı: ${allVideos.length} video`);
   return allVideos;
 }
