@@ -1,7 +1,6 @@
 "use client";
 
 import { useState, useEffect, Suspense } from "react";
-import { motion } from "framer-motion";
 import {
   FiEye,
   FiEyeOff,
@@ -144,12 +143,7 @@ function LoginContent() {
         <div className="absolute bottom-0 left-0 w-40 h-px bg-gradient-to-r from-teal/30 to-transparent" />
 
         {/* Üst — Logo & Navigasyon */}
-        <motion.div
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.6 }}
-          className="relative z-10"
-        >
+        <div className="relative z-10">
           <Link href="/" className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors text-sm mb-8">
             <FiArrowLeft className="w-4 h-4" />
             Ana Sayfa
@@ -173,38 +167,25 @@ function LoginContent() {
               </p>
             </div>
           </div>
-        </motion.div>
+        </div>
 
         {/* Orta — Özellikler Grid */}
         <div className="relative z-10 flex-1 flex items-center">
           <div>
-            <motion.h2
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.3, duration: 0.5 }}
-              className="text-xl xl:text-2xl font-semibold text-text-primary mb-2"
-            >
+            <h2 className="text-xl xl:text-2xl font-semibold text-text-primary mb-2">
               Trendleri Yakala, Öne Çık
-            </motion.h2>
-            <motion.p
-              initial={{ opacity: 0, x: -20 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.4, duration: 0.5 }}
-              className="text-text-secondary text-sm mb-8 max-w-md"
-            >
+            </h2>
+            <p className="text-text-secondary text-sm mb-8 max-w-md">
               Türkiye&apos;nin en kapsamlı TikTok analiz aracıyla içeriklerinizi
               bir üst seviyeye taşıyın.
-            </motion.p>
+            </p>
 
             <div className="grid grid-cols-2 gap-3 max-w-lg">
-              {features.map((feature, i) => {
+              {features.map((feature) => {
                 const Icon = feature.icon;
                 return (
-                  <motion.div
+                  <div
                     key={feature.title}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: 0.5 + i * 0.08, duration: 0.4 }}
                     className="group flex items-start gap-3 p-3 rounded-xl bg-surface/40 border border-border/50 hover:border-neon-red/20 hover:bg-surface-light/50 transition-all duration-300"
                   >
                     <div className="w-9 h-9 rounded-lg bg-neon-red/10 flex items-center justify-center flex-shrink-0 group-hover:bg-neon-red/20 transition-colors">
@@ -218,7 +199,7 @@ function LoginContent() {
                         {feature.desc}
                       </p>
                     </div>
-                  </motion.div>
+                  </div>
                 );
               })}
             </div>
@@ -226,25 +207,17 @@ function LoginContent() {
         </div>
 
         {/* Alt — İstatistik Kartları */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 1, duration: 0.5 }}
-          className="relative z-10 flex gap-4"
-        >
-          {floatingStats.map((stat, i) => (
-            <motion.div
+        <div className="relative z-10 flex gap-4">
+          {floatingStats.map((stat) => (
+            <div
               key={stat.label}
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1.1 + i * 0.1 }}
               className="flex-1 bg-surface/50 backdrop-blur-sm border border-border/50 rounded-xl p-3 text-center"
             >
               <p className={`text-xl font-bold ${stat.color}`}>{stat.value}</p>
               <p className="text-[10px] text-text-muted mt-0.5">{stat.label}</p>
-            </motion.div>
+            </div>
           ))}
-        </motion.div>
+        </div>
       </div>
 
       {/* ─────────── Dikey Ayırıcı (desktop) ─────────── */}
@@ -275,11 +248,7 @@ function LoginContent() {
         />
 
         {/* Mobile back button */}
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          className="lg:hidden fixed top-0 left-0 right-0 z-20 px-4 py-4"
-        >
+        <div className="lg:hidden fixed top-0 left-0 right-0 z-20 px-4 py-4">
           <div className="max-w-md mx-auto">
             <Link
               href="/"
@@ -289,26 +258,16 @@ function LoginContent() {
               Ana Sayfa
             </Link>
           </div>
-        </motion.div>
+        </div>
 
         {/* Form kartı */}
-        <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-          className="relative z-10 w-full max-w-md px-6 py-8 lg:px-10 xl:px-14"
-        >
+        <div className="relative z-10 w-full max-w-md px-6 py-8 lg:px-10 xl:px-14">
           {/* Desktop sağ panel üst dekorasyon */}
           <div className="hidden lg:block absolute top-0 right-0 w-20 h-px bg-gradient-to-l from-neon-red/20 to-transparent" />
 
           <div className="lg:bg-transparent lg:shadow-none glass lg:backdrop-blur-none rounded-2xl p-8 lg:p-0 shadow-2xl">
             {/* Logo */}
-            <motion.div
-              initial={{ opacity: 0, y: -10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.2 }}
-              className="text-center lg:text-left mb-8"
-            >
+            <div className="text-center lg:text-left mb-8">
               <div className="inline-flex mb-4 lg:hidden">
                 <LogoLink size="lg" />
               </div>
@@ -321,15 +280,11 @@ function LoginContent() {
                   Hesabınıza giriş yaparak trendleri keşfedin
                 </span>
               </p>
-            </motion.div>
+            </div>
 
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.3 }}
-              >
+              <div>
                 <label className="block text-sm font-medium text-text-secondary mb-2">
                   Kullanıcı Adı veya E-posta
                 </label>
@@ -344,13 +299,9 @@ function LoginContent() {
                     required
                   />
                 </div>
-              </motion.div>
+              </div>
 
-              <motion.div
-                initial={{ opacity: 0, x: -10 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.35 }}
-              >
+              <div>
                 <label className="block text-sm font-medium text-text-secondary mb-2">
                   Şifre
                 </label>
@@ -376,22 +327,15 @@ function LoginContent() {
                     )}
                   </button>
                 </div>
-              </motion.div>
+              </div>
 
               {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: -5 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  className="bg-neon-red/10 border border-neon-red/20 rounded-lg p-3 text-neon-red text-sm text-center"
-                >
+                <div className="bg-neon-red/10 border border-neon-red/20 rounded-lg p-3 text-neon-red text-sm text-center">
                   {error}
-                </motion.div>
+                </div>
               )}
 
-              <motion.button
-                initial={{ opacity: 0, y: 10 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ delay: 0.4 }}
+              <button
                 type="submit"
                 disabled={loading || !identifier || !password}
                 className="w-full gradient-red text-white font-semibold py-3 rounded-xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
@@ -404,25 +348,16 @@ function LoginContent() {
                     Giriş Yap
                   </>
                 )}
-              </motion.button>
+              </button>
             </form>
 
             {/* OAuth Buttons */}
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.45 }}
-            >
+            <div>
               <OAuthButtons mode="login" />
-            </motion.div>
+            </div>
 
             {/* Register Link */}
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.5 }}
-              className="text-center mt-6"
-            >
+            <div className="text-center mt-6">
               <p className="text-text-secondary text-sm">
                 Hesabınız yok mu?{" "}
                 <Link
@@ -432,19 +367,14 @@ function LoginContent() {
                   Kayıt Ol
                 </Link>
               </p>
-            </motion.div>
+            </div>
 
             {/* Footer */}
-            <motion.p
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 0.6 }}
-              className="text-center text-text-muted text-xs mt-4"
-            >
+            <p className="text-center text-text-muted text-xs mt-4">
               Sadece yetkili kullanıcılar erişebilir
-            </motion.p>
+            </p>
           </div>
-        </motion.div>
+        </div>
       </div>
     </div>
   );
