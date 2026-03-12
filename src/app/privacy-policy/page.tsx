@@ -1,7 +1,8 @@
 "use client";
 
 import Link from "next/link";
-import { FiTrendingUp, FiArrowLeft } from "react-icons/fi";
+import { FiArrowLeft } from "react-icons/fi";
+import LogoLink from "@/components/LogoLink";
 
 export default function PrivacyPolicyPage() {
   return (
@@ -9,12 +10,7 @@ export default function PrivacyPolicyPage() {
       {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg gradient-red flex items-center justify-center">
-              <FiTrendingUp className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-lg font-bold">Val<span className="text-neon-red">yze</span></span>
-          </Link>
+          <LogoLink size="sm" />
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm text-text-secondary hover:text-text-primary transition-colors px-4 py-2">Giris Yap</Link>
             <Link href="/register" className="text-sm bg-neon-red text-white px-4 py-2 rounded-lg hover:bg-neon-red-light transition-colors font-medium">Ucretsiz Basla</Link>
