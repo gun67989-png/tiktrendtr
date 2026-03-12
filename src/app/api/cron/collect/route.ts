@@ -107,7 +107,6 @@ async function storeVideos(videos: ScrapedVideo[]): Promise<number> {
       ad_format: v.ad_format,
       creator_presence_score: v.creator_presence_score,
       tiktok_url: buildTiktokUrl(v.creator_username, v.video_id),
-      follower_count: v.follower_count || 0,
       scraped_at: v.scraped_at,
     }));
 
