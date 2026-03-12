@@ -6,7 +6,6 @@ import { FiTrendingUp } from "react-icons/fi";
 
 interface WelcomeOverlayProps {
   username?: string;
-  storageKey?: string;
 }
 
 /* Deterministic orbiting particles */
@@ -58,18 +57,17 @@ function makeShapes(n: number) {
 
 export default function WelcomeOverlay({
   username,
-  storageKey = "tiktrendtr_welcome_shown",
 }: WelcomeOverlayProps) {
   const [visible, setVisible] = useState(false);
   const particles = useMemo(() => makeParticles(10), []);
   const shapes = useMemo(() => makeShapes(6), []);
 
+  // Show on every login (no sessionStorage gating)
   useEffect(() => {
-    if (sessionStorage.getItem(storageKey)) return;
-    sessionStorage.setItem(storageKey, "1");
     setVisible(true);
-  }, [storageKey]);
+  }, []);
 
+  // Auto-dismiss after 3.5s
   useEffect(() => {
     if (!visible) return;
     const timer = setTimeout(() => setVisible(false), 3500);

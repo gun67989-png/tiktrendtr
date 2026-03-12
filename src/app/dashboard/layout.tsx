@@ -97,10 +97,7 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-background flex">
       {/* Welcome back overlay — once per session, with username */}
-      <WelcomeOverlay
-        username={user?.username}
-        storageKey="tiktrendtr_dashboard_welcome"
-      />
+      <WelcomeOverlay username={user?.username} />
 
       {/* Mobile overlay */}
       <AnimatePresence>
