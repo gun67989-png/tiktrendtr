@@ -98,7 +98,6 @@ async function storeVideos(videos: ScrapedVideo[]): Promise<number> {
       like_count: v.like_count,
       comment_count: v.comment_count,
       share_count: v.share_count,
-      tiktok_url: v.tiktok_url,
       thumbnail_url: v.thumbnail_url,
       duration: v.duration,
       sound_name: v.sound_name,
@@ -175,17 +174,18 @@ export async function GET(request: NextRequest) {
     // Parametre yoksa tam scrape yapar (lokal/manual)
     const { searchParams } = new URL(request.url);
     const batchParam = searchParams.get("batch");
-    const batchNum = batchParam === "1" ? 1 : batchParam === "2" ? 2 : null;
+    const parsedBatch = batchParam ? parseInt(batchParam, 10) : null;
+    const validBatch = parsedBatch && parsedBatch >= 1 && parsedBatch <= 6 ? parsedBatch : null;
 
-    console.log(`[CRON] Data collection started at ${timestamp} (batch: ${batchNum ?? "full"})`);
+    console.log(`[CRON] Data collection started at ${timestamp} (batch: ${validBatch ?? "full"})`);
 
     // Step 1: Ensure database table exists
     await ensureTable();
 
     // Step 2: Scrape real TikTok data
     console.log("[CRON] Starting TikTok scraping...");
-    const scrapedVideos = batchNum
-      ? await scrapeTrendingVideosBatch(batchNum)
+    const scrapedVideos = validBatch
+      ? await scrapeTrendingVideosBatch(validBatch)
       : await scrapeTrendingVideos();
     console.log(`[CRON] Scraped ${scrapedVideos.length} videos`);
 
@@ -194,17 +194,17 @@ export async function GET(request: NextRequest) {
     console.log(`[CRON] Stored ${storedCount} videos in database`);
 
     // Step 4: Sadece batch 2'de veya full scrape'de eski kayıtları temizle
-    const cleanedCount = (!batchNum || batchNum === 2) ? await cleanOldVideos() : 0;
+    const cleanedCount = (!validBatch || validBatch === 6) ? await cleanOldVideos() : 0;
 
     const results = {
       timestamp,
-      batch: batchNum ?? "full",
+      batch: validBatch ?? "full",
       videosScraped: scrapedVideos.length,
       videosStored: storedCount,
       videosCleanedUp: cleanedCount,
       status: scrapedVideos.length > 0 ? "success" : "no_data",
       message: scrapedVideos.length > 0
-        ? `Batch ${batchNum ?? "full"}: ${scrapedVideos.length} video çekildi`
+        ? `Batch ${validBatch ?? "full"}: ${scrapedVideos.length} video çekildi`
         : "Veri çekilemedi. Sonraki döngüde tekrar denenecek.",
     };
 

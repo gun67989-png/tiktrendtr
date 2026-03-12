@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { buildTiktokUrl } from "@/lib/tiktok-scraper";
 
 export const dynamic = "force-dynamic";
 
@@ -84,7 +85,7 @@ export async function GET(request: NextRequest) {
           description: (v.caption as string) || "",
           creator: (v.creator_username as string) || "",
           thumbnailUrl: (v.thumbnail_url as string) || "",
-          tiktokUrl: (v.tiktok_url as string) || "",
+          tiktokUrl: buildTiktokUrl(v.creator_username as string, v.video_id as string),
           views: (v.view_count as number) || 0,
           likes: (v.like_count as number) || 0,
           comments: (v.comment_count as number) || 0,

@@ -6,7 +6,7 @@
     },
     {
       "path": "/api/cron/collect?batch=2",
-      "schedule": "5 6 * * *"
+      "schedule": "1 6 * * *"
     }
   ]
 }

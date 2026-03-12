@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { generateHashtagDetail } from "@/lib/data";
+import { buildTiktokUrl } from "@/lib/tiktok-scraper";
 
 export const dynamic = "force-dynamic";
 
@@ -35,7 +36,7 @@ export async function GET(
             description: v.caption || "",
             creator: v.creator_username || "",
             thumbnailUrl: (v.thumbnail_url as string) || `https://picsum.photos/seed/${(v.video_id as string || "").slice(-6)}/400/700`,
-            tiktokUrl: v.tiktok_url || "",
+            tiktokUrl: buildTiktokUrl(v.creator_username as string, v.video_id as string),
             views,
             likes,
             comments,

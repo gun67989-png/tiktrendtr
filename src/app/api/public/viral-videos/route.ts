@@ -6,6 +6,7 @@ import {
   VIRAL_THRESHOLDS,
   type ViralTier,
 } from "@/lib/data";
+import { buildTiktokUrl } from "@/lib/tiktok-scraper";
 
 export const dynamic = "force-dynamic";
 
@@ -73,7 +74,7 @@ async function fetchViralFromDB(minViews: number, minLikes: number): Promise<Pub
           creator: v.creator_username as string,
           description: ((v.caption as string) || "").substring(0, 100),
           thumbnailUrl: (v.thumbnail_url as string) || `https://picsum.photos/seed/${((v.video_id as string) || "").slice(-6)}/400/700`,
-          tiktokUrl: v.tiktok_url as string,
+          tiktokUrl: buildTiktokUrl(v.creator_username as string, v.video_id as string),
           views,
           likes,
           comments,

@@ -12,16 +12,20 @@ export interface ScrapedVideo {
   comment_count: number;
   share_count: number;
   follower_count: number;
-  tiktok_url: string;
   thumbnail_url: string;
   duration: number;
   sound_name: string;
   sound_creator: string;
   category: string;
   format: string;
-  ad_format: string | null; // null = not an ad, otherwise the ad type
-  creator_presence_score: number; // 0-100: estimates if a human creator is visible on camera
+  ad_format: string | null;
+  creator_presence_score: number;
   scraped_at: string;
+}
+
+// URL helper — video_id + username'den tam URL oluştur
+export function buildTiktokUrl(username: string, videoId: string): string {
+  return `https://www.tiktok.com/@${username}/video/${videoId}`;
 }
 
 // Category detection based on hashtags and keywords
@@ -408,7 +412,6 @@ async function fetchTikWMPage(
         comment_count: v.comment_count || 0,
         share_count: v.share_count || 0,
         follower_count: 0,
-        tiktok_url: `https://www.tiktok.com/@${v.author.unique_id}/video/${v.video_id}`,
         thumbnail_url: v.origin_cover || v.cover || "",
         duration: v.duration || 0,
         sound_name: soundName,
@@ -609,8 +612,8 @@ const ALL_KEYWORDS = [
   { keyword: "hepsiburada inceleme", category: null },
 ];
 
-// Batch 1 ve 2 bölme noktası (ilk 36, son 32)
-const BATCH_SPLIT = 36;
+// 6 batch'e bölme: her batch ~11 keyword → ~20-30 saniyede tamamlanır
+const TOTAL_BATCHES = 6;
 
 /**
  * Tam scrape — tüm keyword'ler, 2 sayfa/keyword, follower enrichment
@@ -666,17 +669,23 @@ export async function scrapeTrendingVideos(): Promise<ScrapedVideo[]> {
 }
 
 /**
- * Vercel cron için hafif batch scrape
- * batch=1: İlk yarı keyword'ler (General, Yemek, Komedi, Seyahat, Moda, Teknoloji)
- * batch=2: İkinci yarı keyword'ler (Vlog, Eğitim, Spor, Müzik, Dans, Güzellik, Oyun, Reklam)
- * 1 sayfa/keyword, kısa delay, follower enrichment yok → ~25 saniye
+ * Vercel cron için batch scrape — 6 batch destekler
+ * Her batch ~11 keyword, 2 sayfa/keyword → ~20-30 saniyede tamamlanır (60s limiti rahat)
+ * cron-job.org üzerinden her dakika bir batch tetiklenir
  */
-export async function scrapeTrendingVideosBatch(batchNum: 1 | 2): Promise<ScrapedVideo[]> {
-  const keywords = batchNum === 1
-    ? ALL_KEYWORDS.slice(0, BATCH_SPLIT)
-    : ALL_KEYWORDS.slice(BATCH_SPLIT);
+export async function scrapeTrendingVideosBatch(batchNum: number): Promise<ScrapedVideo[]> {
+  const totalKeywords = ALL_KEYWORDS.length;
+  const perBatch = Math.ceil(totalKeywords / TOTAL_BATCHES);
+  const startIdx = (batchNum - 1) * perBatch;
+  const endIdx = Math.min(startIdx + perBatch, totalKeywords);
+  const keywords = ALL_KEYWORDS.slice(startIdx, endIdx);
 
-  console.log(`[SCRAPER] Batch ${batchNum} başlıyor — ${keywords.length} keyword`);
+  if (keywords.length === 0) {
+    console.log(`[SCRAPER] Batch ${batchNum} — keyword yok, atlıyorum`);
+    return [];
+  }
+
+  console.log(`[SCRAPER] Batch ${batchNum}/${TOTAL_BATCHES} başlıyor — ${keywords.length} keyword (idx ${startIdx}-${endIdx})`);
 
   const allVideos: ScrapedVideo[] = [];
   const seenIds = new Set<string>();
@@ -685,9 +694,9 @@ export async function scrapeTrendingVideosBatch(batchNum: 1 | 2): Promise<Scrape
   for (let i = 0; i < keywords.length; i += BATCH_SIZE) {
     const batch = keywords.slice(i, i + BATCH_SIZE);
 
-    // Cron mode: 1 sayfa per keyword (hızlı)
+    // 2 sayfa per keyword — daha çok video
     const batchResults = await Promise.allSettled(
-      batch.map(({ keyword }) => fetchTikWMVideos(keyword, 30, 1))
+      batch.map(({ keyword }) => fetchTikWMVideos(keyword, 30, 2))
     );
 
     for (let j = 0; j < batchResults.length; j++) {
@@ -707,9 +716,8 @@ export async function scrapeTrendingVideosBatch(batchNum: 1 | 2): Promise<Scrape
       }
     }
 
-    // Kısa delay (1-1.5s) — Vercel timeout'a sığmak için
     if (i + BATCH_SIZE < keywords.length) {
-      await new Promise(resolve => setTimeout(resolve, 1000 + Math.random() * 500));
+      await new Promise(resolve => setTimeout(resolve, 1500 + Math.random() * 500));
     }
   }
 

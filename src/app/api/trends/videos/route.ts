@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { generateVideos, calcViralScore } from "@/lib/data";
+import { buildTiktokUrl } from "@/lib/tiktok-scraper";
 
 export const dynamic = "force-dynamic";
 
@@ -15,7 +16,6 @@ interface DBVideo {
   comment_count: number;
   share_count: number;
   follower_count: number;
-  tiktok_url: string;
   thumbnail_url: string;
   duration: number;
   sound_name: string;
@@ -108,8 +108,8 @@ async function getRealVideos(options: {
         creator: v.creator_username,
         creatorAvatar: null,
         thumbnailUrl: v.thumbnail_url || `https://picsum.photos/seed/${v.video_id.slice(-6)}/400/700`,
-        videoUrl: v.tiktok_url,
-        tiktokUrl: v.tiktok_url,
+        videoUrl: buildTiktokUrl(v.creator_username, v.video_id),
+        tiktokUrl: buildTiktokUrl(v.creator_username, v.video_id),
         views: v.view_count,
         likes: v.like_count,
         comments: v.comment_count,
