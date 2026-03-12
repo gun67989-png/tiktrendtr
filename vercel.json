@@ -2,11 +2,31 @@
   "crons": [
     {
       "path": "/api/cron/collect?batch=1",
-      "schedule": "0 6 * * *"
+      "schedule": "0 3 * * *"
     },
     {
       "path": "/api/cron/collect?batch=2",
-      "schedule": "1 6 * * *"
+      "schedule": "0 7 * * *"
+    },
+    {
+      "path": "/api/cron/collect?batch=3",
+      "schedule": "0 11 * * *"
+    },
+    {
+      "path": "/api/cron/collect?batch=4",
+      "schedule": "0 15 * * *"
+    },
+    {
+      "path": "/api/cron/collect?batch=5",
+      "schedule": "0 19 * * *"
+    },
+    {
+      "path": "/api/cron/collect?batch=6",
+      "schedule": "0 23 * * *"
+    },
+    {
+      "path": "/api/cron/check-subscriptions",
+      "schedule": "0 */6 * * *"
     }
   ]
 }
