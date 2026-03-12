@@ -9,8 +9,8 @@
 }
 
 body {
-  background: #08080c;
-  color: #f0f0f5;
+  background: #0c0c14;
+  color: #f0f0f8;
   min-height: 100vh;
 }
 
@@ -21,45 +21,57 @@ body {
 }
 
 ::-webkit-scrollbar-track {
-  background: #111118;
+  background: #13131e;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #2a2a3a;
+  background: #2e2e44;
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #3a3a4a;
+  background: #3e3e54;
 }
 
 /* Gradient backgrounds */
 .gradient-red {
-  background: linear-gradient(135deg, #ff3b5c 0%, #cc2f4a 100%);
+  background: linear-gradient(135deg, #ff4d6a 0%, #d93a56 100%);
 }
 
 .gradient-teal {
-  background: linear-gradient(135deg, #00d4aa 0%, #00a885 100%);
+  background: linear-gradient(135deg, #00e6b8 0%, #00b892 100%);
 }
 
 .gradient-mixed {
-  background: linear-gradient(135deg, #ff3b5c 0%, #00d4aa 100%);
+  background: linear-gradient(135deg, #ff4d6a 0%, #00e6b8 100%);
+}
+
+.gradient-purple {
+  background: linear-gradient(135deg, #a78bfa 0%, #7c3aed 100%);
+}
+
+.gradient-warm {
+  background: linear-gradient(135deg, #ff4d6a 0%, #fbbf24 100%);
 }
 
 /* Glass effect */
 .glass {
-  background: rgba(17, 17, 24, 0.8);
-  backdrop-filter: blur(12px);
-  border: 1px solid rgba(42, 42, 58, 0.5);
+  background: rgba(19, 19, 30, 0.85);
+  backdrop-filter: blur(16px);
+  border: 1px solid rgba(46, 46, 68, 0.5);
 }
 
-/* Glow effects */
+/* Soft glow effects */
 .glow-red {
-  box-shadow: 0 0 20px rgba(255, 59, 92, 0.15);
+  box-shadow: 0 0 24px rgba(255, 77, 106, 0.12), 0 0 8px rgba(255, 77, 106, 0.06);
 }
 
 .glow-teal {
-  box-shadow: 0 0 20px rgba(0, 212, 170, 0.15);
+  box-shadow: 0 0 24px rgba(0, 230, 184, 0.12), 0 0 8px rgba(0, 230, 184, 0.06);
+}
+
+.glow-purple {
+  box-shadow: 0 0 24px rgba(167, 139, 250, 0.12), 0 0 8px rgba(167, 139, 250, 0.06);
 }
 
 /* Animated gradient border */
@@ -73,10 +85,21 @@ body {
   inset: 0;
   border-radius: inherit;
   padding: 1px;
-  background: linear-gradient(135deg, #ff3b5c, #00d4aa);
+  background: linear-gradient(135deg, #ff4d6a, #00e6b8);
   -webkit-mask: linear-gradient(#fff 0 0) content-box, linear-gradient(#fff 0 0);
   -webkit-mask-composite: xor;
   mask-composite: exclude;
+}
+
+/* Subtle colored card accent — add to cards for a soft top glow */
+.card-accent-red {
+  border-top: 1px solid rgba(255, 77, 106, 0.2);
+}
+.card-accent-teal {
+  border-top: 1px solid rgba(0, 230, 184, 0.2);
+}
+.card-accent-purple {
+  border-top: 1px solid rgba(167, 139, 250, 0.2);
 }
 
 /* Loading pulse */
@@ -86,7 +109,7 @@ body {
 }
 
 .shimmer {
-  background: linear-gradient(90deg, #111118 25%, #1a1a24 50%, #111118 75%);
+  background: linear-gradient(90deg, #13131e 25%, #1c1c2b 50%, #13131e 75%);
   background-size: 200% 100%;
   animation: shimmer 1.5s ease-in-out infinite;
 }

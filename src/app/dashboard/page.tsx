@@ -110,7 +110,7 @@ export default function DashboardPage() {
     },
   ];
 
-  const nicheColors = ["#ff3b5c", "#00d4aa", "#8b5cf6", "#f59e0b", "#3b82f6", "#ec4899", "#14b8a6", "#f97316"];
+  const nicheColors = ["#ff4d6a", "#00e6b8", "#8b5cf6", "#f59e0b", "#3b82f6", "#ec4899", "#14b8a6", "#f97316"];
 
   return (
     <motion.div
@@ -142,7 +142,7 @@ export default function DashboardPage() {
             key={stat.label}
             variants={item}
             whileHover={{ scale: 1.02, y: -2 }}
-            className="bg-surface rounded-xl border border-border p-5 hover:border-border/80 transition-all"
+            className="bg-surface rounded-xl border border-border p-5 hover:border-neon-red/20 transition-all shadow-sm"
           >
             <div className="flex items-start justify-between">
               <div>
@@ -173,37 +173,37 @@ export default function DashboardPage() {
               <AreaChart data={overview.dailyStats}>
                 <defs>
                   <linearGradient id="colorVideos" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#ff3b5c" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#ff3b5c" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#ff4d6a" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#ff4d6a" stopOpacity={0} />
                   </linearGradient>
                   <linearGradient id="colorEngagement" x1="0" y1="0" x2="0" y2="1">
-                    <stop offset="5%" stopColor="#00d4aa" stopOpacity={0.3} />
-                    <stop offset="95%" stopColor="#00d4aa" stopOpacity={0} />
+                    <stop offset="5%" stopColor="#00e6b8" stopOpacity={0.3} />
+                    <stop offset="95%" stopColor="#00e6b8" stopOpacity={0} />
                   </linearGradient>
                 </defs>
-                <CartesianGrid strokeDasharray="3 3" stroke="#1a1a24" />
+                <CartesianGrid strokeDasharray="3 3" stroke="#1c1c2b" />
                 <XAxis
                   dataKey="date"
-                  stroke="#555570"
+                  stroke="#606080"
                   fontSize={10}
                   tickFormatter={(v) => v.split("-").slice(1).join("/")}
                 />
-                <YAxis stroke="#555570" fontSize={10} yAxisId="left" />
-                <YAxis stroke="#555570" fontSize={10} yAxisId="right" orientation="right" />
+                <YAxis stroke="#606080" fontSize={10} yAxisId="left" />
+                <YAxis stroke="#606080" fontSize={10} yAxisId="right" orientation="right" />
                 <Tooltip
                   contentStyle={{
-                    backgroundColor: "#111118",
-                    border: "1px solid #2a2a3a",
+                    backgroundColor: "#13131e",
+                    border: "1px solid #2e2e44",
                     borderRadius: "8px",
                     fontSize: "12px",
-                    color: "#f0f0f5",
+                    color: "#f0f0f8",
                   }}
                 />
                 <Area
                   yAxisId="left"
                   type="monotone"
                   dataKey="videos"
-                  stroke="#ff3b5c"
+                  stroke="#ff4d6a"
                   strokeWidth={2}
                   fill="url(#colorVideos)"
                   name="Videolar"
@@ -212,7 +212,7 @@ export default function DashboardPage() {
                   yAxisId="right"
                   type="monotone"
                   dataKey="engagement"
-                  stroke="#00d4aa"
+                  stroke="#00e6b8"
                   strokeWidth={2}
                   fill="url(#colorEngagement)"
                   name="Etkileşim %"

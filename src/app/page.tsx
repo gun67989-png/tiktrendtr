@@ -178,8 +178,9 @@ export default function LandingPage() {
 
       {/* ── Hero ── */}
       <section className="relative pt-24 pb-12 md:pt-32 md:pb-20 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute top-20 left-1/4 w-64 md:w-96 h-64 md:h-96 bg-neon-red/5 rounded-full blur-[100px]" />
-        <div className="absolute top-40 right-1/4 w-56 md:w-80 h-56 md:h-80 bg-teal/5 rounded-full blur-[100px]" />
+        <div className="absolute top-20 left-1/4 w-64 md:w-96 h-64 md:h-96 bg-neon-red/8 rounded-full blur-[100px]" />
+        <div className="absolute top-40 right-1/4 w-56 md:w-80 h-56 md:h-80 bg-teal/8 rounded-full blur-[100px]" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-72 md:w-[500px] h-40 bg-purple-400/5 rounded-full blur-[120px]" />
 
         <div className="max-w-4xl mx-auto text-center relative z-10">
           <motion.div

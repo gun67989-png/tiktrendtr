@@ -45,13 +45,13 @@ export default function LoginPage() {
     <div className="min-h-screen bg-background flex items-center justify-center relative overflow-hidden">
       {/* Animated background orbs */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute -top-40 -left-40 w-80 h-80 bg-neon-red/10 rounded-full blur-[100px] bg-animate" />
+        <div className="absolute -top-40 -left-40 w-80 h-80 bg-neon-red/12 rounded-full blur-[100px] bg-animate" />
         <div
           className="absolute top-1/2 -right-40 w-96 h-96 bg-teal/10 rounded-full blur-[120px] bg-animate"
           style={{ animationDelay: "5s" }}
         />
         <div
-          className="absolute -bottom-40 left-1/3 w-72 h-72 bg-neon-red/5 rounded-full blur-[80px] bg-animate"
+          className="absolute -bottom-40 left-1/3 w-72 h-72 bg-purple-400/8 rounded-full blur-[80px] bg-animate"
           style={{ animationDelay: "10s" }}
         />
       </div>
