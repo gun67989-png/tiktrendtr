@@ -170,6 +170,7 @@ export default function LandingPage() {
                 <Link href="/viral-tiktok-videos-turkey" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Viral Videolar</Link>
                 <Link href="/trending-hashtags-turkey" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Trend Hashtag&apos;ler</Link>
                 <Link href="/tiktok-trend-report" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Haftalik Rapor</Link>
+                <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Hakkimizda</Link>
                 <div className="border-t border-border my-2" />
                 <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Giris Yap</Link>
                 <Link href="/register" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-neon-red hover:bg-neon-red/5 rounded-lg transition-colors">Ucretsiz Kayit Ol</Link>
@@ -494,6 +495,7 @@ export default function LandingPage() {
               <ul className="space-y-1.5">
                 <li><a href="#features" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Ozellikler</a></li>
                 <li><a href="#pricing" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Fiyatlandirma</a></li>
+                <li><Link href="/about" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Hakkimizda</Link></li>
                 <li><Link href="/contact" className="text-xs text-text-secondary hover:text-text-primary transition-colors flex items-center gap-1"><FiMessageCircle className="w-3 h-3" /> Iletisim</Link></li>
               </ul>
             </div>
