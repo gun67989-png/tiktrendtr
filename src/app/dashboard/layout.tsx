@@ -308,8 +308,11 @@ export default function DashboardLayout({
               <FiMenu className="w-5 h-5 text-text-primary" />
             )}
           </button>
-          <Link href="/dashboard" className="text-sm font-semibold text-text-primary">
-            Val<span className="text-neon-red">yze</span>
+          <Link href="/dashboard" className="flex items-center gap-2">
+            <img src="/logo.png" alt="Valyze TR" className="w-7 h-7 rounded-lg" />
+            <span className="text-sm font-semibold text-text-primary">
+              Valyze <span className="text-neon-red">TR</span>
+            </span>
           </Link>
         </div>
 
