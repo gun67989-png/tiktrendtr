@@ -62,8 +62,11 @@ export default function WelcomeOverlay({
   const particles = useMemo(() => makeParticles(10), []);
   const shapes = useMemo(() => makeShapes(6), []);
 
-  // Show on every login (no sessionStorage gating)
+  // Show only once per user (first registration / first visit)
   useEffect(() => {
+    const key = "valyze_welcome_shown";
+    if (localStorage.getItem(key)) return;
+    localStorage.setItem(key, "1");
     setVisible(true);
   }, []);
 
@@ -74,8 +77,8 @@ export default function WelcomeOverlay({
     return () => clearTimeout(timer);
   }, [visible]);
 
-  const brandName = "Val";
-  const brandAccent = "yze";
+  const brandName = "Valyze ";
+  const brandAccent = "TR";
 
   return (
     <AnimatePresence>
@@ -459,8 +462,8 @@ export default function WelcomeOverlay({
                 }}
               >
                 {username
-                  ? `Tekrar hos geldin, ${username}!`
-                  : "TikTok Trend Analiz Platformu"}
+                  ? `Hos geldin, ${username}! Haydi basla.`
+                  : "Turkiye'nin TikTok Trend Analiz Platformu"}
               </motion.p>
             </div>
 
