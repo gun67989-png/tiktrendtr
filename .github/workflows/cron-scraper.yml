@@ -1,0 +1,61 @@
+name: TikTok Scraper Cron (Batch 3-6)
+
+on:
+  schedule:
+    - cron: '2 6 * * *'  # 09:02 Turkey - Batch 3
+    - cron: '3 6 * * *'  # 09:03 Turkey - Batch 4
+    - cron: '4 6 * * *'  # 09:04 Turkey - Batch 5
+    - cron: '5 6 * * *'  # 09:05 Turkey - Batch 6
+  workflow_dispatch:
+    inputs:
+      batch:
+        description: 'Batch number to run'
+        required: true
+        default: '3'
+        type: choice
+        options:
+          - '3'
+          - '4'
+          - '5'
+          - '6'
+
+jobs:
+  batch3:
+    if: github.event.schedule == '2 6 * * *' || (github.event_name == 'workflow_dispatch' && github.event.inputs.batch == '3')
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Run Batch 3
+        run: |
+          curl -sf -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "https://tiktrendtr.vercel.app/api/cron/collect?batch=3"
+
+  batch4:
+    if: github.event.schedule == '3 6 * * *' || (github.event_name == 'workflow_dispatch' && github.event.inputs.batch == '4')
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Run Batch 4
+        run: |
+          curl -sf -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "https://tiktrendtr.vercel.app/api/cron/collect?batch=4"
+
+  batch5:
+    if: github.event.schedule == '4 6 * * *' || (github.event_name == 'workflow_dispatch' && github.event.inputs.batch == '5')
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Run Batch 5
+        run: |
+          curl -sf -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "https://tiktrendtr.vercel.app/api/cron/collect?batch=5"
+
+  batch6:
+    if: github.event.schedule == '5 6 * * *' || (github.event_name == 'workflow_dispatch' && github.event.inputs.batch == '6')
+    runs-on: ubuntu-latest
+    timeout-minutes: 3
+    steps:
+      - name: Run Batch 6
+        run: |
+          curl -sf -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
+            "https://tiktrendtr.vercel.app/api/cron/collect?batch=6"
