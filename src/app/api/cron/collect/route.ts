@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { scrapeTrendingVideos, scrapeTrendingVideosBatch, type ScrapedVideo } from "@/lib/tiktok-scraper";
+import { scrapeTrendingVideos, scrapeTrendingVideosBatch, buildTiktokUrl, type ScrapedVideo } from "@/lib/tiktok-scraper";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60; // Allow up to 60s for scraping
@@ -106,6 +106,7 @@ async function storeVideos(videos: ScrapedVideo[]): Promise<number> {
       format: v.format,
       ad_format: v.ad_format,
       creator_presence_score: v.creator_presence_score,
+      tiktok_url: buildTiktokUrl(v.creator_username, v.video_id),
       follower_count: v.follower_count || 0,
       scraped_at: v.scraped_at,
     }));
