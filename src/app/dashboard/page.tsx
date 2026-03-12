@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
@@ -41,9 +41,14 @@ const item = {
   show: { opacity: 1, y: 0 },
 };
 
+// Fallback overview so the page renders while API loads
+const fallbackOverview = generateOverview();
+const fallbackTrends = generateEmergingTrends();
+
 export default function DashboardPage() {
-  const overview = useMemo(() => generateOverview(), []);
-  const emergingTrends = useMemo(() => generateEmergingTrends(), []);
+  const [overview, setOverview] = useState(fallbackOverview);
+  const [emergingTrends, setEmergingTrends] = useState(fallbackTrends);
+  const [dataSource, setDataSource] = useState<"loading" | "live" | "generated">("loading");
   const router = useRouter();
   const [topVideos, setTopVideos] = useState<VideoData[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<VideoData | null>(null);
@@ -51,6 +56,18 @@ export default function DashboardPage() {
 
   useEffect(() => {
     setLastUpdate(new Date().toLocaleString("tr-TR"));
+  }, []);
+
+  // Fetch overview from API (uses live data if available)
+  useEffect(() => {
+    fetch("/api/trends/overview")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.overview) setOverview(data.overview);
+        if (data.emergingTrends) setEmergingTrends(data.emergingTrends);
+        setDataSource(data.source || "generated");
+      })
+      .catch(() => setDataSource("generated"));
   }, []);
 
   useEffect(() => {
@@ -109,8 +126,8 @@ export default function DashboardPage() {
           </p>
         </div>
         <div className="flex items-center gap-2 text-xs text-text-muted bg-surface rounded-lg px-3 py-2">
-          <div className="w-2 h-2 rounded-full bg-teal animate-pulse" />
-          Son güncelleme: {lastUpdate || "—"}
+          <div className={`w-2 h-2 rounded-full ${dataSource === "live" ? "bg-teal" : "bg-amber-400"} animate-pulse`} />
+          {dataSource === "live" ? "Canli veri" : "Son guncelleme"}: {lastUpdate || "—"}
         </div>
       </motion.div>
 

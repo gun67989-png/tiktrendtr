@@ -1,9 +1,7 @@
 const Anthropic = require('@anthropic-ai/sdk');
-const OpenAI = require('openai');
 const { GoogleGenerativeAI } = require('@google/generative-ai');
 
 let claudeClient = null;
-let openaiClient = null;
 let geminiModel = null;
 
 function initClients() {
@@ -13,15 +11,6 @@ function initClients() {
       console.log('[AI] Claude client hazir');
     } catch (err) {
       console.warn('[AI] Claude client olusturulamadi:', err.message);
-    }
-  }
-
-  if (process.env.OPENAI_API_KEY && !openaiClient) {
-    try {
-      openaiClient = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
-      console.log('[AI] OpenAI client hazir');
-    } catch (err) {
-      console.warn('[AI] OpenAI client olusturulamadi:', err.message);
     }
   }
 
@@ -37,37 +26,43 @@ function initClients() {
 }
 
 /**
- * Claude ile yorum analizi: spam, toksik, bot tespiti, sentiment
+ * Claude: Yorum analizi + Video viral potansiyel & kitle tipi
+ * (Eski GPT gorevi: viralPotential + audienceType buraya taşındı)
  */
-async function analyzeCommentsWithClaude(comments) {
-  if (!claudeClient || comments.length === 0) {
-    return comments.map(c => ({
+async function analyzeWithClaude(comments, videos) {
+  const results = {
+    comments: comments.map(c => ({
       ...c,
       isSpam: false,
       isToxic: false,
       isBot: false,
       sentiment: 'neutral',
-    }));
-  }
+    })),
+    videoScores: [],
+  };
 
-  try {
-    const batches = [];
-    for (let i = 0; i < comments.length; i += 50) {
-      batches.push(comments.slice(i, i + 50));
-    }
+  if (!claudeClient) return results;
 
-    const allResults = [];
+  // 1. Yorum analizi
+  if (comments.length > 0) {
+    try {
+      const batches = [];
+      for (let i = 0; i < comments.length; i += 50) {
+        batches.push(comments.slice(i, i + 50));
+      }
 
-    for (const batch of batches) {
-      const commentsForAI = batch.map(c => ({
-        username: c.username,
-        text: c.text,
-      }));
+      const allCommentResults = [];
 
-      const response = await claudeClient.messages.create({
-        model: 'claude-sonnet-4-20250514',
-        max_tokens: 4096,
-        system: `Sen bir TikTok yorum moderatorusun. Sana bir JSON dizisi icinde yorumlar gelecek.
+      for (const batch of batches) {
+        const commentsForAI = batch.map(c => ({
+          username: c.username,
+          text: c.text,
+        }));
+
+        const response = await claudeClient.messages.create({
+          model: 'claude-sonnet-4-20250514',
+          max_tokens: 4096,
+          system: `Sen bir TikTok yorum moderatorusun. Sana bir JSON dizisi icinde yorumlar gelecek.
 Her yorum icin sunu belirle:
 - isSpam: true/false (tanitim, link, anlamsiz tekrar iceriyorsa)
 - isToxic: true/false (hakaret, nefret soylemi, tehdit iceriyorsa)
@@ -76,132 +71,91 @@ Her yorum icin sunu belirle:
 
 Sadece JSON dondur. Baska hicbir sey yazma.
 Ornek cikti: [{"username": "ali", "isSpam": false, "isToxic": false, "isBot": false, "sentiment": "positive"}]`,
+          messages: [
+            {
+              role: 'user',
+              content: JSON.stringify(commentsForAI),
+            },
+          ],
+        });
+
+        const text = response.content[0]?.text || '[]';
+        try {
+          const parsed = JSON.parse(text);
+          for (let i = 0; i < batch.length; i++) {
+            const aiResult = parsed[i] || {};
+            allCommentResults.push({
+              ...batch[i],
+              isSpam: aiResult.isSpam || false,
+              isToxic: aiResult.isToxic || false,
+              isBot: aiResult.isBot || false,
+              sentiment: aiResult.sentiment || 'neutral',
+            });
+          }
+        } catch {
+          allCommentResults.push(...batch.map(c => ({
+            ...c,
+            isSpam: false,
+            isToxic: false,
+            isBot: false,
+            sentiment: 'neutral',
+          })));
+        }
+      }
+
+      results.comments = allCommentResults;
+      console.log(`[AI/Claude] ${allCommentResults.length} yorum analiz edildi`);
+    } catch (err) {
+      console.error('[AI/Claude] Yorum analizi hatasi:', err.message);
+    }
+  }
+
+  // 2. Video viral potansiyel & kitle tipi analizi (eski GPT gorevi)
+  if (videos.length > 0) {
+    try {
+      const videosForAI = videos.slice(0, 30).map(v => ({
+        id: v.id,
+        description: v.description,
+        stats: v.stats,
+        hashtags: v.hashtags,
+      }));
+
+      const response = await claudeClient.messages.create({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4096,
+        system: `Sen bir TikTok trend analistisin. Sana video verileri gelecek.
+Her video icin belirle:
+- viralPotential: 0-10 arasi puan (engagement orani, goruntulenme, paylasim sayisina gore)
+- audienceType: "gen-z" | "millenial" | "general" | "niche"
+
+Sadece JSON dondur. Baska hicbir sey yazma.
+Format: [{"id": "video_id", "viralPotential": 8, "audienceType": "gen-z"}]`,
         messages: [
           {
             role: 'user',
-            content: JSON.stringify(commentsForAI),
+            content: JSON.stringify(videosForAI),
           },
         ],
       });
 
       const text = response.content[0]?.text || '[]';
       try {
-        const parsed = JSON.parse(text);
-        for (let i = 0; i < batch.length; i++) {
-          const aiResult = parsed[i] || {};
-          allResults.push({
-            ...batch[i],
-            isSpam: aiResult.isSpam || false,
-            isToxic: aiResult.isToxic || false,
-            isBot: aiResult.isBot || false,
-            sentiment: aiResult.sentiment || 'neutral',
-          });
-        }
+        results.videoScores = JSON.parse(text);
+        console.log(`[AI/Claude] ${results.videoScores.length} video viral analizi yapildi`);
       } catch {
-        allResults.push(...batch.map(c => ({
-          ...c,
-          isSpam: false,
-          isToxic: false,
-          isBot: false,
-          sentiment: 'neutral',
-        })));
+        console.warn('[AI/Claude] Video analizi JSON parse hatasi');
       }
+    } catch (err) {
+      console.error('[AI/Claude] Video analizi hatasi:', err.message);
     }
-
-    console.log(`[AI/Claude] ${allResults.length} yorum analiz edildi`);
-    return allResults;
-  } catch (err) {
-    console.error('[AI/Claude] Yorum analizi hatasi:', err.message);
-    return comments.map(c => ({
-      ...c,
-      isSpam: false,
-      isToxic: false,
-      isBot: false,
-      sentiment: 'neutral',
-    }));
   }
+
+  return results;
 }
 
 /**
- * GPT-4o-mini ile trend ve viral analizi
- */
-async function analyzeTrendsWithGPT(videos) {
-  if (!openaiClient || videos.length === 0) {
-    return {
-      videos: videos.map(v => ({
-        id: v.id,
-        viralPotential: 5,
-        audienceType: 'general',
-        emergingTrends: [],
-      })),
-      topTrends: [],
-      overallMood: 'neutral',
-    };
-  }
-
-  try {
-    const videosForAI = videos.slice(0, 30).map(v => ({
-      id: v.id,
-      description: v.description,
-      stats: v.stats,
-      hashtags: v.hashtags,
-    }));
-
-    const response = await openaiClient.chat.completions.create({
-      model: 'gpt-4o-mini',
-      max_tokens: 4096,
-      messages: [
-        {
-          role: 'system',
-          content: `Analyze these TikTok video descriptions and stats.
-For each video identify:
-- viralPotential: 0-10 score based on engagement rate and view count
-- audienceType: "gen-z" | "millenial" | "general" | "niche"
-- emergingTrends: array of trend keywords found
-
-Also provide overall analysis:
-- topTrends: top 5 emerging trends across all videos
-- overallMood: general mood of the content
-
-Return ONLY JSON in this format:
-{
-  "videos": [{"id": "...", "viralPotential": 8, "audienceType": "gen-z", "emergingTrends": ["dance", "challenge"]}],
-  "topTrends": ["trend1", "trend2"],
-  "overallMood": "energetic"
-}`,
-        },
-        {
-          role: 'user',
-          content: JSON.stringify(videosForAI),
-        },
-      ],
-    });
-
-    const text = response.choices[0]?.message?.content || '{}';
-    try {
-      const parsed = JSON.parse(text);
-      console.log(`[AI/GPT] ${(parsed.videos || []).length} video trend analizi yapildi`);
-      return parsed;
-    } catch {
-      console.warn('[AI/GPT] JSON parse hatasi');
-      return {
-        videos: videos.map(v => ({ id: v.id, viralPotential: 5, audienceType: 'general', emergingTrends: [] })),
-        topTrends: [],
-        overallMood: 'neutral',
-      };
-    }
-  } catch (err) {
-    console.error('[AI/GPT] Trend analizi hatasi:', err.message);
-    return {
-      videos: videos.map(v => ({ id: v.id, viralPotential: 5, audienceType: 'general', emergingTrends: [] })),
-      topTrends: [],
-      overallMood: 'neutral',
-    };
-  }
-}
-
-/**
- * Gemini ile hashtag onerisi + cok dilli icerik analizi + stream mood
+ * Gemini: Hashtag onerisi + trend analizi + dil & kitle analizi + mood
+ * (Eski GPT gorevi: emergingTrends, topTrends, overallMood buraya eklendi)
  */
 async function analyzeWithGemini(videos, comments) {
   if (!geminiModel || videos.length === 0) {
@@ -211,12 +165,16 @@ async function analyzeWithGemini(videos, comments) {
       streamMood: 'neutral',
       categoryBreakdown: {},
       trendPredictions: [],
+      emergingTrends: [],
+      topTrends: [],
+      overallMood: 'neutral',
     };
   }
 
   try {
     const dataForGemini = {
       videos: videos.slice(0, 25).map(v => ({
+        id: v.id,
         description: v.description,
         hashtags: v.hashtags,
         stats: v.stats,
@@ -244,13 +202,21 @@ Analyze and return this exact JSON structure:
     "primaryAge": "18-24",
     "interests": ["music", "comedy"],
     "engagementStyle": "passive" | "active" | "creator"
-  }
+  },
+  "emergingTrends": [
+    {"videoId": "id", "trends": ["dance", "challenge"]}
+  ],
+  "topTrends": ["trend1", "trend2", "trend3", "trend4", "trend5"],
+  "overallMood": "energetic"
 }
 
 Rules:
 - suggestedHashtags: Recommend 10 trending hashtags based on content patterns
 - contentLanguages: Percentage breakdown of languages detected
 - trendPredictions: Top 5 predicted trends with confidence scores
+- emergingTrends: For each video, identify emerging trend keywords from description/hashtags
+- topTrends: Top 5 overall emerging trends across ALL videos
+- overallMood: General mood/energy of the content ("energetic", "chill", "funny", "dramatic", "educational", "neutral")
 - Be specific to Turkish TikTok market when possible
 - Return ONLY the JSON object, nothing else`;
 
@@ -266,7 +232,7 @@ Rules:
 
     try {
       const parsed = JSON.parse(jsonStr);
-      console.log(`[AI/Gemini] Analiz tamamlandi: ${(parsed.suggestedHashtags || []).length} hashtag onerisi, ${(parsed.trendPredictions || []).length} trend tahmini`);
+      console.log(`[AI/Gemini] Analiz tamamlandi: ${(parsed.suggestedHashtags || []).length} hashtag, ${(parsed.topTrends || []).length} trend, ${(parsed.trendPredictions || []).length} tahmin`);
       return parsed;
     } catch {
       console.warn('[AI/Gemini] JSON parse hatasi');
@@ -276,6 +242,9 @@ Rules:
         streamMood: 'neutral',
         categoryBreakdown: {},
         trendPredictions: [],
+        emergingTrends: [],
+        topTrends: [],
+        overallMood: 'neutral',
       };
     }
   } catch (err) {
@@ -286,12 +255,15 @@ Rules:
       streamMood: 'neutral',
       categoryBreakdown: {},
       trendPredictions: [],
+      emergingTrends: [],
+      topTrends: [],
+      overallMood: 'neutral',
     };
   }
 }
 
 /**
- * Ana isleme fonksiyonu: Claude + GPT + Gemini paralel calistir
+ * Ana isleme fonksiyonu: Claude + Gemini paralel calistir (GPT devre disi)
  */
 async function processData(scrapedData) {
   if (!scrapedData || !scrapedData.videos) {
@@ -320,26 +292,25 @@ async function processData(scrapedData) {
     }
   }
 
-  // Claude + GPT + Gemini paralel calistir
-  console.log('[AI] 3-lu paralel analiz basliyor (Claude + GPT + Gemini)...');
-  const [commentResults, trendResults, geminiResults] = await Promise.all([
-    analyzeCommentsWithClaude(allComments).catch(err => {
+  // Claude + Gemini paralel calistir
+  console.log('[AI] 2-li paralel analiz basliyor (Claude + Gemini)...');
+  const [claudeResults, geminiResults] = await Promise.all([
+    analyzeWithClaude(allComments, videos).catch(err => {
       console.error('[AI] Claude hatasi:', err.message);
-      return allComments.map(c => ({ ...c, isSpam: false, isToxic: false, isBot: false, sentiment: 'neutral' }));
-    }),
-    analyzeTrendsWithGPT(videos).catch(err => {
-      console.error('[AI] GPT hatasi:', err.message);
-      return { videos: [], topTrends: [], overallMood: 'neutral' };
+      return {
+        comments: allComments.map(c => ({ ...c, isSpam: false, isToxic: false, isBot: false, sentiment: 'neutral' })),
+        videoScores: [],
+      };
     }),
     analyzeWithGemini(videos, allComments).catch(err => {
       console.error('[AI] Gemini hatasi:', err.message);
-      return { suggestedHashtags: [], contentLanguages: {}, streamMood: 'neutral', categoryBreakdown: {}, trendPredictions: [] };
+      return { suggestedHashtags: [], contentLanguages: {}, streamMood: 'neutral', categoryBreakdown: {}, trendPredictions: [], emergingTrends: [], topTrends: [], overallMood: 'neutral' };
     }),
   ]);
 
   // Yorum sonuclarini videolara geri eslestir
   const videoCommentsMap = new Map();
-  commentResults.forEach((comment, index) => {
+  claudeResults.comments.forEach((comment, index) => {
     const videoId = commentVideoMap.get(index);
     if (!videoCommentsMap.has(videoId)) {
       videoCommentsMap.set(videoId, []);
@@ -347,11 +318,19 @@ async function processData(scrapedData) {
     videoCommentsMap.get(videoId).push(comment);
   });
 
-  // GPT sonuclarini video ID'ye eslestir
-  const gptVideoMap = new Map();
-  if (trendResults.videos) {
-    trendResults.videos.forEach(v => {
-      gptVideoMap.set(v.id, v);
+  // Claude video skorlarini eslestir
+  const claudeScoreMap = new Map();
+  if (claudeResults.videoScores) {
+    claudeResults.videoScores.forEach(v => {
+      claudeScoreMap.set(v.id, v);
+    });
+  }
+
+  // Gemini emerging trends eslestir
+  const geminiTrendsMap = new Map();
+  if (geminiResults.emergingTrends) {
+    geminiResults.emergingTrends.forEach(v => {
+      if (v.videoId) geminiTrendsMap.set(v.videoId, v.trends || []);
     });
   }
 
@@ -374,7 +353,7 @@ async function processData(scrapedData) {
     const dominantSentiment = Object.entries(sentimentCounts)
       .sort((a, b) => b[1] - a[1])[0]?.[0] || 'neutral';
 
-    const gptData = gptVideoMap.get(video.id) || {};
+    const claudeScore = claudeScoreMap.get(video.id) || {};
     const spamCount = videoComments.filter(c => c.isSpam).length;
 
     return {
@@ -388,18 +367,18 @@ async function processData(scrapedData) {
       stats: video.stats,
       hashtags: video.hashtags,
       createdAt: video.createdAt,
-      viralPotential: gptData.viralPotential || calculateViralPotential(video),
-      audienceType: gptData.audienceType || 'general',
+      viralPotential: claudeScore.viralPotential || calculateViralPotential(video),
+      audienceType: claudeScore.audienceType || 'general',
       topComments: filteredComments.slice(0, 5).map(c => c.text),
       commentSentiment: dominantSentiment,
       spamCommentRatio: videoComments.length > 0 ? spamCount / videoComments.length : 0,
-      topTopics: gptData.emergingTrends || [],
+      topTopics: geminiTrendsMap.get(video.id) || [],
     };
   });
 
   processedVideos.sort((a, b) => b.viralPotential - a.viralPotential);
 
-  // Top hashtag'ler (Gemini onerileriyle zenginlestirilmis)
+  // Top hashtag'ler
   const topHashtags = Array.from(hashtagCounts.entries())
     .sort((a, b) => b[1] - a[1])
     .slice(0, 20)
@@ -415,8 +394,8 @@ async function processData(scrapedData) {
     processedAt: Date.now(),
     trendScore: Math.round(avgViralPotential * 10) / 10,
     topHashtags,
-    topTrends: trendResults.topTrends || [],
-    overallMood: trendResults.overallMood || 'neutral',
+    topTrends: geminiResults.topTrends || [],
+    overallMood: geminiResults.overallMood || 'neutral',
     videos: processedVideos,
     source: scrapedData.source,
     // Gemini verileri
@@ -432,7 +411,7 @@ async function processData(scrapedData) {
     },
   };
 
-  console.log(`[AI] 3-lu analiz tamamlandi: ${processedVideos.length} video, ${topHashtags.length} hashtag, Gemini: ${(geminiResults.suggestedHashtags || []).length} oneri`);
+  console.log(`[AI] 2-li analiz tamamlandi: ${processedVideos.length} video, ${topHashtags.length} hashtag, Gemini: ${(geminiResults.suggestedHashtags || []).length} oneri`);
   return result;
 }
 

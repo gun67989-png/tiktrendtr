@@ -15,7 +15,6 @@ import {
   FiLogOut,
   FiMenu,
   FiX,
-  FiActivity,
   FiPlay,
   FiShield,
   FiUser,
@@ -25,6 +24,7 @@ import {
   FiStar,
   FiCreditCard,
 } from "react-icons/fi";
+import WelcomeOverlay from "@/components/WelcomeOverlay";
 
 // Premium pages — free users see the PremiumGate inside these pages
 const PREMIUM_PATHS = [
@@ -96,6 +96,12 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-background flex">
+      {/* Welcome back overlay — once per session, with username */}
+      <WelcomeOverlay
+        username={user?.username}
+        storageKey="tiktrendtr_dashboard_welcome"
+      />
+
       {/* Mobile overlay */}
       <AnimatePresence>
         {sidebarOpen && (
@@ -117,19 +123,19 @@ export default function DashboardLayout({
       >
         {/* Logo */}
         <div className="p-6 border-b border-border">
-          <div className="flex items-center gap-3">
+          <Link href="/dashboard" className="flex items-center gap-3">
             <div className="w-9 h-9 rounded-lg gradient-red flex items-center justify-center">
-              <FiActivity className="w-5 h-5 text-white" />
+              <FiTrendingUp className="w-5 h-5 text-white" />
             </div>
             <div>
               <h1 className="text-lg font-bold text-text-primary">
-                Tik<span className="text-neon-red">Trend</span>TR
+                TikTrend<span className="text-neon-red">TR</span>
               </h1>
               <p className="text-[10px] text-text-muted uppercase tracking-wider">
                 Trend Analytics
               </p>
             </div>
-          </div>
+          </Link>
         </div>
 
         {/* Navigation */}
@@ -289,9 +295,9 @@ export default function DashboardLayout({
               <FiMenu className="w-5 h-5 text-text-primary" />
             )}
           </button>
-          <h1 className="text-sm font-semibold text-text-primary">
-            Tik<span className="text-neon-red">Trend</span>TR
-          </h1>
+          <Link href="/dashboard" className="text-sm font-semibold text-text-primary">
+            TikTrend<span className="text-neon-red">TR</span>
+          </Link>
         </div>
 
         <div className="p-4 lg:p-8">{children}</div>

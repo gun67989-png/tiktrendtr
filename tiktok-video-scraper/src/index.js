@@ -31,11 +31,10 @@ async function main() {
     console.log(`  ${s.available ? '✓' : '✗'} ${s.name}: ${s.available ? 'HAZIR' : 'KAPALI'}`);
   });
 
-  // AI durumu
+  // AI durumu (2-li paralel: Claude + Gemini)
   console.log('[Config] AI durumu:');
-  console.log(`  ${process.env.ANTHROPIC_API_KEY ? '✓' : '✗'} Claude: ${process.env.ANTHROPIC_API_KEY ? 'HAZIR' : 'API key yok'}`);
-  console.log(`  ${process.env.OPENAI_API_KEY ? '✓' : '✗'} GPT-4: ${process.env.OPENAI_API_KEY ? 'HAZIR' : 'API key yok'}`);
-  console.log(`  ${process.env.GOOGLE_AI_KEY ? '✓' : '✗'} Gemini: ${process.env.GOOGLE_AI_KEY ? 'HAZIR' : 'API key yok'}`);
+  console.log(`  ${process.env.ANTHROPIC_API_KEY ? '✓' : '✗'} Claude: ${process.env.ANTHROPIC_API_KEY ? 'HAZIR' : 'API key yok'} (yorum analizi + viral skor)`);
+  console.log(`  ${process.env.GOOGLE_AI_KEY ? '✓' : '✗'} Gemini: ${process.env.GOOGLE_AI_KEY ? 'HAZIR' : 'API key yok'} (trend analizi + hashtag)`);
   console.log('');
 
   // 1. WebSocket sunucusunu baslat

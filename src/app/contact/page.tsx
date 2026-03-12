@@ -4,7 +4,6 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import Link from "next/link";
 import {
-  FiTrendingUp,
   FiSend,
   FiMessageCircle,
   FiAlertCircle,
@@ -12,6 +11,7 @@ import {
   FiCheckCircle,
   FiMail,
 } from "react-icons/fi";
+import LogoLink from "@/components/LogoLink";
 
 type Category = "destek" | "hata" | "oneri" | "diger";
 
@@ -45,12 +45,7 @@ export default function ContactPage() {
       {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg gradient-red flex items-center justify-center">
-              <FiTrendingUp className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-lg font-bold">TikTrend<span className="text-neon-red">TR</span></span>
-          </Link>
+          <LogoLink />
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm text-text-secondary hover:text-text-primary transition-colors px-4 py-2">
               Giris Yap
@@ -226,12 +221,7 @@ export default function ContactPage() {
       {/* Footer */}
       <footer className="border-t border-border py-8 px-6">
         <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
-            <div className="w-6 h-6 rounded-lg gradient-red flex items-center justify-center">
-              <FiTrendingUp className="w-3 h-3 text-white" />
-            </div>
-            <span className="text-sm font-bold">TikTrend<span className="text-neon-red">TR</span></span>
-          </div>
+          <LogoLink size="sm" />
           <div className="flex items-center gap-6 text-xs text-text-secondary">
             <Link href="/privacy-policy" className="hover:text-text-primary transition-colors">Gizlilik</Link>
             <Link href="/terms-of-service" className="hover:text-text-primary transition-colors">Kullanim Sartlari</Link>

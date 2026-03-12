@@ -6,13 +6,14 @@ import {
   FiEye,
   FiEyeOff,
   FiLock,
-  FiZap,
   FiUser,
   FiMail,
   FiUserPlus,
+  FiArrowLeft,
 } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import LogoLink from "@/components/LogoLink";
 
 export default function RegisterPage() {
   const [username, setUsername] = useState("");
@@ -102,6 +103,23 @@ export default function RegisterPage() {
         }}
       />
 
+      {/* Back to Home */}
+      <motion.div
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        className="fixed top-0 left-0 right-0 z-20 px-4 py-4"
+      >
+        <div className="max-w-md mx-auto">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors text-sm"
+          >
+            <FiArrowLeft className="w-4 h-4" />
+            Ana Sayfa
+          </Link>
+        </div>
+      </motion.div>
+
       {/* Register Card */}
       <motion.div
         initial={{ opacity: 0, y: 30, scale: 0.95 }}
@@ -117,13 +135,8 @@ export default function RegisterPage() {
             transition={{ delay: 0.2 }}
             className="text-center mb-8"
           >
-            <div className="inline-flex items-center gap-2 mb-4">
-              <div className="w-10 h-10 rounded-xl gradient-red flex items-center justify-center">
-                <FiZap className="w-6 h-6 text-white" />
-              </div>
-              <h1 className="text-2xl font-bold text-text-primary">
-                Tik<span className="text-neon-red">Trend</span>TR
-              </h1>
+            <div className="inline-flex mb-4">
+              <LogoLink size="lg" />
             </div>
             <p className="text-text-secondary text-sm">Yeni Hesap Oluştur</p>
           </motion.div>

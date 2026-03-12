@@ -17,6 +17,7 @@ import {
   FiBarChart2,
   FiFileText,
 } from "react-icons/fi";
+import LogoLink from "@/components/LogoLink";
 
 type ViralTier = "mega_viral" | "viral" | "trend" | "rising" | null;
 
@@ -76,12 +77,7 @@ export default function ViralVideosPage() {
       {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
-          <Link href="/" className="flex items-center gap-2">
-            <div className="w-8 h-8 rounded-lg gradient-red flex items-center justify-center">
-              <FiTrendingUp className="w-4 h-4 text-white" />
-            </div>
-            <span className="text-lg font-bold">TikTrend<span className="text-neon-red">TR</span></span>
-          </Link>
+          <LogoLink />
           <div className="hidden md:flex items-center gap-6">
             <Link href="/viral-tiktok-videos-turkey" className="text-sm text-neon-red font-medium">Viral Videolar</Link>
             <Link href="/trending-hashtags-turkey" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Trend Hashtag&apos;ler</Link>
@@ -393,12 +389,7 @@ export default function ViralVideosPage() {
       <footer className="border-t border-border py-8 px-6">
         <div className="max-w-6xl mx-auto">
           <div className="flex flex-col md:flex-row items-center justify-between gap-4">
-            <div className="flex items-center gap-2">
-              <div className="w-6 h-6 rounded-lg gradient-red flex items-center justify-center">
-                <FiTrendingUp className="w-3 h-3 text-white" />
-              </div>
-              <span className="text-sm font-bold">TikTrend<span className="text-neon-red">TR</span></span>
-            </div>
+            <LogoLink size="sm" />
             <div className="flex items-center gap-6 text-xs text-text-secondary">
               <Link href="/viral-tiktok-videos-turkey" className="hover:text-text-primary transition-colors">Viral Videolar</Link>
               <Link href="/trending-hashtags-turkey" className="hover:text-text-primary transition-colors">Trend Hashtag&apos;ler</Link>
