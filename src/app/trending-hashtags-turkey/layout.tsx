@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Trending TikTok Hashtags in Turkey | TikTrendTR",
+  title: "Trending TikTok Hashtags in Turkey | Valyze",
   description:
     "Discover trending TikTok hashtags in Turkey with detailed statistics. Video counts, average views, growth rates, and emerging hashtags updated daily.",
   keywords: [
@@ -14,12 +14,12 @@ export const metadata: Metadata = {
     "tiktok hashtag istatistikleri",
   ],
   openGraph: {
-    title: "Trending TikTok Hashtags in Turkey | TikTrendTR",
+    title: "Trending TikTok Hashtags in Turkey | Valyze",
     description:
       "Discover trending TikTok hashtags in Turkey with video counts, average views, and growth rates.",
     type: "website",
     locale: "tr_TR",
-    siteName: "TikTrendTR",
+    siteName: "Valyze",
   },
   alternates: {
     canonical: "/trending-hashtags-turkey",

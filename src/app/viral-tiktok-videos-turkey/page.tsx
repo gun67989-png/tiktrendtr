@@ -324,7 +324,7 @@ export default function ViralVideosPage() {
           <h2 className="text-2xl font-bold mb-6">Turkiye&apos;de Viral TikTok Videolari Hakkinda</h2>
           <div className="prose prose-invert prose-sm max-w-none space-y-4 text-text-secondary">
             <p>
-              TikTrendTR, Turkiye&apos;deki en viral TikTok videolarini analiz ederek icerik ureticilerinin
+              Valyze, Turkiye&apos;deki en viral TikTok videolarini analiz ederek icerik ureticilerinin
               trendleri yakin takip etmesini saglar. Platformumuz her gun binlerce videoyu tarayarak
               en cok izlenen, en cok paylasilan ve en hizli buyuyen icerikleri tespit eder.
             </p>
@@ -396,7 +396,7 @@ export default function ViralVideosPage() {
               <Link href="/tiktok-trend-report" className="hover:text-text-primary transition-colors">Haftalik Rapor</Link>
               <Link href="/pricing" className="hover:text-text-primary transition-colors">Fiyatlandirma</Link>
             </div>
-            <p className="text-[10px] text-text-muted">&copy; 2026 TikTrendTR. Tum haklari saklidir.</p>
+            <p className="text-[10px] text-text-muted">&copy; 2026 Valyze. Tum haklari saklidir.</p>
           </div>
         </div>
       </footer>

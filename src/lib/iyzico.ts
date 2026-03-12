@@ -73,7 +73,7 @@ export async function createSinglePaymentCheckout(
     buyer: {
       id: params.userId,
       name: params.name || "Kullanici",
-      surname: params.surname || "TikTrendTR",
+      surname: params.surname || "Valyze",
       email: params.email,
       identityNumber: "11111111111", // TC zorunlu ama saklanmayacak
       registrationAddress: "Istanbul, Turkey",
@@ -82,21 +82,21 @@ export async function createSinglePaymentCheckout(
       country: "Turkey",
     },
     shippingAddress: {
-      contactName: `${params.name || "Kullanici"} ${params.surname || "TikTrendTR"}`,
+      contactName: `${params.name || "Kullanici"} ${params.surname || "Valyze"}`,
       city: "Istanbul",
       country: "Turkey",
       address: "Istanbul, Turkey",
     },
     billingAddress: {
-      contactName: `${params.name || "Kullanici"} ${params.surname || "TikTrendTR"}`,
+      contactName: `${params.name || "Kullanici"} ${params.surname || "Valyze"}`,
       city: "Istanbul",
       country: "Turkey",
       address: "Istanbul, Turkey",
     },
     basketItems: [
       {
-        id: "TIKTRENDTR_PRO_MONTHLY",
-        name: "TikTrendTR Pro Plan (30 Gün)",
+        id: "VALYZE_PRO_MONTHLY",
+        name: "Valyze Pro Plan (30 Gün)",
         category1: "Abonelik",
         itemType: Iyzipay.BASKET_ITEM_TYPE.VIRTUAL,
         price: "299",
@@ -127,7 +127,7 @@ export async function createSubscriptionCheckout(
     buyer: {
       id: params.userId,
       name: params.name || "Kullanici",
-      surname: params.surname || "TikTrendTR",
+      surname: params.surname || "Valyze",
       email: params.email,
       identityNumber: "11111111111",
       registrationAddress: "Istanbul, Turkey",
@@ -136,21 +136,21 @@ export async function createSubscriptionCheckout(
       country: "Turkey",
     },
     shippingAddress: {
-      contactName: `${params.name || "Kullanici"} ${params.surname || "TikTrendTR"}`,
+      contactName: `${params.name || "Kullanici"} ${params.surname || "Valyze"}`,
       city: "Istanbul",
       country: "Turkey",
       address: "Istanbul, Turkey",
     },
     billingAddress: {
-      contactName: `${params.name || "Kullanici"} ${params.surname || "TikTrendTR"}`,
+      contactName: `${params.name || "Kullanici"} ${params.surname || "Valyze"}`,
       city: "Istanbul",
       country: "Turkey",
       address: "Istanbul, Turkey",
     },
     basketItems: [
       {
-        id: "TIKTRENDTR_PRO_SUBSCRIPTION",
-        name: "TikTrendTR Pro Aylık Abonelik",
+        id: "VALYZE_PRO_SUBSCRIPTION",
+        name: "Valyze Pro Aylık Abonelik",
         category1: "Abonelik",
         itemType: Iyzipay.BASKET_ITEM_TYPE.VIRTUAL,
         price: "299",

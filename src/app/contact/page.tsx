@@ -227,7 +227,7 @@ export default function ContactPage() {
             <Link href="/terms-of-service" className="hover:text-text-primary transition-colors">Kullanim Sartlari</Link>
             <Link href="/cookie-policy" className="hover:text-text-primary transition-colors">Cerezler</Link>
           </div>
-          <p className="text-[10px] text-text-muted">&copy; 2026 TikTrendTR</p>
+          <p className="text-[10px] text-text-muted">&copy; 2026 Valyze</p>
         </div>
       </footer>
     </div>

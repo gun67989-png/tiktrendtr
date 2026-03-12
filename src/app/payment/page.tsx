@@ -125,7 +125,7 @@ function PaymentPageContent() {
           className="bg-surface rounded-xl border border-border p-6 mb-8"
         >
           <div className="flex justify-between items-center mb-4">
-            <span className="text-sm text-text-secondary">TikTrendTR Pro Plan</span>
+            <span className="text-sm text-text-secondary">Valyze Pro Plan</span>
             <span className="text-sm font-semibold text-text-primary">₺299,00</span>
           </div>
           <div className="border-t border-border pt-4 flex justify-between items-center">

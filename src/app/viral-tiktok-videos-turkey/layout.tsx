@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Top Viral TikTok Videos in Turkey Today | TikTrendTR",
+  title: "Top Viral TikTok Videos in Turkey Today | Valyze",
   description:
     "Discover the most viral TikTok videos in Turkey today. View counts, creator profiles, hashtags, and direct links. Updated daily with fresh viral content.",
   keywords: [
@@ -14,12 +14,12 @@ export const metadata: Metadata = {
     "turkiye tiktok kesfet",
   ],
   openGraph: {
-    title: "Top Viral TikTok Videos in Turkey Today | TikTrendTR",
+    title: "Top Viral TikTok Videos in Turkey Today | Valyze",
     description:
       "Discover the most viral TikTok videos in Turkey. Updated daily with view counts, creators, and hashtags.",
     type: "website",
     locale: "tr_TR",
-    siteName: "TikTrendTR",
+    siteName: "Valyze",
   },
   alternates: {
     canonical: "/viral-tiktok-videos-turkey",

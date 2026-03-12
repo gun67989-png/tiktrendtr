@@ -12,7 +12,7 @@ export default function CookiePolicyPage() {
             <div className="w-8 h-8 rounded-lg gradient-red flex items-center justify-center">
               <FiTrendingUp className="w-4 h-4 text-white" />
             </div>
-            <span className="text-lg font-bold">TikTrend<span className="text-neon-red">TR</span></span>
+            <span className="text-lg font-bold">Val<span className="text-neon-red">yze</span></span>
           </Link>
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm text-text-secondary hover:text-text-primary transition-colors px-4 py-2">Giris Yap</Link>
@@ -177,7 +177,7 @@ export default function CookiePolicyPage() {
 
       <footer className="border-t border-border py-6 px-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <p className="text-[10px] text-text-muted">&copy; 2026 TikTrendTR. Tum haklari saklidir.</p>
+          <p className="text-[10px] text-text-muted">&copy; 2026 Valyze. Tum haklari saklidir.</p>
           <div className="flex gap-4 text-[10px] text-text-muted">
             <Link href="/privacy-policy" className="hover:text-text-primary transition-colors">Gizlilik</Link>
             <Link href="/terms-of-service" className="hover:text-text-primary transition-colors">Sartlar</Link>

@@ -315,7 +315,7 @@ export default function TrendingHashtagsPage() {
           <div className="prose prose-invert prose-sm max-w-none space-y-4 text-text-secondary">
             <p>
               TikTok hashtag&apos;leri, iceriklerin kesfedilmesinde kritik bir rol oynar. Dogru hashtag&apos;leri
-              kullanmak, videolarinizin daha genis bir kitleye ulasmasini saglar. TikTrendTR, Turkiye&apos;deki
+              kullanmak, videolarinizin daha genis bir kitleye ulasmasini saglar. Valyze, Turkiye&apos;deki
               en trend hashtag&apos;leri analiz ederek size en guncel verileri sunar.
             </p>
             <p>
@@ -386,7 +386,7 @@ export default function TrendingHashtagsPage() {
               <Link href="/tiktok-trend-report" className="hover:text-text-primary transition-colors">Haftalik Rapor</Link>
               <Link href="/pricing" className="hover:text-text-primary transition-colors">Fiyatlandirma</Link>
             </div>
-            <p className="text-[10px] text-text-muted">&copy; 2026 TikTrendTR. Tum haklari saklidir.</p>
+            <p className="text-[10px] text-text-muted">&copy; 2026 Valyze. Tum haklari saklidir.</p>
           </div>
         </div>
       </footer>

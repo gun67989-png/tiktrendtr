@@ -392,7 +392,7 @@ export default function TrendReportPage() {
           <h2 className="text-2xl font-bold mb-6">TikTok Haftalik Trend Raporu Hakkinda</h2>
           <div className="prose prose-invert prose-sm max-w-none space-y-4 text-text-secondary">
             <p>
-              TikTrendTR haftalik trend raporu, Turkiye&apos;deki TikTok ekosisteminin kapsamli
+              Valyze haftalik trend raporu, Turkiye&apos;deki TikTok ekosisteminin kapsamli
               bir analizini sunar. Trend video formatlari, yukselen nisler, en iyi paylasim
               zamanlari ve en hizli buyuyen hashtag&apos;ler gibi onemli verileri iceren bu rapor,
               icerik ureticilerinin stratejilerini optimize etmelerine yardimci olur.
@@ -465,7 +465,7 @@ export default function TrendReportPage() {
               <Link href="/tiktok-trend-report" className="hover:text-text-primary transition-colors">Haftalik Rapor</Link>
               <Link href="/pricing" className="hover:text-text-primary transition-colors">Fiyatlandirma</Link>
             </div>
-            <p className="text-[10px] text-text-muted">&copy; 2026 TikTrendTR. Tum haklari saklidir.</p>
+            <p className="text-[10px] text-text-muted">&copy; 2026 Valyze. Tum haklari saklidir.</p>
           </div>
         </div>
       </footer>

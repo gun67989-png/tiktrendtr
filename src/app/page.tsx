@@ -460,7 +460,7 @@ export default function LandingPage() {
               Basla
             </h2>
             <p className="text-sm text-text-secondary mb-6 max-w-md mx-auto">
-              Viral firsatlari kesfetmek icin TikTrendTR kullanan ureticilere katilin.
+              Viral firsatlari kesfetmek icin Valyze kullanan ureticilere katilin.
             </p>
             <Link
               href="/register"
@@ -519,7 +519,7 @@ export default function LandingPage() {
           </div>
 
           <div className="border-t border-border pt-4 flex items-center justify-between">
-            <p className="text-[10px] text-text-muted">&copy; 2026 TikTrendTR</p>
+            <p className="text-[10px] text-text-muted">&copy; 2026 Valyze</p>
             <p className="text-[10px] text-text-muted">Turkiye&apos;de yapildi</p>
           </div>
         </div>

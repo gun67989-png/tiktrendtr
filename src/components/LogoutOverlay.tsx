@@ -67,8 +67,8 @@ export default function LogoutOverlay({
   const particles = useMemo(() => makeParticles(8), []);
   const shapes = useMemo(() => makeShapes(5), []);
 
-  const brandName = "TikTrend";
-  const brandAccent = "TR";
+  const brandName = "Val";
+  const brandAccent = "yze";
   const allLetters = [...brandName.split(""), ...brandAccent.split("")];
 
   const handleConfirm = useCallback(() => {

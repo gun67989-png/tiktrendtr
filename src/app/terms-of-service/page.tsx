@@ -12,7 +12,7 @@ export default function TermsOfServicePage() {
             <div className="w-8 h-8 rounded-lg gradient-red flex items-center justify-center">
               <FiTrendingUp className="w-4 h-4 text-white" />
             </div>
-            <span className="text-lg font-bold">TikTrend<span className="text-neon-red">TR</span></span>
+            <span className="text-lg font-bold">Val<span className="text-neon-red">yze</span></span>
           </Link>
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm text-text-secondary hover:text-text-primary transition-colors px-4 py-2">Giris Yap</Link>
@@ -34,7 +34,7 @@ export default function TermsOfServicePage() {
             <section>
               <h2 className="text-lg font-semibold text-text-primary mb-3">1. Kabul ve Onay</h2>
               <p>
-                TikTrendTR platformuna kayit olarak veya platformu kullanarak bu Kullanim Sartlarini
+                Valyze platformuna kayit olarak veya platformu kullanarak bu Kullanim Sartlarini
                 kabul etmis sayilirsiniz. Bu sartlari kabul etmiyorsaniz platformu kullanamazsiniz.
                 Platform 18 yas ve uzeri kullanicilar icindir.
               </p>
@@ -43,7 +43,7 @@ export default function TermsOfServicePage() {
             <section>
               <h2 className="text-lg font-semibold text-text-primary mb-3">2. Hizmet Tanimi</h2>
               <p>
-                TikTrendTR, TikTok platformundaki trend verileri analiz eden bir SaaS (Software as a Service)
+                Valyze, TikTok platformundaki trend verileri analiz eden bir SaaS (Software as a Service)
                 platformudur. Sunulan hizmetler:
               </p>
               <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
@@ -94,7 +94,7 @@ export default function TermsOfServicePage() {
             <section>
               <h2 className="text-lg font-semibold text-text-primary mb-3">6. Fikri Mulkiyet</h2>
               <p>
-                Platform tasarimi, kodu, logosu, icerik ve analizleri TikTrendTR&apos;nin fikri mulkiyetidir.
+                Platform tasarimi, kodu, logosu, icerik ve analizleri Valyze&apos;nin fikri mulkiyetidir.
                 Platformdaki analiz verileri kisisel ve ticari icerik stratejiniz icin kullanilabilir, ancak
                 verilerin toplu olarak kopyalanmasi, yeniden yayinlanmasi veya satilmasi yasaktir.
                 TikTok markalari ve verileri ilgili hak sahiplerine aittir.
@@ -104,7 +104,7 @@ export default function TermsOfServicePage() {
             <section>
               <h2 className="text-lg font-semibold text-text-primary mb-3">7. Sorumluluk Sinirlamasi</h2>
               <p>
-                TikTrendTR, sunulan analizlerin ve tahminlerin dogrulugunu garanti etmez. Platform
+                Valyze, sunulan analizlerin ve tahminlerin dogrulugunu garanti etmez. Platform
                 &quot;oldugu gibi&quot; sunulmaktadir. Platformun kullanimindan dogan dolayli, ozel veya sonuc
                 olarak ortaya cikan zararlardan sorumlu degiliz. TikTok&apos;un API veya politika
                 degisikliklerinden kaynaklanabilecek hizmet kesintilerinden sorumlulugumuz bulunmamaktadir.
@@ -160,7 +160,7 @@ export default function TermsOfServicePage() {
 
       <footer className="border-t border-border py-6 px-6">
         <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <p className="text-[10px] text-text-muted">&copy; 2026 TikTrendTR. Tum haklari saklidir.</p>
+          <p className="text-[10px] text-text-muted">&copy; 2026 Valyze. Tum haklari saklidir.</p>
           <div className="flex gap-4 text-[10px] text-text-muted">
             <Link href="/privacy-policy" className="hover:text-text-primary transition-colors">Gizlilik</Link>
             <Link href="/terms-of-service" className="hover:text-text-primary transition-colors">Sartlar</Link>

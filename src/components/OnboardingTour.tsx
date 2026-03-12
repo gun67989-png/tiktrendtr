@@ -26,7 +26,7 @@ export default function OnboardingTour({
   const [visible, setVisible] = useState(false);
   const [current, setCurrent] = useState(0);
 
-  const storageKey = `tiktrendtr_tour_${tourKey}`;
+  const storageKey = `valyze_tour_${tourKey}`;
 
   useEffect(() => {
     if (localStorage.getItem(storageKey)) return;

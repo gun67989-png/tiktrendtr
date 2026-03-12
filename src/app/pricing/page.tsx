@@ -124,7 +124,7 @@ function PricingPageContent() {
             Planınızı Seçin
           </h1>
           <p className="text-text-secondary max-w-lg mx-auto">
-            TikTrend ile viral içerik üretmeye bugün başlayın. İstediğiniz zaman plan değiştirebilirsiniz.
+            Valyze ile viral içerik üretmeye bugün başlayın. İstediğiniz zaman plan değiştirebilirsiniz.
           </p>
         </motion.div>
 

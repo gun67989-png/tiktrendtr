@@ -41,7 +41,7 @@ export async function POST(request: NextRequest) {
     // İsmi parçala
     const nameParts = (user.username || "Kullanici").split(" ");
     const name = nameParts[0] || "Kullanici";
-    const surname = nameParts.slice(1).join(" ") || "TikTrendTR";
+    const surname = nameParts.slice(1).join(" ") || "Valyze";
 
     const conversationId = `${paymentType}_${user.id}_${Date.now()}`;
 

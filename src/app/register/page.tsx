@@ -176,7 +176,7 @@ function RegisterContent() {
             </div>
             <div>
               <h1 className="text-3xl xl:text-4xl font-bold text-text-primary">
-                TikTrend<span className="text-neon-red">TR</span>
+                Val<span className="text-neon-red">yze</span>
               </h1>
               <p className="text-text-muted text-sm tracking-wide">
                 TikTok Trend Analiz Platformu

@@ -1,4 +1,4 @@
-name: TikTok Scraper Cron (Batch 3-6)
+name: Valyze Scraper Cron (Batch 3-6)
 
 on:
   schedule:
@@ -28,7 +28,7 @@ jobs:
       - name: Run Batch 3
         run: |
           curl -sf -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-            "https://tiktrendtr.vercel.app/api/cron/collect?batch=3"
+            "https://valyze.vercel.app/api/cron/collect?batch=3"
 
   batch4:
     if: github.event.schedule == '3 6 * * *' || (github.event_name == 'workflow_dispatch' && github.event.inputs.batch == '4')
@@ -38,7 +38,7 @@ jobs:
       - name: Run Batch 4
         run: |
           curl -sf -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-            "https://tiktrendtr.vercel.app/api/cron/collect?batch=4"
+            "https://valyze.vercel.app/api/cron/collect?batch=4"
 
   batch5:
     if: github.event.schedule == '4 6 * * *' || (github.event_name == 'workflow_dispatch' && github.event.inputs.batch == '5')
@@ -48,7 +48,7 @@ jobs:
       - name: Run Batch 5
         run: |
           curl -sf -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-            "https://tiktrendtr.vercel.app/api/cron/collect?batch=5"
+            "https://valyze.vercel.app/api/cron/collect?batch=5"
 
   batch6:
     if: github.event.schedule == '5 6 * * *' || (github.event_name == 'workflow_dispatch' && github.event.inputs.batch == '6')
@@ -58,4 +58,4 @@ jobs:
       - name: Run Batch 6
         run: |
           curl -sf -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}" \
-            "https://tiktrendtr.vercel.app/api/cron/collect?batch=6"
+            "https://valyze.vercel.app/api/cron/collect?batch=6"

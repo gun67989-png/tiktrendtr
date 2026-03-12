@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "TikTok Weekly Trend Report - Turkey | TikTrendTR",
+  title: "TikTok Weekly Trend Report - Turkey | Valyze",
   description:
     "Weekly TikTok trend analysis for Turkey. Trending video formats, popular niches, best posting times, and fastest growing hashtags. Updated weekly.",
   keywords: [
@@ -14,12 +14,12 @@ export const metadata: Metadata = {
     "tiktok turkiye analiz",
   ],
   openGraph: {
-    title: "TikTok Weekly Trend Report - Turkey | TikTrendTR",
+    title: "TikTok Weekly Trend Report - Turkey | Valyze",
     description:
       "Weekly TikTok trend analysis for Turkey. Trending formats, popular niches, best posting times, and growing hashtags.",
     type: "website",
     locale: "tr_TR",
-    siteName: "TikTrendTR",
+    siteName: "Valyze",
   },
   alternates: {
     canonical: "/tiktok-trend-report",

@@ -125,7 +125,7 @@ export default function AboutPage() {
               Platformu
             </h1>
             <p className="text-text-secondary text-sm md:text-base max-w-xl mx-auto leading-relaxed">
-              TikTrendTR, Turkiye&apos;deki icerik ureticilerine, markalara ve
+              Valyze, Turkiye&apos;deki icerik ureticilerine, markalara ve
               dijital pazarlamacilara veri odakli TikTok analizi sunan bagimsiz
               bir teknoloji platformudur.
             </p>
@@ -344,7 +344,7 @@ export default function AboutPage() {
             </h2>
             <p className="text-sm text-text-secondary mb-5 max-w-md mx-auto">
               Binlerce icerik ureticisi viral firsatlari kesfetmek icin
-              TikTrendTR kullaniyor. Ucretsiz hesabinizi hemen olusturun.
+              Valyze kullaniyor. Ucretsiz hesabinizi hemen olusturun.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
@@ -390,7 +390,7 @@ export default function AboutPage() {
             </Link>
           </div>
           <p className="text-[10px] text-text-muted">
-            &copy; 2026 TikTrendTR
+            &copy; 2026 Valyze
           </p>
         </div>
       </footer>

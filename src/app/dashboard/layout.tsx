@@ -140,7 +140,7 @@ export default function DashboardLayout({
             </div>
             <div>
               <h1 className="text-lg font-bold text-text-primary">
-                TikTrend<span className="text-neon-red">TR</span>
+                Val<span className="text-neon-red">yze</span>
               </h1>
               <p className="text-[10px] text-text-muted uppercase tracking-wider">
                 Trend Analytics
@@ -307,7 +307,7 @@ export default function DashboardLayout({
             )}
           </button>
           <Link href="/dashboard" className="text-sm font-semibold text-text-primary">
-            TikTrend<span className="text-neon-red">TR</span>
+            Val<span className="text-neon-red">yze</span>
           </Link>
         </div>
 

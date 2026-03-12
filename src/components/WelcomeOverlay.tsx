@@ -74,8 +74,8 @@ export default function WelcomeOverlay({
     return () => clearTimeout(timer);
   }, [visible]);
 
-  const brandName = "TikTrend";
-  const brandAccent = "TR";
+  const brandName = "Val";
+  const brandAccent = "yze";
 
   return (
     <AnimatePresence>

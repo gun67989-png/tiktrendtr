@@ -60,7 +60,7 @@ export async function GET(request: NextRequest) {
           .replace(/\s+/g, "_")
           .replace(/[^a-zA-Z0-9_]/g, "");
         user = await createOAuthUser({
-          email: profile.email || `tiktok_${profile.providerId}@tiktrendtr.local`,
+          email: profile.email || `tiktok_${profile.providerId}@valyze.local`,
           username: username || `tiktok_${profile.providerId.slice(-6)}`,
           oauth_provider: "tiktok",
           oauth_provider_id: profile.providerId,

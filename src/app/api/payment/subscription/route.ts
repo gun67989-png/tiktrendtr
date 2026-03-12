@@ -38,7 +38,7 @@ export async function POST(request: NextRequest) {
       userId: user.id,
       email: user.email,
       name: nameParts[0] || "Kullanici",
-      surname: nameParts.slice(1).join(" ") || "TikTrendTR",
+      surname: nameParts.slice(1).join(" ") || "Valyze",
       ip,
       conversationId,
     });

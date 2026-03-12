@@ -60,7 +60,7 @@ export async function seedDefaultAdmin(): Promise<void> {
     const hashedPassword = await bcrypt.hash("antmalya4407", 12);
     await supabase.from("users").insert({
       username: "admin",
-      email: "admin@tiktrendtr.com",
+      email: "admin@valyze.app",
       password: hashedPassword,
       role: "admin",
       disabled: false,
@@ -74,7 +74,7 @@ export async function seedDefaultAdmin(): Promise<void> {
       {
         id: nanoid(),
         username: "admin",
-        email: "admin@tiktrendtr.com",
+        email: "admin@valyze.app",
         password: hashedPassword,
         role: "admin",
         disabled: false,
