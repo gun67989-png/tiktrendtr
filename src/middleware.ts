@@ -41,9 +41,13 @@ export async function middleware(request: NextRequest) {
     pathname === "/privacy-policy" ||
     pathname === "/terms-of-service" ||
     pathname === "/cookie-policy" ||
+    pathname === "/payment" ||
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/api/cron") ||
     pathname.startsWith("/api/public") ||
+    pathname.startsWith("/api/payment/callback") ||
+    pathname.startsWith("/api/payment/subscription/callback") ||
+    pathname.startsWith("/api/payment/webhook") ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon")
   ) {

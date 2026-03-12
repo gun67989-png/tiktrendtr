@@ -1,7 +1,7 @@
 import { SignJWT, jwtVerify } from "jose";
 import { cookies } from "next/headers";
 import bcrypt from "bcryptjs";
-import { findUserByEmailOrUsername, seedDefaultAdmin, type User } from "./db";
+import { findUserByEmailOrUsername, findUserById, seedDefaultAdmin, type User } from "./db";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "default-secret-change-me"
@@ -66,4 +66,32 @@ export async function getSession(): Promise<SessionPayload | null> {
   const token = cookieStore.get("session")?.value;
   if (!token) return null;
   return verifySession(token);
+}
+
+/**
+ * Ödeme sonrası session'ı yenile (subscriptionType güncellensin)
+ */
+export async function refreshSession(userId: string): Promise<string | null> {
+  const user = await findUserById(userId);
+  if (!user) return null;
+
+  const token = await createSession({
+    id: user.id,
+    username: user.username,
+    email: user.email,
+    role: user.role,
+    subscription_type: user.subscription_type,
+  });
+
+  // Cookie'yi güncelle
+  const cookieStore = cookies();
+  cookieStore.set("session", token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "lax",
+    maxAge: 7 * 24 * 60 * 60, // 7 gün
+    path: "/",
+  });
+
+  return token;
 }

@@ -102,7 +102,7 @@ export default function PremiumGate({ children, featureName = "Bu özellik" }: P
         </Link>
 
         <p className="text-[11px] text-text-muted">
-          Aylık sadece $19 &middot; İstediğin zaman iptal et
+          Aylık sadece ₺299 &middot; İstediğin zaman iptal et
         </p>
       </div>
     </motion.div>

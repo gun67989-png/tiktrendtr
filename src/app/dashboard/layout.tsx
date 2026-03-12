@@ -23,6 +23,7 @@ import {
   FiBarChart2,
   FiLock,
   FiStar,
+  FiCreditCard,
 } from "react-icons/fi";
 
 // Premium pages — free users see the PremiumGate inside these pages
@@ -163,6 +164,29 @@ export default function DashboardLayout({
               </button>
             );
           })}
+
+          {/* Fatura */}
+          <div className="my-3 border-t border-border" />
+          <button
+            onClick={() => {
+              router.push("/dashboard/billing");
+              setSidebarOpen(false);
+            }}
+            className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 ${
+              isActive("/dashboard/billing")
+                ? "bg-neon-red/10 text-neon-red"
+                : "text-text-secondary hover:text-text-primary hover:bg-surface-light"
+            }`}
+          >
+            <FiCreditCard className={`w-4 h-4 ${isActive("/dashboard/billing") ? "text-neon-red" : ""}`} />
+            <span className="flex-1 text-left">Fatura</span>
+            {isActive("/dashboard/billing") && (
+              <motion.div
+                layoutId="activeNavBilling"
+                className="w-1.5 h-1.5 rounded-full bg-neon-red"
+              />
+            )}
+          </button>
 
           {/* Admin Panel Link - only for admins */}
           {user?.role === "admin" && (
