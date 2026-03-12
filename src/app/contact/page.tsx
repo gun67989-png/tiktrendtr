@@ -220,14 +220,18 @@ export default function ContactPage() {
 
       {/* Footer */}
       <footer className="border-t border-border py-8 px-6">
-        <div className="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
-          <LogoLink size="sm" />
-          <div className="flex items-center gap-6 text-xs text-text-secondary">
-            <Link href="/privacy-policy" className="hover:text-text-primary transition-colors">Gizlilik</Link>
-            <Link href="/terms-of-service" className="hover:text-text-primary transition-colors">Kullanim Sartlari</Link>
-            <Link href="/cookie-policy" className="hover:text-text-primary transition-colors">Cerezler</Link>
+        <div className="max-w-3xl mx-auto">
+          <div className="flex flex-wrap gap-4 text-xs text-text-muted mb-4">
+            <Link href="/privacy-policy" className="hover:text-text-primary transition-colors">Gizlilik Politikası</Link>
+            <Link href="/terms-of-service" className="hover:text-text-primary transition-colors">Kullanım Şartları</Link>
+            <Link href="/mesafeli-satis-sozlesmesi" className="hover:text-text-primary transition-colors">Mesafeli Satış Sözleşmesi</Link>
+            <Link href="/iptal-ve-iade" className="hover:text-text-primary transition-colors">İptal ve İade</Link>
+            <Link href="/cookie-policy" className="hover:text-text-primary transition-colors">Çerez Politikası</Link>
           </div>
-          <p className="text-[10px] text-text-muted">&copy; 2026 Valyze</p>
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] text-text-muted">&copy; 2026 Valyze TR. Tüm hakları saklıdır.</p>
+            <p className="text-[10px] text-text-muted">destek@valyze.app</p>
+          </div>
         </div>
       </footer>
     </div>

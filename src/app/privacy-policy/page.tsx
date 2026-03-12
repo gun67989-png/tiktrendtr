@@ -139,20 +139,28 @@ export default function PrivacyPolicyPage() {
 
           {/* Related links */}
           <div className="mt-12 flex flex-wrap gap-3">
-            <Link href="/terms-of-service" className="text-xs bg-surface border border-border px-4 py-2 rounded-lg hover:border-neon-red/20 transition-colors">Kullanim Sartlari</Link>
-            <Link href="/cookie-policy" className="text-xs bg-surface border border-border px-4 py-2 rounded-lg hover:border-neon-red/20 transition-colors">Cerez Politikasi</Link>
-            <Link href="/contact" className="text-xs bg-surface border border-border px-4 py-2 rounded-lg hover:border-neon-red/20 transition-colors">Iletisim</Link>
+            <Link href="/terms-of-service" className="text-xs bg-surface border border-border px-4 py-2 rounded-lg hover:border-neon-red/20 transition-colors">Kullanım Şartları</Link>
+            <Link href="/mesafeli-satis-sozlesmesi" className="text-xs bg-surface border border-border px-4 py-2 rounded-lg hover:border-neon-red/20 transition-colors">Mesafeli Satış Sözleşmesi</Link>
+            <Link href="/iptal-ve-iade" className="text-xs bg-surface border border-border px-4 py-2 rounded-lg hover:border-neon-red/20 transition-colors">İptal ve İade</Link>
+            <Link href="/cookie-policy" className="text-xs bg-surface border border-border px-4 py-2 rounded-lg hover:border-neon-red/20 transition-colors">Çerez Politikası</Link>
+            <Link href="/contact" className="text-xs bg-surface border border-border px-4 py-2 rounded-lg hover:border-neon-red/20 transition-colors">İletişim</Link>
           </div>
         </div>
       </div>
 
-      <footer className="border-t border-border py-6 px-6">
-        <div className="max-w-6xl mx-auto flex items-center justify-between">
-          <p className="text-[10px] text-text-muted">&copy; 2026 Valyze. Tum haklari saklidir.</p>
-          <div className="flex gap-4 text-[10px] text-text-muted">
-            <Link href="/privacy-policy" className="hover:text-text-primary transition-colors">Gizlilik</Link>
-            <Link href="/terms-of-service" className="hover:text-text-primary transition-colors">Sartlar</Link>
-            <Link href="/cookie-policy" className="hover:text-text-primary transition-colors">Cerezler</Link>
+      <footer className="border-t border-border py-8 px-6">
+        <div className="max-w-3xl mx-auto">
+          <div className="flex flex-wrap gap-4 text-xs text-text-muted mb-4">
+            <Link href="/privacy-policy" className="hover:text-text-primary transition-colors">Gizlilik Politikası</Link>
+            <Link href="/terms-of-service" className="hover:text-text-primary transition-colors">Kullanım Şartları</Link>
+            <Link href="/mesafeli-satis-sozlesmesi" className="hover:text-text-primary transition-colors">Mesafeli Satış Sözleşmesi</Link>
+            <Link href="/iptal-ve-iade" className="hover:text-text-primary transition-colors">İptal ve İade</Link>
+            <Link href="/cookie-policy" className="hover:text-text-primary transition-colors">Çerez Politikası</Link>
+            <Link href="/contact" className="hover:text-text-primary transition-colors">İletişim</Link>
+          </div>
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] text-text-muted">&copy; 2026 Valyze TR. Tüm hakları saklıdır.</p>
+            <p className="text-[10px] text-text-muted">destek@valyze.app</p>
           </div>
         </div>
       </footer>
