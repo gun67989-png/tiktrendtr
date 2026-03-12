@@ -4,6 +4,8 @@ import { useMemo } from "react";
 import { motion } from "framer-motion";
 import { FiClock, FiInfo } from "react-icons/fi";
 import { generatePostingTimes } from "@/lib/data";
+import OnboardingTour from "@/components/OnboardingTour";
+import { postingTimesTourSteps } from "@/lib/onboarding";
 
 const DAYS = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"];
 const HOURS = Array.from({ length: 24 }, (_, i) => i);
@@ -47,6 +49,8 @@ export default function PostingTimesPage() {
       animate={{ opacity: 1 }}
       className="space-y-6"
     >
+      <OnboardingTour tourKey="posting-times" steps={postingTimesTourSteps} tourTitle="Paylasim Zamanlari" />
+
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-text-primary flex items-center gap-2">

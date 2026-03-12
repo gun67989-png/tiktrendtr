@@ -27,6 +27,8 @@ import {
 } from "@/lib/data";
 import VideoCard, { type VideoData } from "@/components/VideoCard";
 import VideoModal from "@/components/VideoModal";
+import OnboardingTour from "@/components/OnboardingTour";
+import { overviewTourSteps } from "@/lib/onboarding";
 
 const container = {
   hidden: { opacity: 0 },
@@ -117,6 +119,8 @@ export default function DashboardPage() {
       animate="show"
       className="space-y-8"
     >
+      <OnboardingTour tourKey="dashboard-overview" steps={overviewTourSteps} tourTitle="Genel Bakis" />
+
       {/* Header */}
       <motion.div variants={item} className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

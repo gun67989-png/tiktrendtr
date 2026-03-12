@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { FiFilter, FiShoppingBag, FiTrendingUp, FiHeart, FiEye } from "react-icons/fi";
 import VideoCard, { type VideoData } from "@/components/VideoCard";
 import VideoModal from "@/components/VideoModal";
+import OnboardingTour from "@/components/OnboardingTour";
+import { adIdeasTourSteps } from "@/lib/onboarding";
 
 const AD_FORMATS = ["Tümü", "UGC Reklam", "Ürün Deneyimi", "Ürün İnceleme", "Haul", "Unboxing", "Önce/Sonra", "Tavsiye", "Sponsorlu", "Kampanya"];
 
@@ -69,6 +71,8 @@ export default function AdIdeasPage() {
       animate={{ opacity: 1 }}
       className="space-y-6"
     >
+      <OnboardingTour tourKey="ad-ideas" steps={adIdeasTourSteps} tourTitle="Reklam Fikirleri" />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>

@@ -5,6 +5,8 @@ import { motion } from "framer-motion";
 import { FiMusic, FiSearch, FiTrendingUp, FiArrowRight } from "react-icons/fi";
 import { useRouter } from "next/navigation";
 import { generateSounds } from "@/lib/data";
+import OnboardingTour from "@/components/OnboardingTour";
+import { soundsTourSteps } from "@/lib/onboarding";
 
 export default function SoundsPage() {
   const allSounds = useMemo(() => generateSounds(), []);
@@ -39,6 +41,8 @@ export default function SoundsPage() {
       animate={{ opacity: 1 }}
       className="space-y-6"
     >
+      <OnboardingTour tourKey="sounds" steps={soundsTourSteps} tourTitle="Sesler" />
+
       {/* Header */}
       <div>
         <h1 className="text-2xl font-bold text-text-primary flex items-center gap-2">

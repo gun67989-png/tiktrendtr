@@ -6,6 +6,8 @@ import { FiHash, FiSearch, FiCopy, FiCheck, FiFilter, FiArrowRight } from "react
 import { useRouter } from "next/navigation";
 import { LineChart, Line, ResponsiveContainer } from "recharts";
 import { generateHashtags, CATEGORIES } from "@/lib/data";
+import OnboardingTour from "@/components/OnboardingTour";
+import { hashtagsTourSteps } from "@/lib/onboarding";
 
 export default function HashtagsPage() {
   const allHashtags = useMemo(() => generateHashtags(), []);
@@ -43,6 +45,8 @@ export default function HashtagsPage() {
       animate={{ opacity: 1 }}
       className="space-y-6"
     >
+      <OnboardingTour tourKey="hashtags" steps={hashtagsTourSteps} tourTitle="Hashtag'ler" />
+
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
