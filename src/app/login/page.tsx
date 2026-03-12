@@ -160,7 +160,7 @@ function LoginContent() {
             </div>
             <div>
               <h1 className="text-3xl xl:text-4xl font-bold text-text-primary">
-                Val<span className="text-neon-red">yze</span>
+                Valyze <span className="text-neon-red">TR</span>
               </h1>
               <p className="text-text-muted text-sm tracking-wide">
                 TikTok Trend Analiz Platformu
