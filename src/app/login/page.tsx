@@ -159,8 +159,8 @@ function LoginContent() {
             <Image
               src="/logo.png"
               alt="Valyze TR"
-              width={48}
-              height={48}
+              width={96}
+              height={96}
               className="rounded-2xl shadow-lg shadow-neon-red/20"
               unoptimized
             />
