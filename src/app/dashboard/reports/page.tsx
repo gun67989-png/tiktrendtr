@@ -102,7 +102,7 @@ function ReportsContent() {
     return (
       <div className="space-y-6">
         <div className="h-8 shimmer rounded w-64" />
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 gap-3 sm:gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
             <div key={i} className="bg-surface rounded-xl border border-border p-4 h-24 shimmer" />
           ))}
@@ -129,45 +129,45 @@ function ReportsContent() {
   });
 
   return (
-    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
+    <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-5 sm:space-y-6 w-full min-w-0">
       {/* Header */}
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold text-text-primary">Gunluk Trend Raporu</h1>
-          <p className="text-sm text-text-secondary mt-1 flex items-center gap-1">
-            <FiCalendar className="w-3.5 h-3.5" /> {reportDate}
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
+        <div className="min-w-0">
+          <h1 className="text-xl sm:text-2xl font-bold text-text-primary truncate">Gunluk Trend Raporu</h1>
+          <p className="text-xs sm:text-sm text-text-secondary mt-1 flex items-center gap-1">
+            <FiCalendar className="w-3.5 h-3.5 shrink-0" /> {reportDate}
           </p>
         </div>
-        <div className="bg-surface-light px-3 py-1.5 rounded-lg">
-          <span className="text-xs text-text-secondary">{data.stats.totalVideos} video analiz edildi</span>
+        <div className="bg-surface-light px-3 py-1.5 rounded-lg shrink-0 self-start">
+          <span className="text-[10px] sm:text-xs text-text-secondary">{data.stats.totalVideos} video analiz edildi</span>
         </div>
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="grid grid-cols-2 gap-3 sm:gap-4">
         {[
           { label: "Toplam Goruntulenme", value: formatNumber(data.stats.totalViews), icon: FiEye, color: "text-blue-400" },
           { label: "Ort. Goruntulenme", value: formatNumber(data.stats.avgViews), icon: FiTrendingUp, color: "text-teal" },
           { label: "Ort. Etkilesim", value: `%${data.stats.avgEngagement}`, icon: FiBarChart2, color: "text-purple-400" },
           { label: "En Populer Kategori", value: data.stats.topCategory, icon: FiPlay, color: "text-neon-red" },
         ].map((stat) => (
-          <div key={stat.label} className="bg-surface rounded-xl border border-border p-4">
-            <div className="flex items-center gap-2 mb-2">
-              <stat.icon className={`w-4 h-4 ${stat.color}`} />
-              <span className="text-[10px] text-text-muted uppercase">{stat.label}</span>
+          <div key={stat.label} className="bg-surface rounded-xl border border-border p-3 sm:p-4">
+            <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
+              <stat.icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${stat.color} shrink-0`} />
+              <span className="text-[9px] sm:text-[10px] text-text-muted uppercase leading-tight">{stat.label}</span>
             </div>
-            <p className={`text-xl font-bold ${stat.color}`}>{stat.value}</p>
+            <p className={`text-lg sm:text-xl font-bold ${stat.color} truncate`}>{stat.value}</p>
           </div>
         ))}
       </div>
 
       {/* Top 10 Viral Videos */}
-      <div className="bg-surface rounded-xl border border-border p-5">
-        <h3 className="text-sm font-semibold text-text-primary mb-4 flex items-center gap-2">
-          <FiPlay className="w-4 h-4 text-neon-red" />
+      <div className="bg-surface rounded-xl border border-border p-3 sm:p-5">
+        <h3 className="text-sm font-semibold text-text-primary mb-3 sm:mb-4 flex items-center gap-2">
+          <FiPlay className="w-4 h-4 text-neon-red shrink-0" />
           En Viral 10 Video
         </h3>
-        <div className="space-y-2">
+        <div className="space-y-1">
           {data.topVideos.map((video, i) => (
             <motion.a
               key={video.id}
@@ -177,12 +177,12 @@ function ReportsContent() {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="flex items-center gap-3 p-2 rounded-lg hover:bg-surface-light transition-colors group"
+              className="flex items-center gap-2 sm:gap-3 p-2 rounded-lg hover:bg-surface-light transition-colors group"
             >
-              <span className="text-lg font-bold text-text-muted w-6 text-right">
+              <span className="text-sm sm:text-lg font-bold text-text-muted w-5 sm:w-6 text-right shrink-0">
                 {i + 1}
               </span>
-              <div className="w-10 h-14 rounded-lg overflow-hidden bg-surface-light shrink-0">
+              <div className="w-9 h-12 sm:w-10 sm:h-14 rounded-lg overflow-hidden bg-surface-light shrink-0">
                 <img
                   src={video.thumbnailUrl}
                   alt=""
@@ -196,12 +196,20 @@ function ReportsContent() {
                 </p>
                 <p className="text-[10px] text-text-secondary truncate">{video.description}</p>
               </div>
-              <div className="flex items-center gap-3 shrink-0">
+              {/* Desktop: inline badges */}
+              <div className="hidden sm:flex items-center gap-2 shrink-0">
                 <span className="text-[10px] text-teal bg-teal/10 px-1.5 py-0.5 rounded">{video.format}</span>
                 <span className="text-xs text-text-secondary flex items-center gap-0.5">
                   <FiEye className="w-3 h-3" /> {formatNumber(video.views)}
                 </span>
                 <span className="text-xs text-neon-red font-medium">%{video.engagementRate}</span>
+              </div>
+              {/* Mobile: compact view/engagement */}
+              <div className="flex sm:hidden flex-col items-end gap-0.5 shrink-0">
+                <span className="text-[10px] text-text-secondary flex items-center gap-0.5">
+                  <FiEye className="w-2.5 h-2.5" /> {formatNumber(video.views)}
+                </span>
+                <span className="text-[10px] text-neon-red font-medium">%{video.engagementRate}</span>
               </div>
             </motion.a>
           ))}
@@ -209,20 +217,20 @@ function ReportsContent() {
       </div>
 
       {/* Two Column: Hashtags + Sounds */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Trending Hashtags */}
-        <div className="bg-surface rounded-xl border border-border p-5">
-          <h3 className="text-sm font-semibold text-text-primary mb-4 flex items-center gap-2">
-            <FiHash className="w-4 h-4 text-teal" />
+        <div className="bg-surface rounded-xl border border-border p-3 sm:p-5">
+          <h3 className="text-sm font-semibold text-text-primary mb-3 sm:mb-4 flex items-center gap-2">
+            <FiHash className="w-4 h-4 text-teal shrink-0" />
             En Hizli Buyuyen Hashtag&apos;ler
           </h3>
-          <div className="space-y-2">
+          <div className="space-y-1">
             {data.trendingHashtags.map((ht, i) => (
-              <div key={ht.tag} className="flex items-center gap-2 p-2 rounded-lg hover:bg-surface-light transition-colors">
-                <span className="text-xs font-bold text-text-muted w-5">{i + 1}</span>
-                <span className="text-xs text-teal flex-1">{ht.tag}</span>
-                <span className="text-[10px] text-text-muted">{ht.count} video</span>
-                <span className={`text-[10px] font-medium flex items-center gap-0.5 ${ht.growth > 0 ? "text-teal" : ht.growth < 0 ? "text-neon-red" : "text-text-muted"}`}>
+              <div key={ht.tag} className="flex items-center gap-2 p-2 rounded-lg hover:bg-surface-light transition-colors min-w-0">
+                <span className="text-xs font-bold text-text-muted w-4 shrink-0">{i + 1}</span>
+                <span className="text-xs text-teal flex-1 truncate min-w-0">{ht.tag}</span>
+                <span className="text-[10px] text-text-muted shrink-0">{ht.count} video</span>
+                <span className={`text-[10px] font-medium flex items-center gap-0.5 shrink-0 ${ht.growth > 0 ? "text-teal" : ht.growth < 0 ? "text-neon-red" : "text-text-muted"}`}>
                   {ht.growth > 0 ? <FiArrowUp className="w-2.5 h-2.5" /> : ht.growth < 0 ? <FiArrowDown className="w-2.5 h-2.5" /> : null}
                   {ht.growth > 0 ? "+" : ""}{ht.growth}%
                 </span>
@@ -235,23 +243,25 @@ function ReportsContent() {
         </div>
 
         {/* Trending Sounds */}
-        <div className="bg-surface rounded-xl border border-border p-5">
-          <h3 className="text-sm font-semibold text-text-primary mb-4 flex items-center gap-2">
-            <FiMusic className="w-4 h-4 text-purple-400" />
+        <div className="bg-surface rounded-xl border border-border p-3 sm:p-5">
+          <h3 className="text-sm font-semibold text-text-primary mb-3 sm:mb-4 flex items-center gap-2">
+            <FiMusic className="w-4 h-4 text-purple-400 shrink-0" />
             Trend Sesler
           </h3>
-          <div className="space-y-2">
+          <div className="space-y-1">
             {data.trendingSounds.map((sound, i) => (
-              <div key={sound.name + i} className="flex items-center gap-2 p-2 rounded-lg hover:bg-surface-light transition-colors">
-                <span className="text-xs font-bold text-text-muted w-5">{i + 1}</span>
+              <div key={sound.name + i} className="flex items-center gap-2 p-2 rounded-lg hover:bg-surface-light transition-colors min-w-0">
+                <span className="text-xs font-bold text-text-muted w-4 shrink-0">{i + 1}</span>
                 <div className="flex-1 min-w-0">
                   <p className="text-xs text-text-primary truncate">{sound.name}</p>
                   <p className="text-[10px] text-text-muted truncate">{sound.creator}</p>
                 </div>
-                <span className="text-[10px] text-text-muted">{sound.videoCount} video</span>
-                <span className="text-[10px] text-text-secondary">
-                  <FiEye className="w-2.5 h-2.5 inline mr-0.5" />{formatNumber(sound.totalViews)}
-                </span>
+                <div className="flex items-center gap-2 shrink-0">
+                  <span className="text-[10px] text-text-muted">{sound.videoCount} video</span>
+                  <span className="text-[10px] text-text-secondary whitespace-nowrap">
+                    <FiEye className="w-2.5 h-2.5 inline mr-0.5" />{formatNumber(sound.totalViews)}
+                  </span>
+                </div>
               </div>
             ))}
             {data.trendingSounds.length === 0 && (
@@ -262,21 +272,21 @@ function ReportsContent() {
       </div>
 
       {/* Two Column: Emerging Formats + Category Distribution */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Emerging Formats */}
-        <div className="bg-surface rounded-xl border border-border p-5">
-          <h3 className="text-sm font-semibold text-text-primary mb-4 flex items-center gap-2">
-            <FiTrendingUp className="w-4 h-4 text-orange-400" />
+        <div className="bg-surface rounded-xl border border-border p-3 sm:p-5">
+          <h3 className="text-sm font-semibold text-text-primary mb-3 sm:mb-4 flex items-center gap-2">
+            <FiTrendingUp className="w-4 h-4 text-orange-400 shrink-0" />
             Yukselen Icerik Formatlari
           </h3>
-          <div className="h-48">
+          <div className="h-48 w-full min-w-0">
             <ResponsiveContainer width="100%" height="100%">
-              <BarChart data={data.emergingFormats}>
+              <BarChart data={data.emergingFormats} margin={{ left: -10, right: 5 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#2a2a3a" />
-                <XAxis dataKey="format" tick={{ fill: "#555570", fontSize: 10 }} angle={-15} />
-                <YAxis tick={{ fill: "#555570", fontSize: 10 }} />
+                <XAxis dataKey="format" tick={{ fill: "#555570", fontSize: 9 }} angle={-15} />
+                <YAxis tick={{ fill: "#555570", fontSize: 9 }} width={30} />
                 <Tooltip
-                  contentStyle={{ backgroundColor: "#1a1a24", border: "1px solid #2a2a3a", borderRadius: 8, fontSize: 12 }}
+                  contentStyle={{ backgroundColor: "#1a1a24", border: "1px solid #2a2a3a", borderRadius: 8, fontSize: 11 }}
                   labelStyle={{ color: "#8888a0" }}
                   formatter={(v, name) => {
                     if (name === "count") return [v, "Bu hafta"];
@@ -293,13 +303,13 @@ function ReportsContent() {
 
         {/* Category Distribution */}
         {data.categoryDistribution && data.categoryDistribution.length > 0 && (
-          <div className="bg-surface rounded-xl border border-border p-5">
-            <h3 className="text-sm font-semibold text-text-primary mb-4 flex items-center gap-2">
-              <FiBarChart2 className="w-4 h-4 text-blue-400" />
+          <div className="bg-surface rounded-xl border border-border p-3 sm:p-5">
+            <h3 className="text-sm font-semibold text-text-primary mb-3 sm:mb-4 flex items-center gap-2">
+              <FiBarChart2 className="w-4 h-4 text-blue-400 shrink-0" />
               Kategori Dagilimi
             </h3>
             <div className="h-48 flex items-center">
-              <div className="w-1/2 h-full">
+              <div className="w-2/5 sm:w-1/2 h-full">
                 <ResponsiveContainer width="100%" height="100%">
                   <PieChart>
                     <Pie
@@ -308,7 +318,7 @@ function ReportsContent() {
                       nameKey="category"
                       cx="50%"
                       cy="50%"
-                      outerRadius={70}
+                      outerRadius={55}
                       strokeWidth={0}
                     >
                       {data.categoryDistribution.slice(0, 8).map((_, i) => (
@@ -316,18 +326,18 @@ function ReportsContent() {
                       ))}
                     </Pie>
                     <Tooltip
-                      contentStyle={{ backgroundColor: "#1a1a24", border: "1px solid #2a2a3a", borderRadius: 8, fontSize: 12 }}
+                      contentStyle={{ backgroundColor: "#1a1a24", border: "1px solid #2a2a3a", borderRadius: 8, fontSize: 11 }}
                       formatter={(v, name) => [`${v} video`, name]}
                     />
                   </PieChart>
                 </ResponsiveContainer>
               </div>
-              <div className="w-1/2 space-y-1.5">
+              <div className="w-3/5 sm:w-1/2 space-y-1.5 min-w-0">
                 {data.categoryDistribution.slice(0, 8).map((cat, i) => (
-                  <div key={cat.category} className="flex items-center gap-2">
-                    <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
-                    <span className="text-[11px] text-text-secondary truncate">{cat.category}</span>
-                    <span className="text-[10px] text-text-muted ml-auto">%{cat.percentage}</span>
+                  <div key={cat.category} className="flex items-center gap-1.5 sm:gap-2 min-w-0">
+                    <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full shrink-0" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
+                    <span className="text-[10px] sm:text-[11px] text-text-secondary truncate">{cat.category}</span>
+                    <span className="text-[9px] sm:text-[10px] text-text-muted ml-auto shrink-0">%{cat.percentage}</span>
                   </div>
                 ))}
               </div>

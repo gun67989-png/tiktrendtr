@@ -101,7 +101,7 @@ export default function DashboardLayout({
   const isPremium = user?.subscriptionType === "premium" || user?.role === "admin";
 
   return (
-    <div className="min-h-screen bg-background flex">
+    <div className="min-h-screen bg-background flex overflow-x-hidden max-w-[100vw]">
       {/* Welcome back overlay — on every login */}
       <WelcomeOverlay username={user?.username} />
 
@@ -293,12 +293,12 @@ export default function DashboardLayout({
       </aside>
 
       {/* Main content */}
-      <main className="flex-1 min-h-screen">
+      <main className="flex-1 min-h-screen min-w-0 overflow-x-hidden">
         {/* Mobile header */}
-        <div className="lg:hidden sticky top-0 z-30 bg-surface/80 backdrop-blur-xl border-b border-border px-4 py-3 flex items-center gap-3">
+        <div className="lg:hidden sticky top-0 z-30 bg-surface/80 backdrop-blur-xl border-b border-border px-3 py-3 flex items-center gap-3">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
-            className="p-2 rounded-lg hover:bg-surface-light transition-colors"
+            className="p-2 rounded-lg hover:bg-surface-light transition-colors shrink-0"
           >
             {sidebarOpen ? (
               <FiX className="w-5 h-5 text-text-primary" />
@@ -311,7 +311,7 @@ export default function DashboardLayout({
           </Link>
         </div>
 
-        <div className="p-4 lg:p-8">{children}</div>
+        <div className="p-3 sm:p-4 lg:p-8 w-full">{children}</div>
       </main>
     </div>
   );

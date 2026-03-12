@@ -33,7 +33,7 @@ function GrowthContent() {
       </div>
 
       {/* Progress Bar */}
-      <div className="bg-surface rounded-xl border border-border p-6">
+      <div className="bg-surface rounded-xl border border-border p-4 sm:p-6">
         <div className="flex items-center justify-between mb-4">
           <span className="text-sm font-medium text-text-primary">Büyüme Yolu</span>
           <span className="text-xs text-text-muted">3 Aşama</span>
@@ -100,7 +100,7 @@ function GrowthContent() {
             </div>
 
             {/* Stage Content */}
-            <div className="p-6 grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="p-4 sm:p-6 grid grid-cols-1 md:grid-cols-3 gap-4 sm:gap-6">
               {/* Content Formats */}
               <div>
                 <h3 className="text-sm font-semibold text-text-primary flex items-center gap-2 mb-3">
@@ -167,7 +167,7 @@ function GrowthContent() {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.8 }}
-        className="bg-surface rounded-xl border border-amber-400/20 p-6"
+        className="bg-surface rounded-xl border border-amber-400/20 p-4 sm:p-6"
       >
         <h3 className="text-sm font-semibold text-amber-400 mb-4">💡 Altın Kurallar</h3>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

@@ -208,7 +208,7 @@ function HooksContent() {
                   type="category"
                   dataKey="label"
                   tick={{ fill: "#8888a0", fontSize: 11 }}
-                  width={100}
+                  width={70}
                 />
                 <Tooltip
                   contentStyle={{ backgroundColor: "#1a1a24", border: "1px solid #2a2a3a", borderRadius: 8, fontSize: 12 }}

@@ -150,7 +150,7 @@ function PredictionsContent() {
                 </div>
 
                 {/* Right - Metrics */}
-                <div className="flex items-center gap-6 flex-shrink-0">
+                <div className="flex items-center gap-3 sm:gap-6 flex-shrink-0">
                   <div className="text-center">
                     <p className="text-xs text-text-muted">Büyüme</p>
                     <p className="text-lg font-bold text-teal">+{trend.growthRate}%</p>

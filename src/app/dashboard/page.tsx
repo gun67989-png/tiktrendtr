@@ -136,25 +136,25 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Stat Cards */}
-      <motion.div variants={item} className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+      <motion.div variants={item} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {stats.map((stat) => (
           <motion.div
             key={stat.label}
             variants={item}
             whileHover={{ scale: 1.02, y: -2 }}
-            className="bg-surface rounded-xl border border-border p-5 hover:border-neon-red/20 transition-all shadow-sm"
+            className="bg-surface rounded-xl border border-border p-3 sm:p-5 hover:border-neon-red/20 transition-all shadow-sm"
           >
-            <div className="flex items-start justify-between">
-              <div>
-                <p className="text-text-secondary text-xs font-medium uppercase tracking-wider">
+            <div className="flex items-start justify-between gap-2">
+              <div className="min-w-0 flex-1">
+                <p className="text-text-secondary text-[10px] sm:text-xs font-medium uppercase tracking-wider leading-tight">
                   {stat.label}
                 </p>
-                <p className="text-2xl font-bold text-text-primary mt-2">
+                <p className="text-lg sm:text-2xl font-bold text-text-primary mt-1 sm:mt-2 truncate">
                   {stat.value}
                 </p>
               </div>
-              <div className={`${stat.bg} p-2.5 rounded-lg`}>
-                <stat.icon className={`w-5 h-5 ${stat.color}`} />
+              <div className={`${stat.bg} p-2 sm:p-2.5 rounded-lg shrink-0`}>
+                <stat.icon className={`w-4 h-4 sm:w-5 sm:h-5 ${stat.color}`} />
               </div>
             </div>
           </motion.div>
@@ -162,9 +162,9 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Charts Row */}
-      <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
         {/* Daily Stats Chart */}
-        <div className="lg:col-span-2 bg-surface rounded-xl border border-border p-6">
+        <div className="lg:col-span-2 bg-surface rounded-xl border border-border p-3 sm:p-6">
           <h3 className="text-sm font-semibold text-text-primary mb-4">
             Son 30 Gün - Video & Etkileşim
           </h3>
@@ -223,7 +223,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Trending Niches */}
-        <div className="bg-surface rounded-xl border border-border p-6">
+        <div className="bg-surface rounded-xl border border-border p-3 sm:p-6">
           <h3 className="text-sm font-semibold text-text-primary mb-4">
             Trend Nişler
           </h3>
@@ -250,9 +250,9 @@ export default function DashboardPage() {
       </motion.div>
 
       {/* Cities & Formats Row */}
-      <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+      <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Trending Cities */}
-        <div className="bg-surface rounded-xl border border-border p-6">
+        <div className="bg-surface rounded-xl border border-border p-3 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
             <FiMapPin className="w-4 h-4 text-neon-red" />
             <h3 className="text-sm font-semibold text-text-primary">
@@ -261,10 +261,10 @@ export default function DashboardPage() {
           </div>
           <div className="space-y-3">
             {overview.trendingCities.map((city, i) => (
-              <div key={city.name} className="flex items-center gap-3">
-                <span className="text-xs text-text-muted w-6 text-right">{i + 1}</span>
-                <span className="text-sm text-text-primary w-24">{city.name}</span>
-                <div className="flex-1 h-2 bg-surface-light rounded-full overflow-hidden">
+              <div key={city.name} className="flex items-center gap-2 sm:gap-3">
+                <span className="text-xs text-text-muted w-5 sm:w-6 text-right shrink-0">{i + 1}</span>
+                <span className="text-xs sm:text-sm text-text-primary w-16 sm:w-24 shrink-0 truncate">{city.name}</span>
+                <div className="flex-1 h-2 bg-surface-light rounded-full overflow-hidden min-w-0">
                   <motion.div
                     initial={{ width: 0 }}
                     animate={{ width: `${city.percentage}%` }}
@@ -281,7 +281,7 @@ export default function DashboardPage() {
         </div>
 
         {/* Viral Formats */}
-        <div className="bg-surface rounded-xl border border-border p-6">
+        <div className="bg-surface rounded-xl border border-border p-3 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
             <FiPlay className="w-4 h-4 text-teal" />
             <h3 className="text-sm font-semibold text-text-primary">
@@ -325,7 +325,7 @@ export default function DashboardPage() {
               Tümünü Gör <FiArrowRight className="w-3 h-3" />
             </button>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
             {topVideos.map((video, i) => (
               <VideoCard key={video.id} video={video} index={i} onSelect={setSelectedVideo} />
             ))}
