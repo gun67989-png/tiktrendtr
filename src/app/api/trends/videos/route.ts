@@ -145,7 +145,7 @@ async function getRealVideos(options: {
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 120);
+  const limit = Math.min(parseInt(searchParams.get("limit") || "20"), 200);
   const offset = parseInt(searchParams.get("offset") || "0");
   const category = searchParams.get("category") || undefined;
   const sortBy = (searchParams.get("sortBy") || "viralScore") as string;

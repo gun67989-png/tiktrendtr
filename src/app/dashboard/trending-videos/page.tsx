@@ -1,8 +1,8 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
-import { FiFilter, FiTrendingUp } from "react-icons/fi";
+import { FiFilter, FiTrendingUp, FiLoader } from "react-icons/fi";
 import VideoCard, { type VideoData } from "@/components/VideoCard";
 import VideoModal from "@/components/VideoModal";
 import OnboardingTour from "@/components/OnboardingTour";
@@ -17,18 +17,29 @@ const SORT_OPTIONS = [
   { value: "publishedAt", label: "En Yeni" },
 ];
 
+const PAGE_SIZE = 40;
+
 export default function TrendingVideosPage() {
   const [videos, setVideos] = useState<VideoData[]>([]);
   const [loading, setLoading] = useState(true);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [selectedVideo, setSelectedVideo] = useState<VideoData | null>(null);
   const [category, setCategory] = useState("Tümü");
   const [sortBy, setSortBy] = useState("viralScore");
   const [total, setTotal] = useState(0);
+  const [offset, setOffset] = useState(0);
+  const [hasMore, setHasMore] = useState(true);
+  const sentinelRef = useRef<HTMLDivElement>(null);
 
+  // Initial load & filter/sort change
   useEffect(() => {
     setLoading(true);
+    setOffset(0);
+    setHasMore(true);
+
     const params = new URLSearchParams({
-      limit: "60",
+      limit: String(PAGE_SIZE),
+      offset: "0",
       sortBy,
       order: "desc",
     });
@@ -37,11 +48,50 @@ export default function TrendingVideosPage() {
     fetch(`/api/trends/videos?${params}`)
       .then((r) => r.json())
       .then((data) => {
-        setVideos(data.videos);
-        setTotal(data.total);
+        setVideos(data.videos || []);
+        setTotal(data.total || 0);
+        setOffset(data.videos?.length || 0);
+        setHasMore((data.videos?.length || 0) < (data.total || 0));
       })
       .finally(() => setLoading(false));
   }, [category, sortBy]);
+
+  // Load more videos
+  const loadMore = useCallback(() => {
+    if (loadingMore || !hasMore) return;
+    setLoadingMore(true);
+
+    const params = new URLSearchParams({
+      limit: String(PAGE_SIZE),
+      offset: String(offset),
+      sortBy,
+      order: "desc",
+    });
+    if (category !== "Tümü") params.set("category", category);
+
+    fetch(`/api/trends/videos?${params}`)
+      .then((r) => r.json())
+      .then((data) => {
+        const newVideos = data.videos || [];
+        setVideos((prev) => [...prev, ...newVideos]);
+        setOffset((prev) => prev + newVideos.length);
+        setHasMore(newVideos.length >= PAGE_SIZE && offset + newVideos.length < (data.total || 0));
+      })
+      .finally(() => setLoadingMore(false));
+  }, [loadingMore, hasMore, offset, sortBy, category]);
+
+  // Intersection Observer for infinite scroll
+  useEffect(() => {
+    if (!sentinelRef.current) return;
+    const observer = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) loadMore();
+      },
+      { rootMargin: "400px" }
+    );
+    observer.observe(sentinelRef.current);
+    return () => observer.disconnect();
+  }, [loadMore]);
 
   return (
     <motion.div
@@ -121,16 +171,37 @@ export default function TrendingVideosPage() {
           <p className="text-text-muted">Bu kategoride video bulunamadı.</p>
         </div>
       ) : (
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
-          {videos.map((video, i) => (
-            <VideoCard
-              key={video.id}
-              video={video}
-              index={i}
-              onSelect={setSelectedVideo}
-            />
-          ))}
-        </div>
+        <>
+          <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4">
+            {videos.map((video, i) => (
+              <VideoCard
+                key={video.id}
+                video={video}
+                index={i}
+                onSelect={setSelectedVideo}
+              />
+            ))}
+          </div>
+
+          {/* Infinite scroll sentinel */}
+          {hasMore && (
+            <div ref={sentinelRef} className="flex items-center justify-center py-8">
+              {loadingMore && (
+                <div className="flex items-center gap-2 text-text-muted text-sm">
+                  <FiLoader className="w-4 h-4 animate-spin" />
+                  Daha fazla video yükleniyor...
+                </div>
+              )}
+            </div>
+          )}
+
+          {/* End message */}
+          {!hasMore && videos.length > 0 && (
+            <p className="text-center text-text-muted text-xs py-4">
+              Tüm videolar yüklendi ({videos.length}/{total})
+            </p>
+          )}
+        </>
       )}
 
       {/* Modal */}

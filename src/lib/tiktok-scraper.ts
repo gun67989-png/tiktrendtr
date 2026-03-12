@@ -315,8 +315,27 @@ interface TikWMResponse {
   };
 }
 
-// Fetch videos from TikWM API for a keyword
-async function fetchTikWMVideos(keyword: string, count: number = 30): Promise<ScrapedVideo[]> {
+// Rotate User-Agent to avoid detection
+const USER_AGENTS = [
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15",
+  "Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:123.0) Gecko/20100101 Firefox/123.0",
+  "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/121.0.0.0 Safari/537.36",
+  "Mozilla/5.0 (iPhone; CPU iPhone OS 17_0 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Mobile/15E148 Safari/604.1",
+];
+let uaIndex = 0;
+function getNextUA(): string {
+  const ua = USER_AGENTS[uaIndex % USER_AGENTS.length];
+  uaIndex++;
+  return ua;
+}
+
+// Fetch a single page of videos from TikWM API
+async function fetchTikWMPage(
+  keyword: string,
+  count: number,
+  cursor: number = 0
+): Promise<{ videos: ScrapedVideo[]; cursor: number; hasMore: boolean }> {
   const videos: ScrapedVideo[] = [];
   const now = new Date().toISOString();
 
@@ -324,13 +343,20 @@ async function fetchTikWMVideos(keyword: string, count: number = 30): Promise<Sc
     const controller = new AbortController();
     const timeout = setTimeout(() => controller.abort(), 15000);
 
+    const bodyParts = [
+      `keywords=${encodeURIComponent(keyword)}`,
+      `count=${count}`,
+      `region=tr`,
+    ];
+    if (cursor > 0) bodyParts.push(`cursor=${cursor}`);
+
     const response = await fetch("https://www.tikwm.com/api/feed/search", {
       method: "POST",
       headers: {
         "Content-Type": "application/x-www-form-urlencoded",
-        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+        "User-Agent": getNextUA(),
       },
-      body: `keywords=${encodeURIComponent(keyword)}&count=${count}&region=tr`,
+      body: bodyParts.join("&"),
       signal: controller.signal,
     });
 
@@ -338,23 +364,20 @@ async function fetchTikWMVideos(keyword: string, count: number = 30): Promise<Sc
 
     if (!response.ok) {
       console.warn(`[SCRAPER] TikWM HTTP ${response.status} for keyword: ${keyword}`);
-      return [];
+      return { videos: [], cursor: 0, hasMore: false };
     }
 
     const result = await response.json() as TikWMResponse;
 
     if (result.code !== 0 || !result.data?.videos) {
       console.warn(`[SCRAPER] TikWM returned code ${result.code} for keyword: ${keyword}`);
-      return [];
+      return { videos: [], cursor: 0, hasMore: false };
     }
 
-    // Filter: only videos from last 14 days
     const fourteenDaysAgo = Math.floor(Date.now() / 1000) - 14 * 24 * 60 * 60;
 
     for (const v of result.data.videos) {
       if (!v.video_id || !v.author?.unique_id) continue;
-
-      // Skip old videos - only keep last 14 days
       if (v.create_time && v.create_time < fourteenDaysAgo) continue;
 
       const caption = v.title || "";
@@ -370,7 +393,6 @@ async function fetchTikWMVideos(keyword: string, count: number = 30): Promise<Sc
         v.duration || 0, soundName, soundCreator, v.author.unique_id
       );
 
-      // Use real video publish date if available
       const publishDate = v.create_time
         ? new Date(v.create_time * 1000).toISOString()
         : now;
@@ -385,7 +407,7 @@ async function fetchTikWMVideos(keyword: string, count: number = 30): Promise<Sc
         like_count: v.digg_count || 0,
         comment_count: v.comment_count || 0,
         share_count: v.share_count || 0,
-        follower_count: 0, // Will be enriched later
+        follower_count: 0,
         tiktok_url: `https://www.tiktok.com/@${v.author.unique_id}/video/${v.video_id}`,
         thumbnail_url: v.origin_cover || v.cover || "",
         duration: v.duration || 0,
@@ -399,12 +421,37 @@ async function fetchTikWMVideos(keyword: string, count: number = 30): Promise<Sc
       });
     }
 
-    console.log(`[SCRAPER] TikWM returned ${videos.length} videos for keyword: ${keyword}`);
-    return videos;
+    return {
+      videos,
+      cursor: result.data.cursor || 0,
+      hasMore: result.data.hasMore ?? false,
+    };
   } catch (e) {
     console.error(`[SCRAPER] TikWM fetch failed for keyword: ${keyword}`, e);
-    return [];
+    return { videos: [], cursor: 0, hasMore: false };
   }
+}
+
+// Fetch videos from TikWM API for a keyword — fetches up to `pages` pages using cursor pagination
+async function fetchTikWMVideos(keyword: string, count: number = 30, pages: number = 2): Promise<ScrapedVideo[]> {
+  const allVids: ScrapedVideo[] = [];
+  let cursor = 0;
+
+  for (let page = 0; page < pages; page++) {
+    const result = await fetchTikWMPage(keyword, count, cursor);
+    allVids.push(...result.videos);
+
+    if (!result.hasMore || result.cursor === 0) break;
+    cursor = result.cursor;
+
+    // Delay between pages to avoid rate limiting
+    if (page < pages - 1) {
+      await new Promise(resolve => setTimeout(resolve, 400));
+    }
+  }
+
+  console.log(`[SCRAPER] TikWM returned ${allVids.length} videos for keyword: ${keyword}`);
+  return allVids;
 }
 
 // Fetch follower count for a creator via TikWM user info API
@@ -477,77 +524,106 @@ export async function scrapeTrendingVideos(): Promise<ScrapedVideo[]> {
   const allVideos: ScrapedVideo[] = [];
   const seenIds = new Set<string>();
 
-  // Expanded Turkish keywords for ~200 videos
+  // Expanded Turkish keywords for ~500 videos — covers popular hashtags & niches
   const keywordsToSearch = [
-    // General trending
+    // ── General trending & popular hashtags ──
     { keyword: "türkiye trend", category: null },
     { keyword: "keşfet", category: null },
     { keyword: "türk tiktok viral", category: null },
     { keyword: "tiktok türkiye", category: null },
     { keyword: "popüler video türkiye", category: null },
     { keyword: "fyp türk", category: null },
-    // Yemek (Food) - multiple sub-keywords
+    { keyword: "#kesfet", category: null },
+    { keyword: "#fyp türkiye", category: null },
+    { keyword: "#viral türk", category: null },
+    { keyword: "#trend türkiye 2024", category: null },
+    // ── Yemek (Food) ──
     { keyword: "yemek tarifi türk", category: "Yemek" },
     { keyword: "kahvaltı tarifi", category: "Yemek" },
     { keyword: "tatlı tarifi", category: "Yemek" },
     { keyword: "sokak lezzetleri türkiye", category: "Yemek" },
     { keyword: "ev yemekleri kolay", category: "Yemek" },
-    // Komedi (Comedy)
+    { keyword: "türk mutfağı", category: "Yemek" },
+    { keyword: "mukbang türk", category: "Yemek" },
+    // ── Komedi (Comedy) ──
     { keyword: "komedi türk", category: "Komedi" },
     { keyword: "komik video türkçe", category: "Komedi" },
     { keyword: "türk komedisi", category: "Komedi" },
-    // Seyahat (Travel)
+    { keyword: "caps komik türk", category: "Komedi" },
+    { keyword: "sketch türkçe", category: "Komedi" },
+    // ── Seyahat (Travel) ──
     { keyword: "istanbul gezi", category: "Seyahat" },
     { keyword: "türkiye gezi rehberi", category: "Seyahat" },
     { keyword: "antalya tatil", category: "Seyahat" },
-    // Moda (Fashion)
+    { keyword: "kapadokya vlog", category: "Seyahat" },
+    { keyword: "bodrum tatil", category: "Seyahat" },
+    // ── Moda (Fashion) ──
     { keyword: "moda kombin", category: "Moda" },
     { keyword: "outfit türk", category: "Moda" },
     { keyword: "alışveriş haul", category: "Moda" },
-    // Teknoloji (Tech)
+    { keyword: "grwm türk", category: "Moda" },
+    { keyword: "vintage moda türkiye", category: "Moda" },
+    // ── Teknoloji (Tech) ──
     { keyword: "teknoloji türkçe", category: "Teknoloji" },
     { keyword: "telefon inceleme türk", category: "Teknoloji" },
     { keyword: "uygulama önerisi", category: "Teknoloji" },
-    // Vlog
+    { keyword: "yapay zeka türkçe", category: "Teknoloji" },
+    // ── Vlog ──
     { keyword: "günlük vlog türk", category: "Vlog" },
     { keyword: "bir günüm vlog", category: "Vlog" },
-    // Eğitim (Education)
+    { keyword: "ev turu türk", category: "Vlog" },
+    { keyword: "sabah rutinim", category: "Vlog" },
+    // ── Eğitim (Education) ──
     { keyword: "eğitim türkçe", category: "Eğitim" },
     { keyword: "YKS hazırlık", category: "Eğitim" },
     { keyword: "ingilizce öğren", category: "Eğitim" },
-    // Spor (Sports)
+    { keyword: "matematik kolay", category: "Eğitim" },
+    { keyword: "üniversite hayatı", category: "Eğitim" },
+    // ── Spor (Sports) ──
     { keyword: "spor fitness türk", category: "Spor" },
     { keyword: "gym motivasyon türk", category: "Spor" },
-    // Müzik (Music)
+    { keyword: "futbol türkiye", category: "Spor" },
+    { keyword: "evde egzersiz", category: "Spor" },
+    // ── Müzik (Music) ──
     { keyword: "türkçe müzik", category: "Müzik" },
     { keyword: "cover türkçe şarkı", category: "Müzik" },
-    // Dans (Dance)
+    { keyword: "rap türk", category: "Müzik" },
+    { keyword: "akustik cover türk", category: "Müzik" },
+    // ── Dans (Dance) ──
     { keyword: "dans türk", category: "Dans" },
-    // Güzellik (Beauty)
+    { keyword: "koreografi türk", category: "Dans" },
+    { keyword: "halay düğün", category: "Dans" },
+    // ── Güzellik (Beauty) ──
     { keyword: "makyaj güzellik", category: "Güzellik" },
     { keyword: "cilt bakımı rutin", category: "Güzellik" },
     { keyword: "saç modeli", category: "Güzellik" },
-    // Oyun (Gaming)
+    { keyword: "kozmetik önerisi türk", category: "Güzellik" },
+    // ── Oyun (Gaming) ──
     { keyword: "oyun gaming türk", category: "Oyun" },
-    // Reklam / Ürün (Ads & Products)
+    { keyword: "valorant türk", category: "Oyun" },
+    { keyword: "pubg mobile türk", category: "Oyun" },
+    // ── Reklam / Ürün (Ads & Products) ──
     { keyword: "ürün tanıtım türk", category: null },
     { keyword: "bunu aldım tiktok", category: null },
     { keyword: "unboxing türk", category: null },
     { keyword: "ürün inceleme", category: null },
     { keyword: "haul türkçe", category: null },
     { keyword: "denedim türk", category: null },
+    { keyword: "trendyol haul", category: null },
+    { keyword: "hepsiburada inceleme", category: null },
   ];
 
-  const BATCH_SIZE = 6; // 6 concurrent requests per batch
+  const BATCH_SIZE = 6;
+  const MAX_VIDEOS = 500; // increased from 300
 
   for (let i = 0; i < keywordsToSearch.length; i += BATCH_SIZE) {
-    if (allVideos.length >= 300) break;
+    if (allVideos.length >= MAX_VIDEOS) break;
 
     const batch = keywordsToSearch.slice(i, i + BATCH_SIZE);
 
-    // Run batch in parallel
+    // Run batch in parallel — each keyword fetches 2 pages of 30 via cursor
     const batchResults = await Promise.allSettled(
-      batch.map(({ keyword }) => fetchTikWMVideos(keyword, 30))
+      batch.map(({ keyword }) => fetchTikWMVideos(keyword, 30, 2))
     );
 
     // Process results
@@ -570,9 +646,9 @@ export async function scrapeTrendingVideos(): Promise<ScrapedVideo[]> {
       }
     }
 
-    // Small delay between batches (not between individual requests)
+    // Delay between batches to respect rate limits (2-3s)
     if (i + BATCH_SIZE < keywordsToSearch.length) {
-      await new Promise(resolve => setTimeout(resolve, 300));
+      await new Promise(resolve => setTimeout(resolve, 2000 + Math.random() * 1000));
     }
   }
 
