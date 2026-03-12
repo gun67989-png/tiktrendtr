@@ -511,15 +511,46 @@ export default function LandingPage() {
             <div>
               <h4 className="text-xs font-semibold text-text-primary uppercase mb-2">Yasal</h4>
               <ul className="space-y-1.5">
-                <li><Link href="/privacy-policy" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Gizlilik</Link></li>
+                <li><Link href="/privacy-policy" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Gizlilik Politikası</Link></li>
                 <li><Link href="/terms-of-service" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Kullanım Şartları</Link></li>
+                <li><Link href="/mesafeli-satis-sozlesmesi" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Mesafeli Satış Sözleşmesi</Link></li>
+                <li><Link href="/iptal-ve-iade" className="text-xs text-text-secondary hover:text-text-primary transition-colors">İptal ve İade</Link></li>
                 <li><Link href="/cookie-policy" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Çerez Politikası</Link></li>
               </ul>
             </div>
           </div>
 
-          <div className="border-t border-border pt-4 flex items-center justify-between">
-            <p className="text-[10px] text-text-muted">&copy; 2026 Valyze TR</p>
+          {/* İletişim ve Ödeme */}
+          <div className="border-t border-border pt-4 mb-4">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
+              <div className="text-xs text-text-muted">
+                <span>İletişim: </span>
+                <a href="mailto:destek@valyze.app" className="text-text-secondary hover:text-text-primary transition-colors">destek@valyze.app</a>
+              </div>
+              <div className="flex items-center gap-3">
+                {/* Visa */}
+                <svg className="h-6 w-auto" viewBox="0 0 48 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="48" height="16" rx="2" fill="#1A1F71" />
+                  <text x="24" y="11.5" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold" fontFamily="Arial, sans-serif">VISA</text>
+                </svg>
+                {/* Mastercard */}
+                <svg className="h-6 w-auto" viewBox="0 0 48 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="48" height="16" rx="2" fill="#252525" />
+                  <circle cx="19" cy="8" r="5" fill="#EB001B" />
+                  <circle cx="29" cy="8" r="5" fill="#F79E1B" />
+                  <path d="M24 4.27a5 5 0 010 7.46 5 5 0 000-7.46z" fill="#FF5F00" />
+                </svg>
+                {/* iyzico */}
+                <svg className="h-6 w-auto" viewBox="0 0 48 16" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect width="48" height="16" rx="2" fill="#1E64FF" />
+                  <text x="24" y="11" textAnchor="middle" fill="white" fontSize="7.5" fontWeight="bold" fontFamily="Arial, sans-serif">iyzico</text>
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between">
+            <p className="text-[10px] text-text-muted">&copy; 2026 Valyze TR. Tüm hakları saklıdır.</p>
             <p className="text-[10px] text-text-muted">Türkiye&apos;de yapıldı</p>
           </div>
         </div>
