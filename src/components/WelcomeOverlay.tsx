@@ -17,15 +17,19 @@ export default function WelcomeOverlay({
 }: WelcomeOverlayProps) {
   const [visible, setVisible] = useState(false);
 
+  // Show overlay only once per browser session
   useEffect(() => {
-    // Only show once per browser session
     if (sessionStorage.getItem(storageKey)) return;
     sessionStorage.setItem(storageKey, "1");
     setVisible(true);
+  }, [storageKey]);
 
+  // Auto-dismiss after 1.8s (separate effect survives strict-mode re-runs)
+  useEffect(() => {
+    if (!visible) return;
     const timer = setTimeout(() => setVisible(false), 1800);
     return () => clearTimeout(timer);
-  }, [storageKey]);
+  }, [visible]);
 
   return (
     <AnimatePresence>
