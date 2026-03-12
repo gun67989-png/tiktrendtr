@@ -15,6 +15,8 @@ export interface User {
   subscription_status: "active" | "expired" | "cancelled" | null;
   subscription_start: string | null;
   subscription_end: string | null;
+  oauth_provider: "google" | "facebook" | "tiktok" | null;
+  oauth_provider_id: string | null;
   created_at: string;
 }
 
@@ -80,6 +82,8 @@ export async function seedDefaultAdmin(): Promise<void> {
         subscription_status: "active",
         subscription_start: new Date().toISOString(),
         subscription_end: null,
+        oauth_provider: null,
+        oauth_provider_id: null,
         created_at: new Date().toISOString(),
       },
     ]);
@@ -208,6 +212,8 @@ export async function createUser(data: {
     subscription_status: null,
     subscription_start: null,
     subscription_end: null,
+    oauth_provider: null,
+    oauth_provider_id: null,
     created_at: new Date().toISOString(),
   };
   users.push(user);
@@ -217,7 +223,7 @@ export async function createUser(data: {
 
 export async function updateUser(
   id: string,
-  data: Partial<Pick<User, "role" | "disabled" | "username" | "email" | "subscription_type" | "subscription_status" | "subscription_start" | "subscription_end">>
+  data: Partial<Pick<User, "role" | "disabled" | "username" | "email" | "subscription_type" | "subscription_status" | "subscription_start" | "subscription_end" | "oauth_provider" | "oauth_provider_id">>
 ): Promise<User | null> {
   if (isSupabaseConfigured && supabase) {
     if (data.email) {
@@ -292,6 +298,116 @@ export async function deleteUser(id: string): Promise<boolean> {
   if (filtered.length === users.length) return false;
   saveLocalUsers(filtered);
   return true;
+}
+
+// ============================================================
+// OAuth Helpers
+// ============================================================
+
+export async function findUserByEmail(email: string): Promise<User | null> {
+  const lower = email.toLowerCase();
+
+  if (isSupabaseConfigured && supabase) {
+    const { data } = await supabase
+      .from("users")
+      .select("*")
+      .ilike("email", lower)
+      .limit(1)
+      .single();
+    return data as User | null;
+  }
+
+  return getLocalUsers().find((u) => u.email.toLowerCase() === lower) || null;
+}
+
+export async function findUserByOAuth(
+  provider: "google" | "facebook" | "tiktok",
+  providerId: string
+): Promise<User | null> {
+  if (isSupabaseConfigured && supabase) {
+    const { data } = await supabase
+      .from("users")
+      .select("*")
+      .eq("oauth_provider", provider)
+      .eq("oauth_provider_id", providerId)
+      .limit(1)
+      .single();
+    return data as User | null;
+  }
+
+  return (
+    getLocalUsers().find(
+      (u) => u.oauth_provider === provider && u.oauth_provider_id === providerId
+    ) || null
+  );
+}
+
+export async function createOAuthUser(data: {
+  email: string;
+  username: string;
+  oauth_provider: "google" | "facebook" | "tiktok";
+  oauth_provider_id: string;
+}): Promise<User> {
+  // OAuth kullanıcıları için random şifre oluştur (direkt giriş yapamaz)
+  const randomPassword = nanoid(32);
+  const hashedPassword = await bcrypt.hash(randomPassword, 12);
+
+  if (isSupabaseConfigured && supabase) {
+    // Username çakışması kontrol et
+    let username = data.username;
+    const { data: existing } = await supabase
+      .from("users")
+      .select("id")
+      .ilike("username", username)
+      .limit(1);
+    if (existing && existing.length > 0) {
+      username = `${username}_${nanoid(4)}`;
+    }
+
+    const { data: user, error } = await supabase
+      .from("users")
+      .insert({
+        username,
+        email: data.email.toLowerCase(),
+        password: hashedPassword,
+        role: "user",
+        disabled: false,
+        subscription_type: "free",
+        oauth_provider: data.oauth_provider,
+        oauth_provider_id: data.oauth_provider_id,
+      })
+      .select()
+      .single();
+
+    if (error) throw new Error(error.message);
+    return user as User;
+  }
+
+  // JSON fallback
+  const users = getLocalUsers();
+  let username = data.username;
+  if (users.some((u) => u.username.toLowerCase() === username.toLowerCase())) {
+    username = `${username}_${nanoid(4)}`;
+  }
+
+  const user: User = {
+    id: nanoid(),
+    username,
+    email: data.email.toLowerCase(),
+    password: hashedPassword,
+    role: "user",
+    disabled: false,
+    subscription_type: "free",
+    subscription_status: null,
+    subscription_start: null,
+    subscription_end: null,
+    oauth_provider: data.oauth_provider,
+    oauth_provider_id: data.oauth_provider_id,
+    created_at: new Date().toISOString(),
+  };
+  users.push(user);
+  saveLocalUsers(users);
+  return user;
 }
 
 export async function getAllUsersPublic(): Promise<Omit<User, "password">[]> {

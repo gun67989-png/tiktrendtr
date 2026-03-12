@@ -25,6 +25,7 @@ import {
   FiCreditCard,
 } from "react-icons/fi";
 import WelcomeOverlay from "@/components/WelcomeOverlay";
+import LogoutOverlay from "@/components/LogoutOverlay";
 
 // Premium pages — free users see the PremiumGate inside these pages
 const PREMIUM_PATHS = [
@@ -66,6 +67,7 @@ export default function DashboardLayout({
   children: React.ReactNode;
 }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [logoutOpen, setLogoutOpen] = useState(false);
   const [user, setUser] = useState<UserInfo | null>(null);
   const pathname = usePathname();
   const router = useRouter();
@@ -81,7 +83,11 @@ export default function DashboardLayout({
       .catch(() => {});
   }, []);
 
-  const handleLogout = async () => {
+  const handleLogout = () => {
+    setLogoutOpen(true);
+  };
+
+  const doLogout = async () => {
     await fetch("/api/auth/logout", { method: "POST" });
     router.push("/login");
     router.refresh();
@@ -96,8 +102,16 @@ export default function DashboardLayout({
 
   return (
     <div className="min-h-screen bg-background flex">
-      {/* Welcome back overlay — once per session, with username */}
+      {/* Welcome back overlay — on every login */}
       <WelcomeOverlay username={user?.username} />
+
+      {/* Logout confirmation + exit animation */}
+      <LogoutOverlay
+        username={user?.username}
+        open={logoutOpen}
+        onCancel={() => setLogoutOpen(false)}
+        onConfirm={doLogout}
+      />
 
       {/* Mobile overlay */}
       <AnimatePresence>

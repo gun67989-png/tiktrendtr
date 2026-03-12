@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect, Suspense } from "react";
 import { motion } from "framer-motion";
 import {
   FiEye,
@@ -11,11 +11,22 @@ import {
   FiUserPlus,
   FiArrowLeft,
 } from "react-icons/fi";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import LogoLink from "@/components/LogoLink";
+import OAuthButtons from "@/components/OAuthButtons";
 
-export default function RegisterPage() {
+const OAUTH_ERRORS: Record<string, string> = {
+  oauth_failed: "Sosyal giriş başarısız oldu. Lütfen tekrar deneyin.",
+  oauth_denied: "Giriş izni reddedildi.",
+  oauth_no_email: "E-posta adresi alınamadı. Lütfen farklı bir yöntem deneyin.",
+  oauth_start_failed: "Sosyal giriş başlatılamadı.",
+  oauth_invalid_state: "Güvenlik doğrulaması başarısız. Lütfen tekrar deneyin.",
+  oauth_missing_params: "Eksik parametreler. Lütfen tekrar deneyin.",
+  account_disabled: "Bu hesap devre dışı bırakılmış.",
+};
+
+function RegisterContent() {
   const [username, setUsername] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -24,6 +35,14 @@ export default function RegisterPage() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const router = useRouter();
+  const searchParams = useSearchParams();
+
+  useEffect(() => {
+    const oauthError = searchParams.get("error");
+    if (oauthError && OAUTH_ERRORS[oauthError]) {
+      setError(OAUTH_ERRORS[oauthError]);
+    }
+  }, [searchParams]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -269,11 +288,20 @@ export default function RegisterPage() {
             </motion.button>
           </form>
 
+          {/* OAuth Buttons */}
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.5 }}
+          >
+            <OAuthButtons mode="register" />
+          </motion.div>
+
           {/* Login Link */}
           <motion.div
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
-            transition={{ delay: 0.5 }}
+            transition={{ delay: 0.55 }}
             className="text-center mt-6"
           >
             <p className="text-text-secondary text-sm">
@@ -289,5 +317,13 @@ export default function RegisterPage() {
         </div>
       </motion.div>
     </div>
+  );
+}
+
+export default function RegisterPage() {
+  return (
+    <Suspense fallback={null}>
+      <RegisterContent />
+    </Suspense>
   );
 }
