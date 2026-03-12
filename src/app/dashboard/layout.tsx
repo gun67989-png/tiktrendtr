@@ -135,12 +135,14 @@ export default function DashboardLayout({
         {/* Logo */}
         <div className="p-6 border-b border-border">
           <Link href="/dashboard" className="flex items-center gap-3">
-            <div className="w-9 h-9 rounded-lg gradient-red flex items-center justify-center">
-              <FiTrendingUp className="w-5 h-5 text-white" />
-            </div>
+            <img
+              src="/logo.png"
+              alt="Valyze TR"
+              className="w-9 h-9 rounded-lg"
+            />
             <div>
               <h1 className="text-lg font-bold text-text-primary">
-                Val<span className="text-neon-red">yze</span>
+                Valyze <span className="text-neon-red">TR</span>
               </h1>
               <p className="text-[10px] text-text-muted uppercase tracking-wider">
                 Trend Analytics

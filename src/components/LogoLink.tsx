@@ -1,7 +1,7 @@
 "use client";
 
 import Link from "next/link";
-import { FiTrendingUp } from "react-icons/fi";
+import Image from "next/image";
 import { useEffect, useState } from "react";
 
 interface LogoLinkProps {
@@ -14,7 +14,6 @@ export default function LogoLink({ size = "md", showSubtitle, subtitle }: LogoLi
   const [href, setHref] = useState("/");
 
   useEffect(() => {
-    // Cookie check - if session cookie exists, user is logged in
     const hasSession = document.cookie.split(";").some((c) => c.trim().startsWith("session="));
     if (hasSession) {
       setHref("/dashboard");
@@ -22,15 +21,9 @@ export default function LogoLink({ size = "md", showSubtitle, subtitle }: LogoLi
   }, []);
 
   const iconSizes = {
-    sm: "w-7 h-7",
-    md: "w-8 h-8",
-    lg: "w-10 h-10",
-  };
-
-  const iconInner = {
-    sm: "w-3.5 h-3.5",
-    md: "w-4 h-4",
-    lg: "w-5 h-5",
+    sm: 28,
+    md: 32,
+    lg: 40,
   };
 
   const textSizes = {
@@ -41,9 +34,14 @@ export default function LogoLink({ size = "md", showSubtitle, subtitle }: LogoLi
 
   return (
     <Link href={href} className="flex items-center gap-2">
-      <div className={`${iconSizes[size]} rounded-lg gradient-red flex items-center justify-center`}>
-        <FiTrendingUp className={`${iconInner[size]} text-white`} />
-      </div>
+      <Image
+        src="/logo.png"
+        alt="Valyze TR"
+        width={iconSizes[size]}
+        height={iconSizes[size]}
+        className="rounded-lg"
+        unoptimized
+      />
       <div>
         <span className={`${textSizes[size]} font-bold text-text-primary`}>
           Valyze <span className="text-neon-red">TR</span>

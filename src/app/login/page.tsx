@@ -15,6 +15,7 @@ import {
   FiBarChart2,
   FiTarget,
 } from "react-icons/fi";
+import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import LogoLink from "@/components/LogoLink";
@@ -155,9 +156,14 @@ function LoginContent() {
           </Link>
 
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 rounded-2xl gradient-red flex items-center justify-center shadow-lg shadow-neon-red/20">
-              <FiTrendingUp className="w-6 h-6 text-white" />
-            </div>
+            <Image
+              src="/logo.png"
+              alt="Valyze TR"
+              width={48}
+              height={48}
+              className="rounded-2xl shadow-lg shadow-neon-red/20"
+              unoptimized
+            />
             <div>
               <h1 className="text-3xl xl:text-4xl font-bold text-text-primary">
                 Valyze <span className="text-neon-red">TR</span>

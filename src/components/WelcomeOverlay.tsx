@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiTrendingUp } from "react-icons/fi";
+import Image from "next/image";
 
 interface WelcomeOverlayProps {
   username?: string;
@@ -327,27 +327,21 @@ export default function WelcomeOverlay({
                   damping: 14,
                   delay: 0.15,
                 }}
-                className="relative w-[72px] h-[72px] rounded-2xl gradient-red flex items-center justify-center"
+                className="relative w-[72px] h-[72px] rounded-2xl overflow-hidden"
                 style={{
                   transformStyle: "preserve-3d",
                   boxShadow:
                     "0 0 30px rgba(255,77,106,0.3), 0 20px 40px rgba(0,0,0,0.3)",
                 }}
               >
-                {/* Inner glow */}
-                <div className="absolute inset-0 rounded-2xl bg-white/10" />
-                <motion.div
-                  animate={{ rotateY: [0, 0, 360, 360] }}
-                  transition={{
-                    duration: 3,
-                    delay: 0.8,
-                    ease: [0.22, 1, 0.36, 1],
-                    times: [0, 0.3, 0.7, 1],
-                  }}
-                  style={{ transformStyle: "preserve-3d" }}
-                >
-                  <FiTrendingUp className="w-9 h-9 text-white relative z-10" />
-                </motion.div>
+                <Image
+                  src="/logo.png"
+                  alt="Valyze TR"
+                  width={72}
+                  height={72}
+                  unoptimized
+                  className="w-full h-full object-contain"
+                />
               </motion.div>
             </div>
 
