@@ -34,81 +34,81 @@ const features = [
   {
     icon: FiHash,
     title: "Hashtag Analizi",
-    desc: "Yuksek performansli hashtag'leri kesfedin.",
+    desc: "Yüksek performanslı hashtag'leri keşfedin.",
     color: "text-teal",
     bg: "bg-teal/10",
   },
   {
     icon: FiPlay,
-    title: "Viral Video Veritabani",
-    desc: "En viral videolari inceleyin ve analiz edin.",
+    title: "Viral Video Veritabanı",
+    desc: "En viral videoları inceleyin ve analiz edin.",
     color: "text-purple-400",
     bg: "bg-purple-400/10",
   },
   {
     icon: FiClock,
-    title: "Paylasim Zamani",
-    desc: "En iyi paylasim zamanlarini bulun.",
+    title: "Paylaşım Zamanı",
+    desc: "En iyi paylaşım zamanlarını bulun.",
     color: "text-blue-400",
     bg: "bg-blue-400/10",
   },
   {
     icon: FiZap,
-    title: "AI Icerik Fikirleri",
-    desc: "Trend konulara dayali icerik onerileri.",
+    title: "AI İçerik Fikirleri",
+    desc: "Trend konulara dayalı içerik önerileri.",
     color: "text-orange-400",
     bg: "bg-orange-400/10",
   },
   {
     icon: FiTarget,
     title: "Rakip Analizi",
-    desc: "Rakiplerinizi analiz edip one gecin.",
+    desc: "Rakiplerinizi analiz edip öne geçin.",
     color: "text-pink-400",
     bg: "bg-pink-400/10",
   },
 ];
 
 const steps = [
-  { num: "1", title: "Kesfet", desc: "Trend video ve hashtag'leri kesfet", icon: FiSearch },
-  { num: "2", title: "Analiz Et", desc: "Neden viral oldugunu anla", icon: FiBarChart2 },
-  { num: "3", title: "Buyut", desc: "Daha iyi icerik uret, hizli buyu", icon: FiTrendingUp },
+  { num: "1", title: "Keşfet", desc: "Trend video ve hashtag'leri keşfet", icon: FiSearch },
+  { num: "2", title: "Analiz Et", desc: "Neden viral olduğunu anla", icon: FiBarChart2 },
+  { num: "3", title: "Büyüt", desc: "Daha iyi içerik üret, hızlı büyü", icon: FiTrendingUp },
 ];
 
 const testimonials = [
   {
-    quote: "Hangi videolarin viral oldugunu artik biliyorum. Cok faydali!",
+    quote: "Hangi videoların viral olduğunu artık biliyorum. Çok faydalı!",
     author: "Elif K.",
-    role: "Icerik Uretici",
+    role: "İçerik Üretici",
     avatar: "E",
   },
   {
-    quote: "Saatlerce arastirma yapmaktan kurtardilar. Neyin tutacagini biliyorum.",
+    quote: "Saatlerce araştırma yapmaktan kurtardılar. Neyin tutacağını biliyorum.",
     author: "Ahmet D.",
-    role: "TikTok Kreatoru",
+    role: "TikTok Kreatörü",
     avatar: "A",
   },
   {
-    quote: "Rakip analizi ozelligi tek basina Pro'ya gecmeye deger.",
+    quote: "Rakip analizi özelliği tek başına Pro'ya geçmeye değer.",
     author: "Selin M.",
-    role: "Dijital Pazarlamaci",
+    role: "Dijital Pazarlamacı",
     avatar: "S",
   },
 ];
 
 const freePlanFeatures = [
-  "Sinirli gunluk analiz",
+  "Sınırlı günlük analiz",
   "Temel trend paneli",
-  "Sinirli hashtag verisi",
+  "Sınırlı hashtag verisi",
 ];
 
 const proPlanFeatures = [
-  "Sinirsiz trend analizi",
-  "Tam viral video veritabani",
+  "Sınırsız trend analizi",
+  "Tam viral video veritabanı",
   "Rakip analizi",
-  "AI icerik fikirleri",
+  "AI içerik fikirleri",
   "Hook analizi",
-  "Gunluk raporlar",
-  "Oncelikli destek",
+  "Günlük raporlar",
+  "Öncelikli destek",
 ];
 
 /* ─── Component ─── */
@@ -126,20 +126,20 @@ export default function LandingPage() {
 
           {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-6">
-            <a href="#features" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Ozellikler</a>
-            <a href="#pricing" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Fiyatlandirma</a>
+            <a href="#features" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Özellikler</a>
+            <a href="#pricing" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Fiyatlandırma</a>
             <Link href="/login" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
-              Giris Yap
+              Giriş Yap
             </Link>
             <Link href="/register" className="text-sm bg-neon-red text-white px-4 py-2 rounded-lg hover:bg-neon-red-light transition-colors font-medium">
-              Ucretsiz Basla
+              Ücretsiz Başla
             </Link>
           </div>
 
           {/* Mobile: CTA + Hamburger */}
           <div className="flex md:hidden items-center gap-2">
             <Link href="/register" className="text-xs bg-neon-red text-white px-3 py-1.5 rounded-lg font-medium">
-              Basla
+              Başla
             </Link>
             <button
               onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
@@ -161,15 +161,15 @@ export default function LandingPage() {
               className="md:hidden border-t border-border bg-background/95 backdrop-blur-xl overflow-hidden"
             >
               <div className="px-4 py-4 space-y-1">
-                <a href="#features" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Ozellikler</a>
-                <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Fiyatlandirma</a>
+                <a href="#features" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Özellikler</a>
+                <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Fiyatlandırma</a>
                 <Link href="/viral-tiktok-videos-turkey" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Viral Videolar</Link>
                 <Link href="/trending-hashtags-turkey" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Trend Hashtag&apos;ler</Link>
-                <Link href="/tiktok-trend-report" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Haftalik Rapor</Link>
-                <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Hakkimizda</Link>
+                <Link href="/tiktok-trend-report" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Haftalık Rapor</Link>
+                <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Hakkımızda</Link>
                 <div className="border-t border-border my-2" />
-                <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Giris Yap</Link>
-                <Link href="/register" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-neon-red hover:bg-neon-red/5 rounded-lg transition-colors">Ucretsiz Kayit Ol</Link>
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Giriş Yap</Link>
+                <Link href="/register" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-neon-red hover:bg-neon-red/5 rounded-lg transition-colors">Ücretsiz Kayıt Ol</Link>
               </div>
             </motion.div>
           )}
@@ -190,7 +190,7 @@ export default function LandingPage() {
             className="inline-flex items-center gap-2 bg-neon-red/10 border border-neon-red/20 text-neon-red text-xs px-3 py-1.5 rounded-full mb-5"
           >
             <FiZap className="w-3 h-3" />
-            Turkiye&apos;nin #1 TikTok Analiz Platformu
+            Türkiye&apos;nin #1 TikTok Analiz Platformu
           </motion.div>
 
           <motion.h1
@@ -201,9 +201,9 @@ export default function LandingPage() {
           >
             Viral Trendleri{" "}
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-red to-teal">
-              Herkesten Once
+              Herkesten Önce
             </span>{" "}
-            Kesfet
+            Keşfet
           </motion.h1>
 
           <motion.p
@@ -212,7 +212,7 @@ export default function LandingPage() {
             transition={{ delay: 0.2, duration: 0.5 }}
             className="text-sm sm:text-base text-text-secondary max-w-xl mx-auto mb-6 leading-relaxed"
           >
-            Binlerce TikTok videosunu analiz edip viral firsatlari kesfetmenize ve daha hizli buyumenize yardimci olur.
+            Binlerce TikTok videosunu analiz edip viral fırsatları keşfetmenize ve daha hızlı büyümenize yardımcı olur.
           </motion.p>
 
           <motion.div
@@ -225,13 +225,13 @@ export default function LandingPage() {
               href="/register"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-neon-red text-white px-6 py-3 rounded-xl hover:bg-neon-red-light transition-all font-medium text-sm hover:shadow-lg hover:shadow-neon-red/20"
             >
-              Ucretsiz Basla <FiArrowRight className="w-4 h-4" />
+              Ücretsiz Başla <FiArrowRight className="w-4 h-4" />
             </Link>
             <Link
               href="/login"
               className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-surface border border-border text-text-primary px-6 py-3 rounded-xl hover:border-neon-red/30 transition-all font-medium text-sm"
             >
-              Giris Yap
+              Giriş Yap
             </Link>
           </motion.div>
         </div>
@@ -247,11 +247,11 @@ export default function LandingPage() {
             className="text-center mb-8 md:mb-12"
           >
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">
-              Ihtiyacin Olan{" "}
-              <span className="text-neon-red">Her Sey</span>
+              İhtiyacın Olan{" "}
+              <span className="text-neon-red">Her Şey</span>
             </h2>
             <p className="text-sm text-text-secondary max-w-md mx-auto">
-              TikTok&apos;ta viral olmak icin guclu araclar
+              TikTok&apos;ta viral olmak için güçlü araçlar
             </p>
           </motion.div>
 
@@ -285,7 +285,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-12"
           >
-            Nasil <span className="text-neon-red">Calisir?</span>
+            Nasıl <span className="text-neon-red">Çalışır?</span>
           </motion.h2>
 
           <div className="flex flex-col md:flex-row gap-4 md:gap-6">
@@ -326,10 +326,10 @@ export default function LandingPage() {
           >
             <h2 className="text-2xl sm:text-3xl font-bold mb-2">
               Basit{" "}
-              <span className="text-teal">Fiyatlandirma</span>
+              <span className="text-teal">Fiyatlandırma</span>
             </h2>
             <p className="text-sm text-text-secondary">
-              Ucretsiz basla, ihtiyacin oldugunda yukselt.
+              Ücretsiz başla, ihtiyacın olduğunda yükselt.
             </p>
           </motion.div>
 
@@ -341,8 +341,8 @@ export default function LandingPage() {
               viewport={{ once: true }}
               className="bg-surface border border-border rounded-2xl p-5 md:p-6"
             >
-              <h3 className="text-base font-bold text-text-primary mb-1">Ucretsiz</h3>
-              <p className="text-xs text-text-secondary mb-3">Baslangic icin</p>
+              <h3 className="text-base font-bold text-text-primary mb-1">Ücretsiz</h3>
+              <p className="text-xs text-text-secondary mb-3">Başlangıç için</p>
               <div className="flex items-baseline gap-1 mb-5">
                 <span className="text-3xl md:text-4xl font-bold text-text-primary">{"\u20BA"}0</span>
                 <span className="text-sm text-text-muted">/ay</span>
@@ -359,7 +359,7 @@ export default function LandingPage() {
                 href="/register"
                 className="block w-full text-center bg-surface-light border border-border text-text-primary py-2.5 rounded-xl text-sm font-medium hover:border-neon-red/30 transition-colors"
               >
-                Ucretsiz Basla
+                Ücretsiz Başla
               </Link>
             </motion.div>
 
@@ -372,10 +372,10 @@ export default function LandingPage() {
               className="bg-surface border-2 border-neon-red/30 rounded-2xl p-5 md:p-6 relative"
             >
               <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-neon-red text-white text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1">
-                <FiStar className="w-2.5 h-2.5" /> EN POPULER
+                <FiStar className="w-2.5 h-2.5" /> EN POPÜLER
               </div>
               <h3 className="text-base font-bold text-text-primary mb-1">Pro</h3>
-              <p className="text-xs text-text-secondary mb-3">Ciddi ureticiler icin</p>
+              <p className="text-xs text-text-secondary mb-3">Ciddi üreticiler için</p>
               <div className="flex items-baseline gap-1 mb-5">
                 <span className="text-3xl md:text-4xl font-bold text-neon-red">{"\u20BA"}299</span>
                 <span className="text-sm text-text-muted">/ay</span>
@@ -392,7 +392,7 @@ export default function LandingPage() {
                 href="/pricing"
                 className="block w-full text-center bg-neon-red text-white py-2.5 rounded-xl text-sm font-medium hover:bg-neon-red-light transition-colors hover:shadow-lg hover:shadow-neon-red/20"
               >
-                Pro&apos;ya Yukselt
+                Pro&apos;ya Yükselt
               </Link>
             </motion.div>
           </div>
@@ -408,7 +408,7 @@ export default function LandingPage() {
             viewport={{ once: true }}
             className="text-2xl sm:text-3xl font-bold text-center mb-8"
           >
-            Ureticiler Ne Diyor?
+            Üreticiler Ne Diyor?
           </motion.h2>
 
           {/* Horizontal scroll on mobile, grid on desktop */}
@@ -455,18 +455,18 @@ export default function LandingPage() {
             className="bg-gradient-to-br from-neon-red/10 via-surface to-teal/10 border border-border rounded-2xl p-6 md:p-10"
           >
             <h2 className="text-2xl sm:text-3xl font-bold mb-3">
-              Bugunden{" "}
-              <span className="text-neon-red">Buyumeye</span>{" "}
-              Basla
+              Bugünden{" "}
+              <span className="text-neon-red">Büyümeye</span>{" "}
+              Başla
             </h2>
             <p className="text-sm text-text-secondary mb-6 max-w-md mx-auto">
-              Viral firsatlari kesfetmek icin Valyze kullanan ureticilere katilin.
+              Viral fırsatları keşfetmek için Valyze TR kullanan üreticilere katılın.
             </p>
             <Link
               href="/register"
               className="inline-flex items-center gap-2 bg-neon-red text-white px-6 py-3 rounded-xl hover:bg-neon-red-light transition-all font-medium text-sm hover:shadow-lg hover:shadow-neon-red/20"
             >
-              Ucretsiz Hesap Olustur <FiArrowRight className="w-4 h-4" />
+              Ücretsiz Hesap Oluştur <FiArrowRight className="w-4 h-4" />
             </Link>
           </motion.div>
         </div>
@@ -482,7 +482,7 @@ export default function LandingPage() {
                 <LogoLink size="sm" />
               </div>
               <p className="text-xs text-text-muted leading-relaxed">
-                Turkiye&apos;nin TikTok trend analiz platformu.
+                Türkiye&apos;nin TikTok trend analiz platformu.
               </p>
             </div>
 
@@ -490,20 +490,20 @@ export default function LandingPage() {
             <div>
               <h4 className="text-xs font-semibold text-text-primary uppercase mb-2">Platform</h4>
               <ul className="space-y-1.5">
-                <li><a href="#features" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Ozellikler</a></li>
-                <li><a href="#pricing" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Fiyatlandirma</a></li>
-                <li><Link href="/about" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Hakkimizda</Link></li>
-                <li><Link href="/contact" className="text-xs text-text-secondary hover:text-text-primary transition-colors flex items-center gap-1"><FiMessageCircle className="w-3 h-3" /> Iletisim</Link></li>
+                <li><a href="#features" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Özellikler</a></li>
+                <li><a href="#pricing" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Fiyatlandırma</a></li>
+                <li><Link href="/about" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Hakkımızda</Link></li>
+                <li><Link href="/contact" className="text-xs text-text-secondary hover:text-text-primary transition-colors flex items-center gap-1"><FiMessageCircle className="w-3 h-3" /> İletişim</Link></li>
               </ul>
             </div>
 
             {/* Tools */}
             <div>
-              <h4 className="text-xs font-semibold text-text-primary uppercase mb-2">Araclar</h4>
+              <h4 className="text-xs font-semibold text-text-primary uppercase mb-2">Araçlar</h4>
               <ul className="space-y-1.5">
                 <li><Link href="/viral-tiktok-videos-turkey" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Viral Videolar</Link></li>
                 <li><Link href="/trending-hashtags-turkey" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Trend Hashtag&apos;ler</Link></li>
-                <li><Link href="/tiktok-trend-report" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Haftalik Rapor</Link></li>
+                <li><Link href="/tiktok-trend-report" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Haftalık Rapor</Link></li>
               </ul>
             </div>
 
@@ -512,15 +512,15 @@ export default function LandingPage() {
               <h4 className="text-xs font-semibold text-text-primary uppercase mb-2">Yasal</h4>
               <ul className="space-y-1.5">
                 <li><Link href="/privacy-policy" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Gizlilik</Link></li>
-                <li><Link href="/terms-of-service" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Kullanim Sartlari</Link></li>
-                <li><Link href="/cookie-policy" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Cerez Politikasi</Link></li>
+                <li><Link href="/terms-of-service" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Kullanım Şartları</Link></li>
+                <li><Link href="/cookie-policy" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Çerez Politikası</Link></li>
               </ul>
             </div>
           </div>
 
           <div className="border-t border-border pt-4 flex items-center justify-between">
-            <p className="text-[10px] text-text-muted">&copy; 2026 Valyze</p>
-            <p className="text-[10px] text-text-muted">Turkiye&apos;de yapildi</p>
+            <p className="text-[10px] text-text-muted">&copy; 2026 Valyze TR</p>
+            <p className="text-[10px] text-text-muted">Türkiye&apos;de yapıldı</p>
           </div>
         </div>
       </footer>

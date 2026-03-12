@@ -16,7 +16,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
-  title: "Valyze - TikTok Trend Analiz Platformu",
+  title: "Valyze TR - TikTok Trend Analiz Platformu",
   description: "Türkiye'deki TikTok trendlerini analiz edin ve viral içerik fırsatlarını keşfedin",
 };
 
