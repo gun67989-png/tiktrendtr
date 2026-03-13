@@ -258,129 +258,6 @@ function DashboardMockup() {
   );
 }
 
-function TrendsMockup() {
-  return (
-    <div className="bg-card border border-border rounded-xl overflow-hidden">
-      <div className="p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <h4 className="text-xs font-semibold text-foreground">Yükselen Trendler</h4>
-          <span className="text-[9px] text-primary font-medium">Canlı</span>
-        </div>
-        {[
-          { name: "Dans Challenge", score: 94, views: "2.4M", status: "🔥" },
-          { name: "Yemek Tarifi", score: 87, views: "1.2M", status: "📈" },
-          { name: "GRWM", score: 82, views: "980K", status: "📈" },
-          { name: "Komedi Skeç", score: 78, views: "750K", status: "⚡" },
-        ].map((t, i) => (
-          <div key={t.name} className="flex items-center gap-3">
-            <span className="text-[10px] text-muted-foreground w-4">{i + 1}</span>
-            <div className="flex-1">
-              <div className="flex items-center justify-between mb-1">
-                <span className="text-[11px] font-medium text-foreground">{t.name}</span>
-                <span className="text-[10px]">{t.status}</span>
-              </div>
-              <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
-                <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${t.score}%` }} />
-              </div>
-            </div>
-            <div className="text-right">
-              <p className="text-[10px] font-medium text-foreground">{t.views}</p>
-              <p className="text-[9px] text-teal">+{t.score}%</p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function HashtagsMockup() {
-  return (
-    <div className="bg-card border border-border rounded-xl overflow-hidden">
-      <div className="p-4 space-y-3">
-        <div className="flex items-center justify-between">
-          <h4 className="text-xs font-semibold text-foreground">Hashtag Performansı</h4>
-          <span className="text-[9px] text-muted-foreground">Son 7 gün</span>
-        </div>
-        {/* Mini chart */}
-        <div className="flex items-end gap-0.5 h-20">
-          {[20, 35, 25, 50, 45, 65, 55, 80, 70, 95, 85, 100, 90, 75].map((h, i) => (
-            <div key={i} className="flex-1 bg-teal/30 rounded-t-sm" style={{ height: `${h}%` }}>
-              <div className="w-full h-full bg-teal rounded-t-sm opacity-80" />
-            </div>
-          ))}
-        </div>
-        {/* Tags */}
-        <div className="flex flex-wrap gap-1.5">
-          {["#viral", "#fyp", "#trending", "#tiktoktürkiye", "#keşfet"].map((tag) => (
-            <span key={tag} className="text-[9px] px-2 py-0.5 bg-teal/10 text-teal rounded-full border border-teal/20">
-              {tag}
-            </span>
-          ))}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-function SoundsMockup() {
-  return (
-    <div className="bg-card border border-border rounded-xl overflow-hidden">
-      <div className="p-4 space-y-2.5">
-        <h4 className="text-xs font-semibold text-foreground">Trend Sesler</h4>
-        {[
-          { name: "Original Sound - DJ Mix", uses: "45K", trend: "+890%" },
-          { name: "Trending Beat 2024", uses: "32K", trend: "+560%" },
-          { name: "Viral Dance Track", uses: "28K", trend: "+340%" },
-        ].map((s) => (
-          <div key={s.name} className="flex items-center gap-2.5 bg-muted/30 rounded-lg p-2">
-            <div className="w-8 h-8 rounded-lg bg-purple-400/10 flex items-center justify-center shrink-0">
-              <Music className="w-3.5 h-3.5 text-purple-400" />
-            </div>
-            <div className="flex-1 min-w-0">
-              <p className="text-[10px] font-medium text-foreground truncate">{s.name}</p>
-              <p className="text-[9px] text-muted-foreground">{s.uses} kullanım</p>
-            </div>
-            <span className="text-[9px] text-teal font-medium shrink-0">{s.trend}</span>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-function AIMockup() {
-  return (
-    <div className="bg-card border border-border rounded-xl overflow-hidden">
-      <div className="p-4 space-y-3">
-        <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-lg bg-orange-400/10 flex items-center justify-center">
-            <Sparkles className="w-3 h-3 text-orange-400" />
-          </div>
-          <h4 className="text-xs font-semibold text-foreground">AI İçerik Önerileri</h4>
-        </div>
-        {[
-          { hook: "Bu trendi kaçırma! İşte neden...", type: "Hook" },
-          { hook: "3 saniyede dikkat çek: Dans challenge ile başla", type: "Fikir" },
-          { hook: "Trend sesi kullan + yemek tarifi = viral", type: "Strateji" },
-        ].map((item) => (
-          <div key={item.hook} className="bg-muted/30 rounded-lg p-2.5">
-            <span className="text-[8px] text-orange-400 font-semibold uppercase">{item.type}</span>
-            <p className="text-[10px] text-foreground mt-0.5">{item.hook}</p>
-          </div>
-        ))}
-      </div>
-    </div>
-  );
-}
-
-const mockupComponents: Record<string, () => JSX.Element> = {
-  trends: TrendsMockup,
-  hashtags: HashtagsMockup,
-  sounds: SoundsMockup,
-  ai: AIMockup,
-};
-
 /* ─── Component ─── */
 
 export default function LandingPage() {
@@ -578,7 +455,6 @@ export default function LandingPage() {
       <section className="py-8 md:py-16 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto space-y-16 md:space-y-24">
           {featureDeepDives.map((fd, idx) => {
-            const MockupComp = mockupComponents[fd.mockup];
             const isReversed = idx % 2 === 1;
             return (
               <motion.div key={fd.badge} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
