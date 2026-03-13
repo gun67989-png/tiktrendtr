@@ -1,6 +1,8 @@
 // TikTok Scraper - Fetches real trending videos via TikWM API
 // Uses TikWM as a reliable proxy to get real TikTok data
 
+export type SoundType = "music" | "sound" | "original";
+
 export interface ScrapedVideo {
   video_id: string;
   creator_username: string;
@@ -16,6 +18,7 @@ export interface ScrapedVideo {
   duration: number;
   sound_name: string;
   sound_creator: string;
+  sound_type: SoundType;
   category: string;
   format: string;
   ad_format: string | null;
@@ -277,6 +280,55 @@ function calculateCreatorPresence(
   return Math.max(0, Math.min(100, score));
 }
 
+// Classify sound type: music (şarkı/beat), sound (viral ses efekti/konuşma), original (orijinal ses)
+const MUSIC_INDICATORS = [
+  "remix", "beat", "song", "şarkı", "sarki", "müzik", "muzik", "cover",
+  "acoustic", "akustik", "piano", "gitar", "guitar", "bass", "drum",
+  "pop", "rap", "hip hop", "rock", "jazz", "r&b", "edm", "trap",
+  "drill", "folk", "arabesk", "slow", "dance mix", "dj", "feat",
+  "ft.", "prod", "instrumental", "karaoke", "halay", "zeybek",
+];
+
+const SOUND_INDICATORS = [
+  "sound", "ses", "efekt", "effect", "voiceover", "seslendirme",
+  "konuşma", "konusma", "motivasyon", "komedi", "funny", "trend ses",
+  "viral ses", "viral sound", "asmr", "whisper", "scream", "reaction",
+  "reaksiyon", "tepki", "POV", "storytime", "anlatım", "monolog",
+  "dialog", "skit", "parodi", "taklit", "dubbing", "dublaj",
+];
+
+function classifySoundType(soundName: string, soundCreator: string, creatorUsername: string): SoundType {
+  const sn = soundName.toLowerCase();
+
+  // Original sound — creator's own audio
+  if (sn.includes("original sound") || sn.includes("orijinal ses") || sn.includes("ses -")) {
+    // Check if it's the creator's own sound
+    if (soundCreator.toLowerCase() === creatorUsername.toLowerCase()) {
+      return "original";
+    }
+    // Someone else's original sound being reused = viral sound
+    return "sound";
+  }
+
+  // Check for music indicators
+  for (const ind of MUSIC_INDICATORS) {
+    if (sn.includes(ind)) return "music";
+  }
+
+  // Check for sound/effect indicators
+  for (const ind of SOUND_INDICATORS) {
+    if (sn.includes(ind)) return "sound";
+  }
+
+  // If BPM-like pattern or artist separator, likely music
+  if (sn.includes(" - ") && !sn.includes("original")) return "music";
+
+  // Default: if it has a known music artist name pattern (creator != video creator), likely music
+  if (soundCreator.toLowerCase() !== creatorUsername.toLowerCase()) return "music";
+
+  return "sound";
+}
+
 // Extract hashtags from caption
 function extractHashtags(text: string): string[] {
   const matches = text.match(/#[\w\u00C0-\u024F\u0400-\u04FF\u00e7\u011f\u0131\u00f6\u015f\u00fc\u00c7\u011e\u0130\u00d6\u015e\u00dc]+/g);
@@ -378,11 +430,12 @@ async function fetchTikWMPage(
       return { videos: [], cursor: 0, hasMore: false };
     }
 
-    const fourteenDaysAgo = Math.floor(Date.now() / 1000) - 14 * 24 * 60 * 60;
+    // Only accept videos from the last 7 days for freshness
+    const sevenDaysAgo = Math.floor(Date.now() / 1000) - 7 * 24 * 60 * 60;
 
     for (const v of result.data.videos) {
       if (!v.video_id || !v.author?.unique_id) continue;
-      if (v.create_time && v.create_time < fourteenDaysAgo) continue;
+      if (v.create_time && v.create_time < sevenDaysAgo) continue;
 
       const caption = v.title || "";
       const hashtags = extractHashtags(caption);
@@ -396,6 +449,8 @@ async function fetchTikWMPage(
         caption, hashtags, category, format,
         v.duration || 0, soundName, soundCreator, v.author.unique_id
       );
+
+      const soundType = classifySoundType(soundName, soundCreator, v.author.unique_id);
 
       const publishDate = v.create_time
         ? new Date(v.create_time * 1000).toISOString()
@@ -416,6 +471,7 @@ async function fetchTikWMPage(
         duration: v.duration || 0,
         sound_name: soundName,
         sound_creator: soundCreator,
+        sound_type: soundType,
         category,
         format,
         ad_format: adFormat,
@@ -524,8 +580,10 @@ async function enrichWithFollowerCounts(videos: ScrapedVideo[]): Promise<void> {
 // Main scraping function - fetches from TikWM API with Turkish keywords
 // Uses parallel batch processing (6 concurrent requests) to stay within Vercel timeout
 // ── Tüm keyword'ler — 2 batch'e bölünmüş ──
+const CURRENT_YEAR = new Date().getFullYear();
+
 const ALL_KEYWORDS = [
-  // ── General trending & popular hashtags ──
+  // ── General trending & popular hashtags (güncel) ──
   { keyword: "türkiye trend", category: null },
   { keyword: "keşfet", category: null },
   { keyword: "türk tiktok viral", category: null },
@@ -535,7 +593,9 @@ const ALL_KEYWORDS = [
   { keyword: "#kesfet", category: null },
   { keyword: "#fyp türkiye", category: null },
   { keyword: "#viral türk", category: null },
-  { keyword: "#trend türkiye 2024", category: null },
+  { keyword: `#trend türkiye ${CURRENT_YEAR}`, category: null },
+  { keyword: `viral tiktok ${CURRENT_YEAR}`, category: null },
+  { keyword: `tiktok trend ${CURRENT_YEAR}`, category: null },
   // ── Yemek (Food) ──
   { keyword: "yemek tarifi türk", category: "Yemek" },
   { keyword: "kahvaltı tarifi", category: "Yemek" },

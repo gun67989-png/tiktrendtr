@@ -1,4 +1,4 @@
-import { NextResponse } from "next/server";
+import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { generateSounds } from "@/lib/data";
 
@@ -16,19 +16,26 @@ interface SoundAgg {
   durations: number[];
   recentCount: number; // last 3 days
   olderCount: number;  // 4-7 days ago
+  soundType: string;
 }
 
-async function getRealSounds() {
+async function getRealSounds(typeFilter?: string) {
   if (!isSupabaseConfigured || !supabase) return null;
 
   try {
-    // Fetch all videos with sound data
-    const { data, error } = await supabase
+    let query = supabase
       .from("trending_videos")
-      .select("sound_name, sound_creator, view_count, like_count, comment_count, share_count, category, duration, scraped_at")
+      .select("sound_name, sound_creator, sound_type, view_count, like_count, comment_count, share_count, category, duration, scraped_at")
       .not("sound_name", "is", null)
       .order("view_count", { ascending: false })
       .limit(2000);
+
+    // Filter by sound_type if specified
+    if (typeFilter && typeFilter !== "all") {
+      query = query.eq("sound_type", typeFilter);
+    }
+
+    const { data, error } = await query;
 
     if (error || !data || data.length === 0) return null;
 
@@ -42,7 +49,6 @@ async function getRealSounds() {
       const name = (video.sound_name || "").trim();
       if (!name || name.length < 2 || name.toLowerCase() === "original sound") continue;
 
-      // Use sound name as key (normalize)
       const key = name.toLowerCase();
       const age = now - new Date(video.scraped_at).getTime();
 
@@ -60,6 +66,7 @@ async function getRealSounds() {
           durations: [],
           recentCount: 0,
           olderCount: 0,
+          soundType: video.sound_type || "sound",
         };
         map.set(key, agg);
       }
@@ -81,11 +88,10 @@ async function getRealSounds() {
 
     // Convert to sorted array
     const sounds = Array.from(map.values())
-      .filter((s) => s.count >= 2) // At least 2 videos
+      .filter((s) => s.count >= 2)
       .sort((a, b) => b.totalViews - a.totalViews)
       .slice(0, 60)
       .map((s, i) => {
-        // Calculate growth
         let growth = 0;
         if (s.olderCount > 0) {
           growth = Math.round(((s.recentCount - s.olderCount) / s.olderCount) * 100);
@@ -93,15 +99,12 @@ async function getRealSounds() {
           growth = 100;
         }
 
-        // Dominant category
         const topCategory = Object.entries(s.categories).sort((a, b) => b[1] - a[1])[0]?.[0] || "Genel";
 
-        // Average duration
         const avgDuration = s.durations.length > 0
           ? Math.round(s.durations.reduce((a, b) => a + b, 0) / s.durations.length)
           : 30;
 
-        // Guess genre from category
         const genreMap: Record<string, string> = {
           "Müzik": "Pop",
           "Dans": "Dance",
@@ -128,9 +131,10 @@ async function getRealSounds() {
           category: topCategory,
           genre: genreMap[topCategory] || "Pop",
           duration: avgDuration,
-          bpm: null, // Not available from scraper
+          bpm: null,
           isRising: growth > 30,
           trend: growth >= 0 ? "up" as const : "down" as const,
+          soundType: s.soundType,
         };
       });
 
@@ -141,15 +145,27 @@ async function getRealSounds() {
   }
 }
 
-export async function GET() {
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const typeFilter = searchParams.get("type") || "all"; // "all" | "music" | "sound" | "original"
+
   // Try real data first
-  const realSounds = await getRealSounds();
+  const realSounds = await getRealSounds(typeFilter);
 
   if (realSounds && realSounds.length > 0) {
     return NextResponse.json({ sounds: realSounds, source: "live" });
   }
 
-  // Fall back to generated data
-  const sounds = generateSounds();
-  return NextResponse.json({ sounds, source: "generated" });
+  // Fall back to generated data (add soundType to mock data)
+  const sounds = generateSounds().map(s => ({
+    ...s,
+    soundType: s.genre === "Efekt" || s.genre === "Konuşma" ? "sound" : "music",
+  }));
+
+  // Apply filter on mock data too
+  const filtered = typeFilter === "all"
+    ? sounds
+    : sounds.filter(s => s.soundType === typeFilter);
+
+  return NextResponse.json({ sounds: filtered, source: "generated" });
 }

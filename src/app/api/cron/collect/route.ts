@@ -76,6 +76,14 @@ async function ensureTable(): Promise<boolean> {
       // Column likely already exists, ignore
     }
 
+    try {
+      await supabase.rpc("exec_sql", {
+        sql: `ALTER TABLE trending_videos ADD COLUMN IF NOT EXISTS sound_type TEXT DEFAULT 'sound';`,
+      });
+    } catch {
+      // Column likely already exists, ignore
+    }
+
     return true;
   } catch (e) {
     console.warn("[CRON] Table check failed:", e);
@@ -102,6 +110,7 @@ async function storeVideos(videos: ScrapedVideo[]): Promise<number> {
       duration: v.duration,
       sound_name: v.sound_name,
       sound_creator: v.sound_creator,
+      sound_type: v.sound_type || "sound",
       category: v.category,
       format: v.format,
       ad_format: v.ad_format,
@@ -138,13 +147,13 @@ async function cleanOldVideos(): Promise<number> {
   if (!isSupabaseConfigured || !supabase) return 0;
 
   try {
-    const fourteenDaysAgo = new Date();
-    fourteenDaysAgo.setDate(fourteenDaysAgo.getDate() - 14);
+    const sevenDaysAgo = new Date();
+    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
 
     const { data, error } = await supabase
       .from("trending_videos")
       .delete()
-      .lt("scraped_at", fourteenDaysAgo.toISOString())
+      .lt("scraped_at", sevenDaysAgo.toISOString())
       .select("video_id");
 
     if (error) {

@@ -152,17 +152,26 @@ export function calcViralScore(opts: {
   // Discovery: 100x follower reach = 1.0
   const discoveryNorm = Math.min(1, discoveryScore / 100);
 
-  // New weighted formula
+  // Freshness score — newer content gets boosted
+  const daysSincePublished = Math.max(0.1, (Date.now() - new Date(publishedAt).getTime()) / (1000 * 60 * 60 * 24));
+  const freshnessNorm = daysSincePublished <= 1 ? 1.0
+    : daysSincePublished <= 3 ? 0.85
+    : daysSincePublished <= 7 ? 0.60
+    : daysSincePublished <= 14 ? 0.30
+    : 0.10;
+
+  // Updated weighted formula with freshness
   const viralScore = Math.min(10, Math.max(0.1,
     Math.round((
-      viewScoreNorm * 0.15 +
-      likeRatioNorm * 0.10 +
-      engRateNorm * 0.10 +
-      presenceNorm * 0.10 +
-      shareNorm * 0.10 +
-      surpriseNorm * 0.20 +
+      viewScoreNorm * 0.12 +
+      likeRatioNorm * 0.08 +
+      engRateNorm * 0.08 +
+      presenceNorm * 0.08 +
+      shareNorm * 0.08 +
+      surpriseNorm * 0.18 +
       velocityNorm * 0.15 +
-      discoveryNorm * 0.10
+      discoveryNorm * 0.08 +
+      freshnessNorm * 0.15
     ) * 100) / 10
   ));
 

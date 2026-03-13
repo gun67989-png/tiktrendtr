@@ -62,15 +62,33 @@ async function analyzeWithClaude(comments, videos) {
         const response = await claudeClient.messages.create({
           model: 'claude-sonnet-4-20250514',
           max_tokens: 4096,
-          system: `Sen bir TikTok yorum moderatorusun. Sana bir JSON dizisi icinde yorumlar gelecek.
-Her yorum icin sunu belirle:
-- isSpam: true/false (tanitim, link, anlamsiz tekrar iceriyorsa)
-- isToxic: true/false (hakaret, nefret soylemi, tehdit iceriyorsa)
-- isBot: true/false (cok kisa ve genel mesajlar, spam kaliplari)
-- sentiment: "positive" | "neutral" | "negative"
+          system: `Sen Turkiye'nin en iyi TikTok yorum moderatorusun. Turkce ve Ingilizce yorumlari analiz ediyorsun.
 
-Sadece JSON dondur. Baska hicbir sey yazma.
-Ornek cikti: [{"username": "ali", "isSpam": false, "isToxic": false, "isBot": false, "sentiment": "positive"}]`,
+Her yorum icin asagidaki kriterleri DIKKATLI belirle:
+
+1. isSpam: true/false
+   - Link, telefon numarasi, "takip et", "bak profilime", "DM at", "linkte" gibi ifadeler → true
+   - Rastgele emoji spam, copy-paste tekrar → true
+   - Gercek bir fikir/tepki bildiriyorsa → false
+
+2. isToxic: true/false
+   - Hakaret, kufur, nefret soylemi, cinsiyet/irk/din ayrımcılığı → true
+   - Agresif tehdit ("oldurecegim", "seni bulacagim") → true
+   - Sert elestiri ama hakaret icermeyen → false
+   - Saka/ironi iceriginde kufur → context'e gore karar ver
+
+3. isBot: true/false
+   - "Harika!", "Guzel", "Wow", "❤️❤️❤️" gibi tek kelime/emoji yorumlar → true
+   - Ayni kullanicidan ayni kalip → true
+   - Kisa ama spesifik bir sey soyluyorsa ("bu tarif cok iyi, kaç dakika pisirdin?") → false
+
+4. sentiment: "positive" | "neutral" | "negative"
+   - Begeni, takdir, heyecan → positive
+   - Soru, bilgilendirme → neutral
+   - Elestiri, sikayet, hayal kirikligi → negative
+
+Sadece JSON array dondur, baska hicbir sey yazma.
+Format: [{"username": "ali", "isSpam": false, "isToxic": false, "isBot": false, "sentiment": "positive"}]`,
           messages: [
             {
               role: 'user',
@@ -123,13 +141,39 @@ Ornek cikti: [{"username": "ali", "isSpam": false, "isToxic": false, "isBot": fa
       const response = await claudeClient.messages.create({
         model: 'claude-sonnet-4-20250514',
         max_tokens: 4096,
-        system: `Sen bir TikTok trend analistisin. Sana video verileri gelecek.
-Her video icin belirle:
-- viralPotential: 0-10 arasi puan (engagement orani, goruntulenme, paylasim sayisina gore)
-- audienceType: "gen-z" | "millenial" | "general" | "niche"
+        system: `Sen Turkiye TikTok pazarinda uzman bir viral trend analistisin. Sana video verileri gelecek.
 
-Sadece JSON dondur. Baska hicbir sey yazma.
-Format: [{"id": "video_id", "viralPotential": 8, "audienceType": "gen-z"}]`,
+Her video icin su kriterleri DETAYLI analiz et:
+
+1. viralPotential (0-10):
+   Puanlama kriterleri:
+   - Engagement orani (likes+comments+shares / views): yuksek oran = yuksek puan
+   - Share/view orani: paylasim en guclu viral sinyali, agirlikli deger
+   - Engagement velocity: kisa surede yuksek etkilesim = bonus
+   - Surprise factor: takipci sayisina gore beklenmedik performans = bonus
+   - Icerik tipi: tutorial, POV, storytime, challenge = dogal viral potansiyel
+   - Hashtag kalitesi: trend hashtag sayisi ve cesitliligi
+
+   0-2: Dusuk performans
+   3-4: Ortanin altinda
+   5-6: Iyi performans
+   7-8: Viral potansiyel yuksek
+   9-10: Mega viral / trending
+
+2. audienceType:
+   - "gen-z": 15-24 yas, dans, challenge, meme, hizli kesim, slang
+   - "millenial": 25-35 yas, lifestyle, yemek, cocuk, nostalji, detayli icerik
+   - "general": genis kitle, haberler, egitim, komedi, evrensel konular
+   - "niche": spesifik ilgi alani (gaming, teknik, hobi, profesyonel)
+
+3. contentCategory (YENİ):
+   - "entertainment": eglence, komedi, dans
+   - "education": ogretici, bilgilendirici
+   - "lifestyle": moda, guzellik, yemek, seyahat
+   - "commerce": urun tanitimi, reklam, haul
+
+Sadece JSON dondur, baska hicbir sey yazma.
+Format: [{"id": "video_id", "viralPotential": 8, "audienceType": "gen-z", "contentCategory": "entertainment"}]`,
         messages: [
           {
             role: 'user',
@@ -168,6 +212,8 @@ async function analyzeWithGemini(videos, comments) {
       emergingTrends: [],
       topTrends: [],
       overallMood: 'neutral',
+      viralSounds: [],
+      contentGaps: [],
     };
   }
 
@@ -182,43 +228,54 @@ async function analyzeWithGemini(videos, comments) {
       sampleComments: comments.slice(0, 50).map(c => c.text),
     };
 
-    const prompt = `Analyze these TikTok videos and comments data. Return ONLY valid JSON, no other text.
+    const prompt = `Sen Turkiye TikTok pazarinin en iyi trend analistisin. Asagidaki video ve yorum verilerini analiz et.
 
-INPUT DATA:
+VERI:
 ${JSON.stringify(dataForGemini)}
 
-Analyze and return this exact JSON structure:
+ONEMLI KURALLAR:
+- Turkiye TikTok pazarina OZEL analiz yap
+- Hashtag onerileri TURKCE ve GUNCEL olsun
+- Trend tahminlerinde Turkiye'deki kulturel etkinlikleri, tatilleri, gundem konularini dikkate al
+- Sadece valid JSON dondur, baska hicbir sey yazma
+
+Asagidaki JSON yapisini dondur:
 {
   "suggestedHashtags": ["#hashtag1", "#hashtag2", ...],
   "contentLanguages": {"tr": 60, "en": 30, "other": 10},
   "streamMood": "excited" | "calm" | "funny" | "dramatic" | "educational" | "neutral",
   "categoryBreakdown": {"entertainment": 40, "education": 20, "lifestyle": 15, ...},
   "trendPredictions": [
-    {"topic": "topic_name", "confidence": 0.85, "direction": "rising" | "stable" | "falling"}
+    {"topic": "konu_adi", "confidence": 0.85, "direction": "rising" | "stable" | "falling", "reason": "neden yukseliyor"}
   ],
   "contentQualityScore": 7.5,
   "bestPostingTimes": ["19:00-21:00", "12:00-14:00"],
   "audienceInsights": {
     "primaryAge": "18-24",
-    "interests": ["music", "comedy"],
+    "interests": ["muzik", "komedi"],
     "engagementStyle": "passive" | "active" | "creator"
   },
   "emergingTrends": [
-    {"videoId": "id", "trends": ["dance", "challenge"]}
+    {"videoId": "id", "trends": ["dans", "challenge"]}
   ],
   "topTrends": ["trend1", "trend2", "trend3", "trend4", "trend5"],
-  "overallMood": "energetic"
+  "overallMood": "energetic",
+  "viralSounds": [
+    {"name": "ses_adi", "usageGrowth": "rising", "category": "music" | "sound" | "original"}
+  ],
+  "contentGaps": ["az uretilen ama talep olan icerik turleri"]
 }
 
-Rules:
-- suggestedHashtags: Recommend 10 trending hashtags based on content patterns
-- contentLanguages: Percentage breakdown of languages detected
-- trendPredictions: Top 5 predicted trends with confidence scores
-- emergingTrends: For each video, identify emerging trend keywords from description/hashtags
-- topTrends: Top 5 overall emerging trends across ALL videos
-- overallMood: General mood/energy of the content ("energetic", "chill", "funny", "dramatic", "educational", "neutral")
-- Be specific to Turkish TikTok market when possible
-- Return ONLY the JSON object, nothing else`;
+DETAYLI ANALIZ KURALLARI:
+- suggestedHashtags: 15 adet, Turkce agirlikli, guncel trendlere uygun
+- trendPredictions: En az 7 tahmin, confidence 0-1 arasi, reason ile aciklama
+- viralSounds (YENI): Verideki sesleri analiz et, hangileri yukseliyor?
+- contentGaps (YENI): Veride eksik olan ama Turkiye'de talep goren icerik turleri
+- topTrends: En az 7 trend belirle
+- emergingTrends: Her video icin hashtag ve aciklamadan trend cikar
+- overallMood: Genel icerik enerjisi
+
+Return ONLY the JSON object, nothing else.`;
 
     const result = await geminiModel.generateContent(prompt);
     const text = result.response.text();
@@ -245,6 +302,8 @@ Rules:
         emergingTrends: [],
         topTrends: [],
         overallMood: 'neutral',
+        viralSounds: [],
+        contentGaps: [],
       };
     }
   } catch (err) {
@@ -258,6 +317,8 @@ Rules:
       emergingTrends: [],
       topTrends: [],
       overallMood: 'neutral',
+      viralSounds: [],
+      contentGaps: [],
     };
   }
 }
@@ -408,6 +469,8 @@ async function processData(scrapedData) {
       contentQualityScore: geminiResults.contentQualityScore || 0,
       bestPostingTimes: geminiResults.bestPostingTimes || [],
       audienceInsights: geminiResults.audienceInsights || {},
+      viralSounds: geminiResults.viralSounds || [],
+      contentGaps: geminiResults.contentGaps || [],
     },
   };
 

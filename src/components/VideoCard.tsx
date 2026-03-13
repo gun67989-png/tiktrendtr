@@ -36,6 +36,15 @@ function formatNumber(n: number): string {
   return n.toString();
 }
 
+function getThumbnailUrl(url: string): string {
+  if (!url) return "/images/placeholder-video.jpg";
+  // Proxy TikTok CDN URLs through our API to avoid CORS/referrer issues
+  if (url.includes("tiktokcdn") || url.includes("tikwm") || url.includes("muscdn")) {
+    return `/api/thumbnail?url=${encodeURIComponent(url)}`;
+  }
+  return url;
+}
+
 function formatDuration(seconds: number): string {
   const m = Math.floor(seconds / 60);
   const s = seconds % 60;
@@ -132,10 +141,17 @@ export default function VideoCard({
       <div className="relative aspect-[9/16] max-h-[280px] bg-card-light rounded-t-xl">
         <div className="w-full h-full overflow-hidden rounded-t-xl">
           <img
-            src={video.thumbnailUrl}
+            src={getThumbnailUrl(video.thumbnailUrl)}
             alt={video.description}
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
             loading="lazy"
+            onError={(e) => {
+              const target = e.target as HTMLImageElement;
+              if (!target.dataset.retried) {
+                target.dataset.retried = "1";
+                target.src = `https://picsum.photos/seed/${video.id?.slice(-6) || "default"}/400/700`;
+              }
+            }}
           />
         </div>
         {/* Overlay */}

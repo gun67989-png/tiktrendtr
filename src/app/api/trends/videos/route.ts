@@ -20,6 +20,7 @@ interface DBVideo {
   duration: number;
   sound_name: string;
   sound_creator: string;
+  sound_type: string | null;
   category: string;
   format: string;
   ad_format: string | null;
@@ -131,6 +132,7 @@ async function getRealVideos(options: {
         soundId: null,
         soundName: v.sound_name,
         soundCreator: v.sound_creator,
+        soundType: v.sound_type || "sound",
         publishedAt: v.scraped_at,
         hashtags: v.hashtags || [],
       };
