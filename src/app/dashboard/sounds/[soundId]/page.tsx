@@ -4,14 +4,14 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
-  FiMusic,
-  FiArrowLeft,
-  FiTrendingUp,
-  FiEye,
-  FiBarChart2,
-  FiClock,
-  FiDisc,
-} from "react-icons/fi";
+  Music,
+  ArrowLeft,
+  TrendingUp,
+  Eye,
+  BarChart2,
+  Clock,
+  Disc,
+} from "lucide-react";
 import {
   AreaChart,
   Area,
@@ -60,7 +60,7 @@ export default function SoundDetailPage() {
         <div className="h-8 shimmer rounded w-64" />
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="bg-surface rounded-xl border border-border p-4 h-24 shimmer" />
+            <div key={i} className="bg-card rounded-xl border border-border p-4 h-24 shimmer" />
           ))}
         </div>
         <div className="h-64 shimmer rounded-xl" />
@@ -71,8 +71,8 @@ export default function SoundDetailPage() {
   if (!data) {
     return (
       <div className="text-center py-20">
-        <FiMusic className="w-12 h-12 text-text-muted mx-auto mb-4" />
-        <p className="text-text-secondary">Ses bulunamadi</p>
+        <Music className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+        <p className="text-muted-foreground">Ses bulunamadi</p>
         <button
           onClick={() => router.push("/dashboard/sounds")}
           className="mt-4 text-sm text-teal hover:underline"
@@ -84,10 +84,10 @@ export default function SoundDetailPage() {
   }
 
   const infoItems = [
-    { label: "Kullanim", value: formatNumber(data.usageCount), icon: FiBarChart2, color: "text-teal" },
-    { label: "Buyume", value: `${data.growthRate >= 0 ? "+" : ""}${data.growthRate}%`, icon: FiTrendingUp, color: data.growthRate >= 0 ? "text-teal" : "text-neon-red" },
-    { label: "BPM", value: data.bpm || "N/A", icon: FiDisc, color: "text-purple-400" },
-    { label: "Sure", value: data.duration, icon: FiClock, color: "text-blue-400" },
+    { label: "Kullanim", value: formatNumber(data.usageCount), icon: BarChart2, color: "text-teal" },
+    { label: "Buyume", value: `${data.growthRate >= 0 ? "+" : ""}${data.growthRate}%`, icon: TrendingUp, color: data.growthRate >= 0 ? "text-teal" : "text-primary" },
+    { label: "BPM", value: data.bpm || "N/A", icon: Disc, color: "text-purple-400" },
+    { label: "Sure", value: data.duration, icon: Clock, color: "text-blue-400" },
   ];
 
   return (
@@ -96,20 +96,20 @@ export default function SoundDetailPage() {
       <div>
         <button
           onClick={() => router.push("/dashboard/sounds")}
-          className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-colors mb-4"
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
         >
-          <FiArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4" />
           Seslere Don
         </button>
         <div className="flex items-start gap-4">
-          <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-teal/20 to-purple-500/20 border border-teal/30 flex items-center justify-center shrink-0">
-            <FiMusic className="w-7 h-7 text-teal" />
+          <div className="w-16 h-16 rounded-xl bg-teal/10 border border-teal/30 flex items-center justify-center shrink-0">
+            <Music className="w-7 h-7 text-teal" />
           </div>
           <div className="min-w-0">
-            <h1 className="text-2xl font-bold text-text-primary truncate">{data.name}</h1>
-            <p className="text-sm text-text-secondary mt-0.5">@{data.creator}</p>
+            <h1 className="text-2xl font-bold text-foreground truncate">{data.name}</h1>
+            <p className="text-sm text-muted-foreground mt-0.5">@{data.creator}</p>
             <div className="flex items-center gap-2 mt-2">
-              <span className="text-xs bg-surface-light text-text-secondary px-2 py-0.5 rounded-md">
+              <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-md">
                 {data.genre}
               </span>
               <span className="text-xs bg-teal/10 text-teal px-2 py-0.5 rounded-md font-mono">
@@ -123,10 +123,10 @@ export default function SoundDetailPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
         {infoItems.map((item) => (
-          <div key={item.label} className="bg-surface rounded-xl border border-border p-4">
+          <div key={item.label} className="bg-card rounded-xl border border-border p-4">
             <div className="flex items-center gap-2 mb-2">
               <item.icon className={`w-4 h-4 ${item.color}`} />
-              <span className="text-[10px] text-text-muted uppercase">{item.label}</span>
+              <span className="text-[10px] text-muted-foreground uppercase">{item.label}</span>
             </div>
             <p className={`text-xl font-bold ${item.color}`}>{item.value}</p>
           </div>
@@ -134,8 +134,8 @@ export default function SoundDetailPage() {
       </div>
 
       {/* Usage Growth Chart */}
-      <div className="bg-surface rounded-xl border border-border p-5">
-        <h3 className="text-sm font-semibold text-text-primary mb-4">Kullanim Buyumesi (30 Gun)</h3>
+      <div className="bg-card rounded-xl border border-border p-5">
+        <h3 className="text-sm font-semibold text-foreground mb-4">Kullanim Buyumesi (30 Gun)</h3>
         <div className="h-64">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={data.usageHistory}>
@@ -165,7 +165,7 @@ export default function SoundDetailPage() {
 
       {/* Top Viral Videos */}
       <div>
-        <h3 className="text-lg font-semibold text-text-primary mb-4">
+        <h3 className="text-lg font-semibold text-foreground mb-4">
           Bu Sesi Kullanan En Viral Videolar
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
@@ -175,34 +175,33 @@ export default function SoundDetailPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
-              whileHover={{ scale: 1.03, y: -4 }}
               onClick={() => router.push(`/dashboard/trending-videos/${video.id}`)}
-              className="bg-surface rounded-xl border border-border overflow-hidden cursor-pointer hover:border-teal/30 transition-all group"
+              className="bg-card rounded-xl border border-border overflow-hidden cursor-pointer hover:border-border/80 transition-all group"
             >
-              <div className="relative aspect-[9/16] max-h-[220px] overflow-hidden bg-surface-light">
+              <div className="relative aspect-[9/16] max-h-[220px] overflow-hidden bg-muted">
                 <img
                   src={video.thumbnailUrl}
                   alt={video.description}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover transition-transform duration-500"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
-                <div className="absolute top-2 left-2 bg-neon-red/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                <div className="absolute top-2 left-2 bg-primary/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
                   {video.viralScore.toFixed(0)}
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 p-2">
                   <div className="flex items-center gap-2 text-white/90 text-[10px]">
                     <span className="flex items-center gap-0.5">
-                      <FiEye className="w-2.5 h-2.5" />{formatNumber(video.views)}
+                      <Eye className="w-2.5 h-2.5" />{formatNumber(video.views)}
                     </span>
                   </div>
                 </div>
               </div>
               <div className="p-2 space-y-1">
-                <p className="text-[11px] text-text-primary font-medium truncate">@{video.creator}</p>
+                <p className="text-[11px] text-foreground font-medium truncate">@{video.creator}</p>
                 <div className="flex items-center justify-between">
-                  <span className="text-[9px] text-text-muted">{timeAgo(video.publishedAt)}</span>
-                  <span className="text-[9px] text-neon-red font-medium">%{video.engagementRate.toFixed(1)}</span>
+                  <span className="text-[9px] text-muted-foreground">{timeAgo(video.publishedAt)}</span>
+                  <span className="text-[9px] text-primary font-medium">%{video.engagementRate.toFixed(1)}</span>
                 </div>
               </div>
             </motion.div>

@@ -1,6 +1,7 @@
 import type { Config } from "tailwindcss";
 
 const config: Config = {
+  darkMode: "class",
   content: [
     "./src/pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./src/components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -12,35 +13,74 @@ const config: Config = {
         "24": "repeat(24, minmax(0, 1fr))",
       },
       colors: {
-        background: "#0c0c14",
-        surface: "#13131e",
-        "surface-light": "#1c1c2b",
-        "surface-lighter": "#252536",
-        border: "#2e2e44",
-        "neon-red": "#ff4d6a",
-        "neon-red-light": "#ff7090",
-        "neon-red-dark": "#d93a56",
-        teal: "#00e6b8",
-        "teal-light": "#40f0d0",
-        "teal-dark": "#00b892",
-        purple: "#a78bfa",
-        "purple-light": "#c4b5fd",
+        border: "hsl(var(--border))",
+        input: "hsl(var(--input))",
+        ring: "hsl(var(--ring))",
+        background: "hsl(var(--background))",
+        foreground: "hsl(var(--foreground))",
+        primary: {
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
+        },
+        secondary: {
+          DEFAULT: "hsl(var(--secondary))",
+          foreground: "hsl(var(--secondary-foreground))",
+        },
+        destructive: {
+          DEFAULT: "hsl(var(--destructive))",
+          foreground: "hsl(var(--destructive-foreground))",
+        },
+        muted: {
+          DEFAULT: "hsl(var(--muted))",
+          foreground: "hsl(var(--muted-foreground))",
+        },
+        accent: {
+          DEFAULT: "hsl(var(--accent))",
+          foreground: "hsl(var(--accent-foreground))",
+        },
+        popover: {
+          DEFAULT: "hsl(var(--popover))",
+          foreground: "hsl(var(--popover-foreground))",
+        },
+        card: {
+          DEFAULT: "hsl(var(--card))",
+          foreground: "hsl(var(--card-foreground))",
+        },
+        // Semantic colors for charts and specific UI
+        teal: {
+          DEFAULT: "#2dd4bf",
+          light: "#5eead4",
+          dark: "#14b8a6",
+        },
+        purple: {
+          DEFAULT: "#a78bfa",
+          light: "#c4b5fd",
+        },
         amber: "#fbbf24",
-        "text-primary": "#f0f0f8",
-        "text-secondary": "#9494b0",
-        "text-muted": "#606080",
+        // Legacy aliases for gradual migration
+        surface: "hsl(var(--card))",
+        "surface-light": "hsl(var(--muted))",
+        "surface-lighter": "hsl(var(--accent))",
+        "neon-red": "hsl(var(--primary))",
+        "neon-red-light": "hsl(var(--primary) / 0.8)",
+        "neon-red-dark": "hsl(var(--primary) / 0.9)",
+        "text-primary": "hsl(var(--foreground))",
+        "text-secondary": "hsl(var(--muted-foreground))",
+        "text-muted": "hsl(var(--muted-foreground) / 0.6)",
       },
       fontFamily: {
         sans: ["var(--font-inter)", "system-ui", "-apple-system", "sans-serif"],
         mono: ["ui-monospace", "SFMono-Regular", "monospace"],
       },
+      borderRadius: {
+        lg: "var(--radius)",
+        md: "calc(var(--radius) - 2px)",
+        sm: "calc(var(--radius) - 4px)",
+      },
       animation: {
-        "fade-in": "fadeIn 0.5s ease-out",
-        "slide-up": "slideUp 0.5s ease-out",
+        "fade-in": "fadeIn 0.4s ease-out",
+        "slide-up": "slideUp 0.4s ease-out",
         "slide-in-right": "slideInRight 0.3s ease-out",
-        glow: "glow 2s ease-in-out infinite alternate",
-        "glow-teal": "glowTeal 2s ease-in-out infinite alternate",
-        float: "float 3s ease-in-out infinite",
       },
       keyframes: {
         fadeIn: {
@@ -48,24 +88,12 @@ const config: Config = {
           "100%": { opacity: "1" },
         },
         slideUp: {
-          "0%": { opacity: "0", transform: "translateY(20px)" },
+          "0%": { opacity: "0", transform: "translateY(10px)" },
           "100%": { opacity: "1", transform: "translateY(0)" },
         },
         slideInRight: {
-          "0%": { opacity: "0", transform: "translateX(20px)" },
+          "0%": { opacity: "0", transform: "translateX(10px)" },
           "100%": { opacity: "1", transform: "translateX(0)" },
-        },
-        glow: {
-          "0%": { boxShadow: "0 0 5px rgba(255, 59, 92, 0.2)" },
-          "100%": { boxShadow: "0 0 20px rgba(255, 59, 92, 0.4)" },
-        },
-        glowTeal: {
-          "0%": { boxShadow: "0 0 5px rgba(0, 212, 170, 0.2)" },
-          "100%": { boxShadow: "0 0 20px rgba(0, 212, 170, 0.4)" },
-        },
-        float: {
-          "0%, 100%": { transform: "translateY(0px)" },
-          "50%": { transform: "translateY(-10px)" },
         },
       },
     },

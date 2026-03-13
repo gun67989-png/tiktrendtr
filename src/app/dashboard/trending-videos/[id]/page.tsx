@@ -4,18 +4,18 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
-  FiArrowLeft,
-  FiEye,
-  FiHeart,
-  FiMessageCircle,
-  FiShare2,
-  FiClock,
-  FiMusic,
-  FiHash,
-  FiExternalLink,
-  FiZap,
-  FiBarChart2,
-} from "react-icons/fi";
+  ArrowLeft,
+  Eye,
+  Heart,
+  MessageCircle,
+  Share2,
+  Clock,
+  Music,
+  Hash,
+  ExternalLink,
+  Zap,
+  BarChart2,
+} from "lucide-react";
 import {
   AreaChart,
   Area,
@@ -79,11 +79,11 @@ export default function VideoAnalyticsPage() {
   if (!data) {
     return (
       <div className="text-center py-20">
-        <FiEye className="w-12 h-12 text-text-muted mx-auto mb-4" />
-        <p className="text-text-secondary">Video bulunamadi</p>
+        <Eye className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+        <p className="text-muted-foreground">Video bulunamadi</p>
         <button
           onClick={() => router.push("/dashboard/trending-videos")}
-          className="mt-4 text-sm text-neon-red hover:underline"
+          className="mt-4 text-sm text-primary hover:underline"
         >
           Videolara don
         </button>
@@ -92,10 +92,10 @@ export default function VideoAnalyticsPage() {
   }
 
   const speedColors: Record<string, string> = {
-    "Cok Hizli": "text-neon-red",
+    "Cok Hizli": "text-primary",
     "Hizli": "text-orange-400",
     "Normal": "text-teal",
-    "Yavas": "text-text-muted",
+    "Yavas": "text-muted-foreground",
   };
 
   // Build comparison data for engagement chart
@@ -109,9 +109,9 @@ export default function VideoAnalyticsPage() {
       {/* Back */}
       <button
         onClick={() => router.push("/dashboard/trending-videos")}
-        className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-colors"
+        className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
       >
-        <FiArrowLeft className="w-4 h-4" />
+        <ArrowLeft className="w-4 h-4" />
         Videolara Don
       </button>
 
@@ -122,9 +122,9 @@ export default function VideoAnalyticsPage() {
           <img
             src={data.thumbnailUrl}
             alt={data.description}
-            className="w-full aspect-[9/16] max-h-[420px] object-cover rounded-2xl"
+            className="w-full aspect-[9/16] max-h-[420px] object-cover rounded-xl"
           />
-          <div className="absolute top-3 left-3 bg-neon-red text-white text-xs font-bold px-2.5 py-1 rounded-lg">
+          <div className="absolute top-3 left-3 bg-primary text-white text-xs font-bold px-2.5 py-1 rounded-lg">
             Viral: {data.viralScore.toFixed(0)}
           </div>
           {data.format && (
@@ -134,7 +134,7 @@ export default function VideoAnalyticsPage() {
           )}
           <div className="absolute bottom-3 left-3 right-3 flex items-center justify-between">
             <span className="bg-black/70 text-white text-xs px-2 py-1 rounded flex items-center gap-1">
-              <FiClock className="w-3 h-3" />
+              <Clock className="w-3 h-3" />
               {formatDuration(data.duration)}
             </span>
             {data.category && (
@@ -149,59 +149,59 @@ export default function VideoAnalyticsPage() {
         <div className="flex-1 space-y-5">
           {/* Creator */}
           <div className="flex items-center gap-3">
-            <div className="w-11 h-11 rounded-full gradient-red flex items-center justify-center text-white font-bold text-lg">
+            <div className="w-11 h-11 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg">
               {data.creator[0].toUpperCase()}
             </div>
             <div>
-              <p className="text-base font-semibold text-text-primary">@{data.creator}</p>
-              <p className="text-xs text-text-muted">
+              <p className="text-base font-semibold text-foreground">@{data.creator}</p>
+              <p className="text-xs text-muted-foreground">
                 {new Date(data.publishedAt).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })}
               </p>
             </div>
           </div>
 
           {/* Description */}
-          <p className="text-sm text-text-secondary leading-relaxed">{data.description}</p>
+          <p className="text-sm text-muted-foreground leading-relaxed">{data.description}</p>
 
           {/* 4 Stats Grid */}
           <div className="grid grid-cols-2 gap-3">
-            <div className="bg-surface rounded-xl border border-border p-4 text-center">
-              <FiEye className="w-5 h-5 text-text-muted mx-auto mb-1.5" />
-              <p className="text-xl font-bold text-text-primary">{formatNumber(data.views)}</p>
-              <p className="text-[10px] text-text-muted">Goruntulenme</p>
+            <div className="bg-card rounded-xl border border-border p-4 text-center">
+              <Eye className="w-5 h-5 text-muted-foreground mx-auto mb-1.5" />
+              <p className="text-xl font-bold text-foreground">{formatNumber(data.views)}</p>
+              <p className="text-[10px] text-muted-foreground">Goruntulenme</p>
             </div>
-            <div className="bg-surface rounded-xl border border-border p-4 text-center">
-              <FiHeart className="w-5 h-5 text-neon-red mx-auto mb-1.5" />
-              <p className="text-xl font-bold text-text-primary">{formatNumber(data.likes)}</p>
-              <p className="text-[10px] text-text-muted">Begeni</p>
+            <div className="bg-card rounded-xl border border-border p-4 text-center">
+              <Heart className="w-5 h-5 text-primary mx-auto mb-1.5" />
+              <p className="text-xl font-bold text-foreground">{formatNumber(data.likes)}</p>
+              <p className="text-[10px] text-muted-foreground">Begeni</p>
             </div>
-            <div className="bg-surface rounded-xl border border-border p-4 text-center">
-              <FiMessageCircle className="w-5 h-5 text-teal mx-auto mb-1.5" />
-              <p className="text-xl font-bold text-text-primary">{formatNumber(data.comments)}</p>
-              <p className="text-[10px] text-text-muted">Yorum</p>
+            <div className="bg-card rounded-xl border border-border p-4 text-center">
+              <MessageCircle className="w-5 h-5 text-teal mx-auto mb-1.5" />
+              <p className="text-xl font-bold text-foreground">{formatNumber(data.comments)}</p>
+              <p className="text-[10px] text-muted-foreground">Yorum</p>
             </div>
-            <div className="bg-surface rounded-xl border border-border p-4 text-center">
-              <FiShare2 className="w-5 h-5 text-purple-400 mx-auto mb-1.5" />
-              <p className="text-xl font-bold text-text-primary">{formatNumber(data.shares)}</p>
-              <p className="text-[10px] text-text-muted">Paylasim</p>
+            <div className="bg-card rounded-xl border border-border p-4 text-center">
+              <Share2 className="w-5 h-5 text-purple-400 mx-auto mb-1.5" />
+              <p className="text-xl font-bold text-foreground">{formatNumber(data.shares)}</p>
+              <p className="text-[10px] text-muted-foreground">Paylasim</p>
             </div>
           </div>
 
           {/* Key Metrics Row */}
           <div className="grid grid-cols-3 gap-3">
-            <div className="bg-neon-red/10 rounded-xl p-3 text-center">
-              <p className="text-lg font-bold text-neon-red">%{data.engagementRate.toFixed(2)}</p>
-              <p className="text-[10px] text-text-muted">Etkilesim Orani</p>
+            <div className="bg-primary/10 rounded-xl p-3 text-center">
+              <p className="text-lg font-bold text-primary">%{data.engagementRate.toFixed(2)}</p>
+              <p className="text-[10px] text-muted-foreground">Etkilesim Orani</p>
             </div>
-            <div className="bg-surface rounded-xl border border-border p-3 text-center">
-              <p className={`text-lg font-bold ${speedColors[data.growthSpeed] || "text-text-primary"}`}>
+            <div className="bg-card rounded-xl border border-border p-3 text-center">
+              <p className={`text-lg font-bold ${speedColors[data.growthSpeed] || "text-foreground"}`}>
                 {data.growthSpeed}
               </p>
-              <p className="text-[10px] text-text-muted">Buyume Hizi</p>
+              <p className="text-[10px] text-muted-foreground">Buyume Hizi</p>
             </div>
-            <div className="bg-surface rounded-xl border border-border p-3 text-center">
+            <div className="bg-card rounded-xl border border-border p-3 text-center">
               <p className="text-lg font-bold text-teal">{data.bestPostingHour}:00</p>
-              <p className="text-[10px] text-text-muted">Paylasim Saati</p>
+              <p className="text-[10px] text-muted-foreground">Paylasim Saati</p>
             </div>
           </div>
 
@@ -209,16 +209,16 @@ export default function VideoAnalyticsPage() {
           {data.soundName && (
             <button
               onClick={() => data.soundId && router.push(`/dashboard/sounds/${data.soundId}`)}
-              className="flex items-center gap-3 w-full bg-surface rounded-xl border border-border p-3 hover:border-teal/40 transition-colors text-left"
+              className="flex items-center gap-3 w-full bg-card rounded-xl border border-border p-3 hover:border-teal/40 transition-colors text-left"
             >
               <div className="w-10 h-10 rounded-lg bg-teal/10 flex items-center justify-center shrink-0">
-                <FiMusic className="w-5 h-5 text-teal" />
+                <Music className="w-5 h-5 text-teal" />
               </div>
               <div className="min-w-0 flex-1">
-                <p className="text-sm text-text-primary truncate">{data.soundName}</p>
-                <p className="text-xs text-text-muted">{data.soundCreator}</p>
+                <p className="text-sm text-foreground truncate">{data.soundName}</p>
+                <p className="text-xs text-muted-foreground">{data.soundCreator}</p>
               </div>
-              <FiArrowLeft className="w-4 h-4 text-text-muted rotate-180 shrink-0" />
+              <ArrowLeft className="w-4 h-4 text-muted-foreground rotate-180 shrink-0" />
             </button>
           )}
 
@@ -231,7 +231,7 @@ export default function VideoAnalyticsPage() {
                   onClick={() => router.push(`/dashboard/hashtags/${encodeURIComponent(tag)}`)}
                   className="flex items-center gap-1 text-xs text-teal bg-teal/10 px-2.5 py-1.5 rounded-lg hover:bg-teal/20 transition-colors"
                 >
-                  <FiHash className="w-3 h-3" />
+                  <Hash className="w-3 h-3" />
                   {tag.replace("#", "")}
                 </button>
               ))}
@@ -243,9 +243,9 @@ export default function VideoAnalyticsPage() {
             href={data.tiktokUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl gradient-red text-white text-sm font-semibold hover:opacity-90 transition-opacity"
+            className="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-primary text-white text-sm font-semibold hover:opacity-90 transition-opacity"
           >
-            <FiExternalLink className="w-4 h-4" />
+            <ExternalLink className="w-4 h-4" />
             TikTok&apos;ta Ac
           </a>
         </div>
@@ -254,10 +254,10 @@ export default function VideoAnalyticsPage() {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Views Over Time */}
-        <div className="bg-surface rounded-xl border border-border p-5">
+        <div className="bg-card rounded-xl border border-border p-5">
           <div className="flex items-center gap-2 mb-4">
-            <FiEye className="w-4 h-4 text-teal" />
-            <h3 className="text-sm font-semibold text-text-primary">Goruntulenme Grafigi</h3>
+            <Eye className="w-4 h-4 text-teal" />
+            <h3 className="text-sm font-semibold text-foreground">Goruntulenme Grafigi</h3>
           </div>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
@@ -287,10 +287,10 @@ export default function VideoAnalyticsPage() {
         </div>
 
         {/* Engagement vs Niche Average */}
-        <div className="bg-surface rounded-xl border border-border p-5">
+        <div className="bg-card rounded-xl border border-border p-5">
           <div className="flex items-center gap-2 mb-4">
-            <FiBarChart2 className="w-4 h-4 text-neon-red" />
-            <h3 className="text-sm font-semibold text-text-primary">Etkilesim vs Nis Ortalamasi</h3>
+            <BarChart2 className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-semibold text-foreground">Etkilesim vs Nis Ortalamasi</h3>
           </div>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
@@ -317,57 +317,57 @@ export default function VideoAnalyticsPage() {
           </div>
           <div className="flex items-center gap-4 mt-3 text-[10px]">
             <span className="flex items-center gap-1.5">
-              <span className="w-3 h-0.5 bg-neon-red rounded" />
-              <span className="text-text-muted">Bu Video</span>
+              <span className="w-3 h-0.5 bg-primary rounded" />
+              <span className="text-muted-foreground">Bu Video</span>
             </span>
             <span className="flex items-center gap-1.5">
               <span className="w-3 h-0.5 bg-text-muted rounded border-dashed" />
-              <span className="text-text-muted">Nis Ortalamasi (%{data.nicheAvgEngagement})</span>
+              <span className="text-muted-foreground">Nis Ortalamasi (%{data.nicheAvgEngagement})</span>
             </span>
           </div>
         </div>
       </div>
 
       {/* Performance vs Niche Summary */}
-      <div className="bg-surface rounded-xl border border-border p-5">
-        <h3 className="text-sm font-semibold text-text-primary mb-4 flex items-center gap-2">
-          <FiZap className="w-4 h-4 text-neon-red" />
+      <div className="bg-card rounded-xl border border-border p-5">
+        <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
+          <Zap className="w-4 h-4 text-primary" />
           Performans Karsilastirmasi
         </h3>
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
           <div className="text-center">
-            <p className="text-[10px] text-text-muted uppercase mb-1">Goruntulenme</p>
-            <p className="text-lg font-bold text-text-primary">{formatNumber(data.views)}</p>
-            <p className="text-xs text-text-muted mt-0.5">Nis Ort: {formatNumber(data.nicheAvgViews)}</p>
-            <div className={`text-xs font-medium mt-1 ${data.views > data.nicheAvgViews ? "text-teal" : "text-neon-red"}`}>
+            <p className="text-[10px] text-muted-foreground uppercase mb-1">Goruntulenme</p>
+            <p className="text-lg font-bold text-foreground">{formatNumber(data.views)}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Nis Ort: {formatNumber(data.nicheAvgViews)}</p>
+            <div className={`text-xs font-medium mt-1 ${data.views > data.nicheAvgViews ? "text-teal" : "text-primary"}`}>
               {data.views > data.nicheAvgViews
                 ? `+${Math.round(((data.views - data.nicheAvgViews) / data.nicheAvgViews) * 100)}% yukarida`
                 : `${Math.round(((data.views - data.nicheAvgViews) / data.nicheAvgViews) * 100)}% asagida`}
             </div>
           </div>
           <div className="text-center">
-            <p className="text-[10px] text-text-muted uppercase mb-1">Etkilesim</p>
-            <p className="text-lg font-bold text-text-primary">%{data.engagementRate.toFixed(2)}</p>
-            <p className="text-xs text-text-muted mt-0.5">Nis Ort: %{data.nicheAvgEngagement}</p>
-            <div className={`text-xs font-medium mt-1 ${data.engagementRate > data.nicheAvgEngagement ? "text-teal" : "text-neon-red"}`}>
+            <p className="text-[10px] text-muted-foreground uppercase mb-1">Etkilesim</p>
+            <p className="text-lg font-bold text-foreground">%{data.engagementRate.toFixed(2)}</p>
+            <p className="text-xs text-muted-foreground mt-0.5">Nis Ort: %{data.nicheAvgEngagement}</p>
+            <div className={`text-xs font-medium mt-1 ${data.engagementRate > data.nicheAvgEngagement ? "text-teal" : "text-primary"}`}>
               {data.engagementRate > data.nicheAvgEngagement
                 ? `+${(data.engagementRate - data.nicheAvgEngagement).toFixed(1)}pp yukarida`
                 : `${(data.engagementRate - data.nicheAvgEngagement).toFixed(1)}pp asagida`}
             </div>
           </div>
           <div className="text-center">
-            <p className="text-[10px] text-text-muted uppercase mb-1">Buyume Hizi</p>
-            <p className={`text-lg font-bold ${speedColors[data.growthSpeed] || "text-text-primary"}`}>
+            <p className="text-[10px] text-muted-foreground uppercase mb-1">Buyume Hizi</p>
+            <p className={`text-lg font-bold ${speedColors[data.growthSpeed] || "text-foreground"}`}>
               {data.growthSpeed}
             </p>
-            <p className="text-xs text-text-muted mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               {data.duration}sn video
             </p>
           </div>
           <div className="text-center">
-            <p className="text-[10px] text-text-muted uppercase mb-1">Paylasim Zamani</p>
+            <p className="text-[10px] text-muted-foreground uppercase mb-1">Paylasim Zamani</p>
             <p className="text-lg font-bold text-teal">{data.bestPostingHour}:00</p>
-            <p className="text-xs text-text-muted mt-0.5">
+            <p className="text-xs text-muted-foreground mt-0.5">
               {data.bestPostingHour >= 19 && data.bestPostingHour <= 22 ? "Prime time" : "Normal saat"}
             </p>
           </div>

@@ -2,7 +2,7 @@
 
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { FiLock, FiZap, FiCheck, FiArrowRight } from "react-icons/fi";
+import { Lock, Zap, Check, ArrowRight } from "lucide-react";
 import Link from "next/link";
 
 // ─── Premium gate component ─────────────────────────────────
@@ -61,33 +61,33 @@ export default function PremiumGate({ children, featureName = "Bu özellik" }: P
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
           transition={{ type: "spring", stiffness: 200 }}
-          className="mx-auto w-20 h-20 rounded-2xl bg-gradient-to-br from-neon-red/20 to-purple-500/20 border border-neon-red/30 flex items-center justify-center"
+          className="mx-auto w-20 h-20 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center"
         >
-          <FiLock className="w-8 h-8 text-neon-red" />
+          <Lock className="w-8 h-8 text-primary" />
         </motion.div>
 
         {/* Title */}
         <div className="space-y-2">
-          <h2 className="text-2xl font-bold text-text-primary">
+          <h2 className="text-2xl font-bold text-foreground">
             Premium Özellik
           </h2>
-          <p className="text-text-secondary text-sm">
+          <p className="text-muted-foreground text-sm">
             {featureName} Pro abonelere özeldir. Tüm gelişmiş özelliklere erişmek için planınızı yükseltin.
           </p>
         </div>
 
         {/* Features list */}
-        <div className="bg-surface rounded-xl border border-border p-6 text-left space-y-3">
+        <div className="bg-card rounded-xl border border-border p-6 text-left space-y-3">
           <div className="flex items-center gap-2 mb-4">
-            <FiZap className="w-4 h-4 text-neon-red" />
-            <span className="text-sm font-semibold text-text-primary">Pro Plan ile neler kazanırsınız?</span>
+            <Zap className="w-4 h-4 text-primary" />
+            <span className="text-sm font-semibold text-foreground">Pro Plan ile neler kazanırsınız?</span>
           </div>
           {PRO_FEATURES.map((feature) => (
             <div key={feature} className="flex items-center gap-3">
               <div className="w-5 h-5 rounded-full bg-teal/10 flex items-center justify-center shrink-0">
-                <FiCheck className="w-3 h-3 text-teal" />
+                <Check className="w-3 h-3 text-teal" />
               </div>
-              <span className="text-sm text-text-secondary">{feature}</span>
+              <span className="text-sm text-muted-foreground">{feature}</span>
             </div>
           ))}
         </div>
@@ -95,13 +95,13 @@ export default function PremiumGate({ children, featureName = "Bu özellik" }: P
         {/* CTA */}
         <Link
           href="/pricing"
-          className="inline-flex items-center gap-2 px-8 py-3 bg-gradient-to-r from-neon-red to-pink-600 text-white font-semibold rounded-xl hover:shadow-lg hover:shadow-neon-red/25 transition-all duration-300 hover:-translate-y-0.5"
+          className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dark transition-colors"
         >
           Pro&apos;ya Yükselt
-          <FiArrowRight className="w-4 h-4" />
+          <ArrowRight className="w-4 h-4" />
         </Link>
 
-        <p className="text-[11px] text-text-muted">
+        <p className="text-[11px] text-muted-foreground">
           Aylık sadece ₺299 &middot; İstediğin zaman iptal et
         </p>
       </div>

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { FiEye, FiHeart, FiMessageCircle, FiClock, FiUser, FiX } from "react-icons/fi";
+import { Eye, Heart, MessageCircle, Clock, User, X } from "lucide-react";
 
 export interface VideoData {
   id: string;
@@ -88,17 +88,17 @@ function BadgeTooltip({ text, onClose, align = "center" }: { text: string; onClo
         initial={{ opacity: 0, y: 4 }}
         animate={{ opacity: 1, y: 0 }}
         exit={{ opacity: 0 }}
-        className={`absolute z-50 bottom-full ${posClass} mb-2 w-48 bg-surface border border-border rounded-lg p-2.5 shadow-xl`}
+        className={`absolute z-50 bottom-full ${posClass} mb-2 w-48 bg-card border border-border rounded-lg p-2.5 shadow-xl`}
         onClick={(e) => e.stopPropagation()}
       >
         <button
           onClick={(e) => { e.stopPropagation(); onClose(); }}
-          className="absolute top-1 right-1 text-text-muted hover:text-text-primary"
+          className="absolute top-1 right-1 text-muted-foreground hover:text-foreground"
         >
-          <FiX className="w-3 h-3" />
+          <X className="w-3 h-3" />
         </button>
-        <p className="text-[11px] text-text-secondary leading-relaxed pr-3">{text}</p>
-        <div className={`absolute bottom-0 ${arrowClass} translate-y-1/2 rotate-45 w-2 h-2 bg-surface border-r border-b border-border`} />
+        <p className="text-[11px] text-muted-foreground leading-relaxed pr-3">{text}</p>
+        <div className={`absolute bottom-0 ${arrowClass} translate-y-1/2 rotate-45 w-2 h-2 bg-card border-r border-b border-border`} />
       </motion.div>
     </AnimatePresence>
   );
@@ -125,12 +125,11 @@ export default function VideoCard({
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
-      whileHover={{ scale: 1.02, y: -4 }}
       onClick={() => { setActiveTooltip(null); onSelect?.(video); }}
-      className="bg-surface rounded-xl border border-border cursor-pointer hover:border-neon-red/30 transition-all group"
+      className="bg-card rounded-lg border border-border cursor-pointer hover:border-zinc-700 transition-colors group"
     >
       {/* Thumbnail */}
-      <div className="relative aspect-[9/16] max-h-[280px] bg-surface-light rounded-t-xl">
+      <div className="relative aspect-[9/16] max-h-[280px] bg-card-light rounded-t-xl">
         <div className="w-full h-full overflow-hidden rounded-t-xl">
           <img
             src={video.thumbnailUrl}
@@ -144,7 +143,7 @@ export default function VideoCard({
 
         {/* Duration badge - top right */}
         <div className="absolute top-2 right-2 bg-black/70 text-white text-[10px] px-1.5 py-0.5 rounded flex items-center gap-1">
-          <FiClock className="w-2.5 h-2.5" />
+          <Clock className="w-2.5 h-2.5" />
           {formatDuration(video.duration)}
         </div>
 
@@ -173,7 +172,7 @@ export default function VideoCard({
           <div className="relative">
             <div
               onClick={(e) => toggleTooltip("viral", e)}
-              className="bg-neon-red/90 text-white text-[10px] font-bold px-1.5 py-0.5 rounded cursor-help hover:bg-neon-red transition-colors"
+              className="bg-primary/90 text-white text-[10px] font-bold px-1.5 py-0.5 rounded cursor-help hover:bg-primary transition-colors"
             >
               {video.viralScore.toFixed(0)}
             </div>
@@ -200,7 +199,7 @@ export default function VideoCard({
                   : "bg-black/40 text-white/50 hover:bg-black/60"
               }`}
             >
-              <FiUser className="w-2.5 h-2.5" />
+              <User className="w-2.5 h-2.5" />
               {video.creatorPresenceScore}
             </div>
             {activeTooltip === "presence" && (
@@ -216,9 +215,9 @@ export default function VideoCard({
         {/* Bottom stats overlay */}
         <div className="absolute bottom-0 left-0 right-0 px-2 py-1.5">
           <div className="flex items-center gap-2 text-white/90 text-[10px]">
-            <span className="flex items-center gap-0.5"><FiEye className="w-2.5 h-2.5" />{formatNumber(video.views)}</span>
-            <span className="flex items-center gap-0.5"><FiHeart className="w-2.5 h-2.5" />{formatNumber(video.likes)}</span>
-            <span className="flex items-center gap-0.5"><FiMessageCircle className="w-2.5 h-2.5" />{formatNumber(video.comments)}</span>
+            <span className="flex items-center gap-0.5"><Eye className="w-2.5 h-2.5" />{formatNumber(video.views)}</span>
+            <span className="flex items-center gap-0.5"><Heart className="w-2.5 h-2.5" />{formatNumber(video.likes)}</span>
+            <span className="flex items-center gap-0.5"><MessageCircle className="w-2.5 h-2.5" />{formatNumber(video.comments)}</span>
           </div>
         </div>
       </div>
@@ -226,12 +225,12 @@ export default function VideoCard({
       {/* Info */}
       <div className="p-3 space-y-2">
         <div className="flex items-center gap-2">
-          <div className="w-6 h-6 rounded-full gradient-red flex items-center justify-center text-white text-[10px] font-bold shrink-0">
+          <div className="w-6 h-6 rounded-full bg-primary flex items-center justify-center text-white text-[10px] font-bold shrink-0">
             {video.creator[0].toUpperCase()}
           </div>
-          <span className="text-xs text-text-primary font-medium truncate">@{video.creator}</span>
+          <span className="text-xs text-foreground font-medium truncate">@{video.creator}</span>
         </div>
-        <p className="text-xs text-text-secondary line-clamp-2 leading-relaxed">{video.description}</p>
+        <p className="text-xs text-muted-foreground line-clamp-2 leading-relaxed">{video.description}</p>
 
         {/* Hashtags */}
         {video.hashtags.length > 0 && (
@@ -255,16 +254,16 @@ export default function VideoCard({
 
         {/* Footer */}
         <div className="flex items-center justify-between pt-1 border-t border-border/50">
-          <span className="text-[10px] text-text-muted">{timeAgo(video.publishedAt)}</span>
+          <span className="text-[10px] text-muted-foreground">{timeAgo(video.publishedAt)}</span>
           <div className="flex items-center gap-2">
             {video.likeRatio != null && (
               <span className={`text-[10px] font-medium ${
-                video.likeRatio >= 8 ? "text-teal" : video.likeRatio >= 4 ? "text-text-secondary" : "text-text-muted"
+                video.likeRatio >= 8 ? "text-teal" : video.likeRatio >= 4 ? "text-muted-foreground" : "text-muted-foreground"
               }`}>
-                <FiHeart className="w-2.5 h-2.5 inline mr-0.5" />%{video.likeRatio.toFixed(1)}
+                <Heart className="w-2.5 h-2.5 inline mr-0.5" />%{video.likeRatio.toFixed(1)}
               </span>
             )}
-            <span className="text-[10px] text-neon-red font-medium">%{video.engagementRate.toFixed(1)}</span>
+            <span className="text-[10px] text-primary font-medium">%{video.engagementRate.toFixed(1)}</span>
           </div>
         </div>
       </div>

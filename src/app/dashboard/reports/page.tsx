@@ -4,16 +4,16 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import PremiumGate from "@/components/PremiumGate";
 import {
-  FiBarChart2,
-  FiEye,
-  FiTrendingUp,
-  FiHash,
-  FiMusic,
-  FiPlay,
-  FiCalendar,
-  FiArrowUp,
-  FiArrowDown,
-} from "react-icons/fi";
+  BarChart2,
+  Eye,
+  TrendingUp,
+  Hash,
+  Music,
+  Play,
+  Calendar,
+  ArrowUp,
+  ArrowDown,
+} from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -104,7 +104,7 @@ function ReportsContent() {
         <div className="h-8 shimmer rounded w-64" />
         <div className="grid grid-cols-2 gap-3 sm:gap-4">
           {Array.from({ length: 4 }).map((_, i) => (
-            <div key={i} className="bg-surface rounded-xl border border-border p-4 h-24 shimmer" />
+            <div key={i} className="bg-card rounded-xl border border-border p-4 h-24 shimmer" />
           ))}
         </div>
         <div className="h-64 shimmer rounded-xl" />
@@ -115,8 +115,8 @@ function ReportsContent() {
   if (!data) {
     return (
       <div className="text-center py-20">
-        <FiBarChart2 className="w-12 h-12 text-text-muted mx-auto mb-4" />
-        <p className="text-text-secondary">Rapor verisi bulunamadi</p>
+        <BarChart2 className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+        <p className="text-muted-foreground">Rapor verisi bulunamadi</p>
       </div>
     );
   }
@@ -133,28 +133,28 @@ function ReportsContent() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
         <div className="min-w-0">
-          <h1 className="text-xl sm:text-2xl font-bold text-text-primary truncate">Gunluk Trend Raporu</h1>
-          <p className="text-xs sm:text-sm text-text-secondary mt-1 flex items-center gap-1">
-            <FiCalendar className="w-3.5 h-3.5 shrink-0" /> {reportDate}
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground truncate">Gunluk Trend Raporu</h1>
+          <p className="text-xs sm:text-sm text-muted-foreground mt-1 flex items-center gap-1">
+            <Calendar className="w-3.5 h-3.5 shrink-0" /> {reportDate}
           </p>
         </div>
-        <div className="bg-surface-light px-3 py-1.5 rounded-lg shrink-0 self-start">
-          <span className="text-[10px] sm:text-xs text-text-secondary">{data.stats.totalVideos} video analiz edildi</span>
+        <div className="bg-muted px-3 py-1.5 rounded-lg shrink-0 self-start">
+          <span className="text-[10px] sm:text-xs text-muted-foreground">{data.stats.totalVideos} video analiz edildi</span>
         </div>
       </div>
 
       {/* Stats Grid */}
       <div className="grid grid-cols-2 gap-3 sm:gap-4">
         {[
-          { label: "Toplam Goruntulenme", value: formatNumber(data.stats.totalViews), icon: FiEye, color: "text-blue-400" },
-          { label: "Ort. Goruntulenme", value: formatNumber(data.stats.avgViews), icon: FiTrendingUp, color: "text-teal" },
-          { label: "Ort. Etkilesim", value: `%${data.stats.avgEngagement}`, icon: FiBarChart2, color: "text-purple-400" },
-          { label: "En Populer Kategori", value: data.stats.topCategory, icon: FiPlay, color: "text-neon-red" },
+          { label: "Toplam Goruntulenme", value: formatNumber(data.stats.totalViews), icon: Eye, color: "text-blue-400" },
+          { label: "Ort. Goruntulenme", value: formatNumber(data.stats.avgViews), icon: TrendingUp, color: "text-teal" },
+          { label: "Ort. Etkilesim", value: `%${data.stats.avgEngagement}`, icon: BarChart2, color: "text-purple-400" },
+          { label: "En Populer Kategori", value: data.stats.topCategory, icon: Play, color: "text-primary" },
         ].map((stat) => (
-          <div key={stat.label} className="bg-surface rounded-xl border border-border p-3 sm:p-4">
+          <div key={stat.label} className="bg-card rounded-xl border border-border p-3 sm:p-4">
             <div className="flex items-center gap-1.5 sm:gap-2 mb-1.5 sm:mb-2">
               <stat.icon className={`w-3.5 h-3.5 sm:w-4 sm:h-4 ${stat.color} shrink-0`} />
-              <span className="text-[9px] sm:text-[10px] text-text-muted uppercase leading-tight">{stat.label}</span>
+              <span className="text-[9px] sm:text-[10px] text-muted-foreground uppercase leading-tight">{stat.label}</span>
             </div>
             <p className={`text-lg sm:text-xl font-bold ${stat.color} truncate`}>{stat.value}</p>
           </div>
@@ -162,9 +162,9 @@ function ReportsContent() {
       </div>
 
       {/* Top 10 Viral Videos */}
-      <div className="bg-surface rounded-xl border border-border p-3 sm:p-5">
-        <h3 className="text-sm font-semibold text-text-primary mb-3 sm:mb-4 flex items-center gap-2">
-          <FiPlay className="w-4 h-4 text-neon-red shrink-0" />
+      <div className="bg-card rounded-xl border border-border p-3 sm:p-5">
+        <h3 className="text-sm font-semibold text-foreground mb-3 sm:mb-4 flex items-center gap-2">
+          <Play className="w-4 h-4 text-primary shrink-0" />
           En Viral 10 Video
         </h3>
         <div className="space-y-1">
@@ -177,12 +177,12 @@ function ReportsContent() {
               initial={{ opacity: 0, x: -10 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="flex items-center gap-2 sm:gap-3 p-2 rounded-lg hover:bg-surface-light transition-colors group"
+              className="flex items-center gap-2 sm:gap-3 p-2 rounded-lg hover:bg-muted transition-colors group"
             >
-              <span className="text-sm sm:text-lg font-bold text-text-muted w-5 sm:w-6 text-right shrink-0">
+              <span className="text-sm sm:text-lg font-bold text-muted-foreground w-5 sm:w-6 text-right shrink-0">
                 {i + 1}
               </span>
-              <div className="w-9 h-12 sm:w-10 sm:h-14 rounded-lg overflow-hidden bg-surface-light shrink-0">
+              <div className="w-9 h-12 sm:w-10 sm:h-14 rounded-lg overflow-hidden bg-muted shrink-0">
                 <img
                   src={video.thumbnailUrl}
                   alt=""
@@ -191,25 +191,25 @@ function ReportsContent() {
                 />
               </div>
               <div className="flex-1 min-w-0">
-                <p className="text-xs text-text-primary font-medium truncate">
+                <p className="text-xs text-foreground font-medium truncate">
                   @{video.creator}
                 </p>
-                <p className="text-[10px] text-text-secondary truncate">{video.description}</p>
+                <p className="text-[10px] text-muted-foreground truncate">{video.description}</p>
               </div>
               {/* Desktop: inline badges */}
               <div className="hidden sm:flex items-center gap-2 shrink-0">
                 <span className="text-[10px] text-teal bg-teal/10 px-1.5 py-0.5 rounded">{video.format}</span>
-                <span className="text-xs text-text-secondary flex items-center gap-0.5">
-                  <FiEye className="w-3 h-3" /> {formatNumber(video.views)}
+                <span className="text-xs text-muted-foreground flex items-center gap-0.5">
+                  <Eye className="w-3 h-3" /> {formatNumber(video.views)}
                 </span>
-                <span className="text-xs text-neon-red font-medium">%{video.engagementRate}</span>
+                <span className="text-xs text-primary font-medium">%{video.engagementRate}</span>
               </div>
               {/* Mobile: compact view/engagement */}
               <div className="flex sm:hidden flex-col items-end gap-0.5 shrink-0">
-                <span className="text-[10px] text-text-secondary flex items-center gap-0.5">
-                  <FiEye className="w-2.5 h-2.5" /> {formatNumber(video.views)}
+                <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                  <Eye className="w-2.5 h-2.5" /> {formatNumber(video.views)}
                 </span>
-                <span className="text-[10px] text-neon-red font-medium">%{video.engagementRate}</span>
+                <span className="text-[10px] text-primary font-medium">%{video.engagementRate}</span>
               </div>
             </motion.a>
           ))}
@@ -219,53 +219,53 @@ function ReportsContent() {
       {/* Two Column: Hashtags + Sounds */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Trending Hashtags */}
-        <div className="bg-surface rounded-xl border border-border p-3 sm:p-5">
-          <h3 className="text-sm font-semibold text-text-primary mb-3 sm:mb-4 flex items-center gap-2">
-            <FiHash className="w-4 h-4 text-teal shrink-0" />
+        <div className="bg-card rounded-xl border border-border p-3 sm:p-5">
+          <h3 className="text-sm font-semibold text-foreground mb-3 sm:mb-4 flex items-center gap-2">
+            <Hash className="w-4 h-4 text-teal shrink-0" />
             En Hizli Buyuyen Hashtag&apos;ler
           </h3>
           <div className="space-y-1">
             {data.trendingHashtags.map((ht, i) => (
-              <div key={ht.tag} className="flex items-center gap-2 p-2 rounded-lg hover:bg-surface-light transition-colors min-w-0">
-                <span className="text-xs font-bold text-text-muted w-4 shrink-0">{i + 1}</span>
+              <div key={ht.tag} className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted transition-colors min-w-0">
+                <span className="text-xs font-bold text-muted-foreground w-4 shrink-0">{i + 1}</span>
                 <span className="text-xs text-teal flex-1 truncate min-w-0">{ht.tag}</span>
-                <span className="text-[10px] text-text-muted shrink-0">{ht.count} video</span>
-                <span className={`text-[10px] font-medium flex items-center gap-0.5 shrink-0 ${ht.growth > 0 ? "text-teal" : ht.growth < 0 ? "text-neon-red" : "text-text-muted"}`}>
-                  {ht.growth > 0 ? <FiArrowUp className="w-2.5 h-2.5" /> : ht.growth < 0 ? <FiArrowDown className="w-2.5 h-2.5" /> : null}
+                <span className="text-[10px] text-muted-foreground shrink-0">{ht.count} video</span>
+                <span className={`text-[10px] font-medium flex items-center gap-0.5 shrink-0 ${ht.growth > 0 ? "text-teal" : ht.growth < 0 ? "text-primary" : "text-muted-foreground"}`}>
+                  {ht.growth > 0 ? <ArrowUp className="w-2.5 h-2.5" /> : ht.growth < 0 ? <ArrowDown className="w-2.5 h-2.5" /> : null}
                   {ht.growth > 0 ? "+" : ""}{ht.growth}%
                 </span>
               </div>
             ))}
             {data.trendingHashtags.length === 0 && (
-              <p className="text-xs text-text-muted text-center py-4">Yeterli hashtag verisi yok</p>
+              <p className="text-xs text-muted-foreground text-center py-4">Yeterli hashtag verisi yok</p>
             )}
           </div>
         </div>
 
         {/* Trending Sounds */}
-        <div className="bg-surface rounded-xl border border-border p-3 sm:p-5">
-          <h3 className="text-sm font-semibold text-text-primary mb-3 sm:mb-4 flex items-center gap-2">
-            <FiMusic className="w-4 h-4 text-purple-400 shrink-0" />
+        <div className="bg-card rounded-xl border border-border p-3 sm:p-5">
+          <h3 className="text-sm font-semibold text-foreground mb-3 sm:mb-4 flex items-center gap-2">
+            <Music className="w-4 h-4 text-purple-400 shrink-0" />
             Trend Sesler
           </h3>
           <div className="space-y-1">
             {data.trendingSounds.map((sound, i) => (
-              <div key={sound.name + i} className="flex items-center gap-2 p-2 rounded-lg hover:bg-surface-light transition-colors min-w-0">
-                <span className="text-xs font-bold text-text-muted w-4 shrink-0">{i + 1}</span>
+              <div key={sound.name + i} className="flex items-center gap-2 p-2 rounded-lg hover:bg-muted transition-colors min-w-0">
+                <span className="text-xs font-bold text-muted-foreground w-4 shrink-0">{i + 1}</span>
                 <div className="flex-1 min-w-0">
-                  <p className="text-xs text-text-primary truncate">{sound.name}</p>
-                  <p className="text-[10px] text-text-muted truncate">{sound.creator}</p>
+                  <p className="text-xs text-foreground truncate">{sound.name}</p>
+                  <p className="text-[10px] text-muted-foreground truncate">{sound.creator}</p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
-                  <span className="text-[10px] text-text-muted">{sound.videoCount} video</span>
-                  <span className="text-[10px] text-text-secondary whitespace-nowrap">
-                    <FiEye className="w-2.5 h-2.5 inline mr-0.5" />{formatNumber(sound.totalViews)}
+                  <span className="text-[10px] text-muted-foreground">{sound.videoCount} video</span>
+                  <span className="text-[10px] text-muted-foreground whitespace-nowrap">
+                    <Eye className="w-2.5 h-2.5 inline mr-0.5" />{formatNumber(sound.totalViews)}
                   </span>
                 </div>
               </div>
             ))}
             {data.trendingSounds.length === 0 && (
-              <p className="text-xs text-text-muted text-center py-4">Yeterli ses verisi yok</p>
+              <p className="text-xs text-muted-foreground text-center py-4">Yeterli ses verisi yok</p>
             )}
           </div>
         </div>
@@ -274,9 +274,9 @@ function ReportsContent() {
       {/* Two Column: Emerging Formats + Category Distribution */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Emerging Formats */}
-        <div className="bg-surface rounded-xl border border-border p-3 sm:p-5">
-          <h3 className="text-sm font-semibold text-text-primary mb-3 sm:mb-4 flex items-center gap-2">
-            <FiTrendingUp className="w-4 h-4 text-orange-400 shrink-0" />
+        <div className="bg-card rounded-xl border border-border p-3 sm:p-5">
+          <h3 className="text-sm font-semibold text-foreground mb-3 sm:mb-4 flex items-center gap-2">
+            <TrendingUp className="w-4 h-4 text-orange-400 shrink-0" />
             Yukselen Icerik Formatlari
           </h3>
           <div className="h-48 w-full min-w-0">
@@ -303,9 +303,9 @@ function ReportsContent() {
 
         {/* Category Distribution */}
         {data.categoryDistribution && data.categoryDistribution.length > 0 && (
-          <div className="bg-surface rounded-xl border border-border p-3 sm:p-5">
-            <h3 className="text-sm font-semibold text-text-primary mb-3 sm:mb-4 flex items-center gap-2">
-              <FiBarChart2 className="w-4 h-4 text-blue-400 shrink-0" />
+          <div className="bg-card rounded-xl border border-border p-3 sm:p-5">
+            <h3 className="text-sm font-semibold text-foreground mb-3 sm:mb-4 flex items-center gap-2">
+              <BarChart2 className="w-4 h-4 text-blue-400 shrink-0" />
               Kategori Dagilimi
             </h3>
             <div className="h-48 flex items-center">
@@ -336,8 +336,8 @@ function ReportsContent() {
                 {data.categoryDistribution.slice(0, 8).map((cat, i) => (
                   <div key={cat.category} className="flex items-center gap-1.5 sm:gap-2 min-w-0">
                     <div className="w-2 h-2 sm:w-2.5 sm:h-2.5 rounded-full shrink-0" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
-                    <span className="text-[10px] sm:text-[11px] text-text-secondary truncate">{cat.category}</span>
-                    <span className="text-[9px] sm:text-[10px] text-text-muted ml-auto shrink-0">%{cat.percentage}</span>
+                    <span className="text-[10px] sm:text-[11px] text-muted-foreground truncate">{cat.category}</span>
+                    <span className="text-[9px] sm:text-[10px] text-muted-foreground ml-auto shrink-0">%{cat.percentage}</span>
                   </div>
                 ))}
               </div>

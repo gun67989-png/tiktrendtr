@@ -2,7 +2,7 @@
 
 import { useState, useEffect, useCallback, useRef } from "react";
 import { motion } from "framer-motion";
-import { FiFilter, FiTrendingUp, FiLoader } from "react-icons/fi";
+import { Filter, TrendingUp, Loader } from "lucide-react";
 import VideoCard, { type VideoData } from "@/components/VideoCard";
 import VideoModal from "@/components/VideoModal";
 import OnboardingTour from "@/components/OnboardingTour";
@@ -104,11 +104,11 @@ export default function TrendingVideosPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary flex items-center gap-2">
-            <FiTrendingUp className="text-neon-red" />
+          <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+            <TrendingUp className="text-primary" />
             Trend Videolar
           </h1>
-          <p className="text-text-secondary text-sm mt-1">
+          <p className="text-muted-foreground text-sm mt-1">
             Türkiye&apos;de trend olan TikTok videoları ({total} video)
           </p>
         </div>
@@ -124,8 +124,8 @@ export default function TrendingVideosPage() {
               onClick={() => setCategory(cat)}
               className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
                 category === cat
-                  ? "bg-neon-red text-white"
-                  : "bg-surface-light text-text-secondary hover:text-text-primary"
+                  ? "bg-primary text-white"
+                  : "bg-muted text-muted-foreground hover:text-foreground"
               }`}
             >
               {cat}
@@ -135,8 +135,8 @@ export default function TrendingVideosPage() {
 
         {/* Sort */}
         <div className="flex items-center gap-1.5 sm:gap-2 flex-wrap">
-          <FiFilter className="w-3.5 h-3.5 text-text-muted shrink-0" />
-          <span className="text-xs text-text-muted shrink-0">Sırala:</span>
+          <Filter className="w-3.5 h-3.5 text-muted-foreground shrink-0" />
+          <span className="text-xs text-muted-foreground shrink-0">Sırala:</span>
           {SORT_OPTIONS.map((opt) => (
             <button
               key={opt.value}
@@ -144,7 +144,7 @@ export default function TrendingVideosPage() {
               className={`px-2 sm:px-2.5 py-1 rounded text-[10px] sm:text-[11px] font-medium transition-all ${
                 sortBy === opt.value
                   ? "bg-teal/10 text-teal"
-                  : "text-text-muted hover:text-text-secondary"
+                  : "text-muted-foreground hover:text-muted-foreground"
               }`}
             >
               {opt.label}
@@ -157,7 +157,7 @@ export default function TrendingVideosPage() {
       {loading ? (
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3 sm:gap-4">
           {Array.from({ length: 10 }).map((_, i) => (
-            <div key={i} className="bg-surface rounded-xl border border-border overflow-hidden">
+            <div key={i} className="bg-card rounded-xl border border-border overflow-hidden">
               <div className="aspect-[9/16] max-h-[280px] shimmer" />
               <div className="p-3 space-y-2">
                 <div className="h-3 shimmer rounded w-3/4" />
@@ -168,7 +168,7 @@ export default function TrendingVideosPage() {
         </div>
       ) : videos.length === 0 ? (
         <div className="text-center py-12">
-          <p className="text-text-muted">Bu kategoride video bulunamadı.</p>
+          <p className="text-muted-foreground">Bu kategoride video bulunamadı.</p>
         </div>
       ) : (
         <>
@@ -187,8 +187,8 @@ export default function TrendingVideosPage() {
           {hasMore && (
             <div ref={sentinelRef} className="flex items-center justify-center py-8">
               {loadingMore && (
-                <div className="flex items-center gap-2 text-text-muted text-sm">
-                  <FiLoader className="w-4 h-4 animate-spin" />
+                <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                  <Loader className="w-4 h-4 animate-spin" />
                   Daha fazla video yükleniyor...
                 </div>
               )}
@@ -197,7 +197,7 @@ export default function TrendingVideosPage() {
 
           {/* End message */}
           {!hasMore && videos.length > 0 && (
-            <p className="text-center text-text-muted text-xs py-4">
+            <p className="text-center text-muted-foreground text-xs py-4">
               Tüm videolar yüklendi ({videos.length}/{total})
             </p>
           )}

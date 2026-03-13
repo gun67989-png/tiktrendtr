@@ -4,17 +4,17 @@ import { useState } from "react";
 import { motion } from "framer-motion";
 import PremiumGate from "@/components/PremiumGate";
 import {
-  FiSearch,
-  FiEye,
-  FiHeart,
-  FiMessageCircle,
-  FiShare2,
-  FiClock,
-  FiHash,
-  FiBarChart2,
-  FiTrendingUp,
-  FiPlay,
-} from "react-icons/fi";
+  Search,
+  Eye,
+  Heart,
+  MessageCircle,
+  Share2,
+  Clock,
+  Hash,
+  BarChart2,
+  TrendingUp,
+  Play,
+} from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -118,8 +118,8 @@ function CompetitorContent() {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-text-primary">Rakip Analizi</h1>
-        <p className="text-sm text-text-secondary mt-1">
+        <h1 className="text-2xl font-bold text-foreground">Rakip Analizi</h1>
+        <p className="text-sm text-muted-foreground mt-1">
           TikTok kullanici adini girerek videolarini, istatistiklerini ve stratejilerini analiz edin
         </p>
       </div>
@@ -127,20 +127,20 @@ function CompetitorContent() {
       {/* Search */}
       <div className="flex gap-3">
         <div className="relative flex-1 max-w-md">
-          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-text-muted" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && handleSearch()}
             placeholder="@kullaniciadi girin..."
-            className="w-full pl-10 pr-4 py-2.5 bg-surface border border-border rounded-xl text-sm text-text-primary placeholder:text-text-muted focus:outline-none focus:border-neon-red/50 transition-colors"
+            className="w-full pl-10 pr-4 py-2.5 bg-card border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors"
           />
         </div>
         <button
           onClick={handleSearch}
           disabled={loading || !username.trim()}
-          className="px-6 py-2.5 bg-neon-red text-white text-sm font-medium rounded-xl hover:bg-neon-red-light transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+          className="px-6 py-2.5 bg-primary text-white text-sm font-medium rounded-xl hover:bg-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {loading ? "Analiz ediliyor..." : "Analiz Et"}
         </button>
@@ -151,7 +151,7 @@ function CompetitorContent() {
         <div className="space-y-4">
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {Array.from({ length: 4 }).map((_, i) => (
-              <div key={i} className="bg-surface rounded-xl border border-border p-4 h-24 shimmer" />
+              <div key={i} className="bg-card rounded-xl border border-border p-4 h-24 shimmer" />
             ))}
           </div>
           <div className="h-64 shimmer rounded-xl" />
@@ -160,8 +160,8 @@ function CompetitorContent() {
 
       {/* Error */}
       {error && (
-        <div className="bg-neon-red/10 border border-neon-red/20 rounded-xl p-4 text-center">
-          <p className="text-sm text-neon-red">{error}</p>
+        <div className="bg-primary/10 border border-primary/20 rounded-xl p-4 text-center">
+          <p className="text-sm text-primary">{error}</p>
         </div>
       )}
 
@@ -169,13 +169,13 @@ function CompetitorContent() {
       {data && data.stats && (
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
           {/* Username banner */}
-          <div className="bg-surface rounded-xl border border-border p-4 flex items-center gap-3">
-            <div className="w-12 h-12 rounded-full gradient-red flex items-center justify-center text-white font-bold text-lg">
+          <div className="bg-card rounded-xl border border-border p-4 flex items-center gap-3">
+            <div className="w-12 h-12 rounded-full bg-primary flex items-center justify-center text-white font-bold text-lg">
               {data.username[0]?.toUpperCase()}
             </div>
             <div>
-              <h2 className="text-lg font-bold text-text-primary">@{data.username}</h2>
-              <p className="text-xs text-text-secondary">
+              <h2 className="text-lg font-bold text-foreground">@{data.username}</h2>
+              <p className="text-xs text-muted-foreground">
                 {data.videoCount} video analiz edildi
                 {!data.isExactMatch && " (arama sonuclari)"}
               </p>
@@ -185,15 +185,15 @@ function CompetitorContent() {
           {/* Stats Grid */}
           <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
             {[
-              { label: "Toplam Goruntulenme", value: formatNumber(data.stats.totalViews), icon: FiEye, color: "text-blue-400" },
-              { label: "Ort. Goruntulenme", value: formatNumber(data.stats.avgViews), icon: FiTrendingUp, color: "text-teal" },
-              { label: "Ort. Etkilesim", value: `%${data.stats.avgEngagementRate}`, icon: FiBarChart2, color: "text-purple-400" },
-              { label: "Ort. Sure", value: formatDuration(data.stats.avgDuration), icon: FiClock, color: "text-orange-400" },
+              { label: "Toplam Goruntulenme", value: formatNumber(data.stats.totalViews), icon: Eye, color: "text-blue-400" },
+              { label: "Ort. Goruntulenme", value: formatNumber(data.stats.avgViews), icon: TrendingUp, color: "text-teal" },
+              { label: "Ort. Etkilesim", value: `%${data.stats.avgEngagementRate}`, icon: BarChart2, color: "text-purple-400" },
+              { label: "Ort. Sure", value: formatDuration(data.stats.avgDuration), icon: Clock, color: "text-orange-400" },
             ].map((stat) => (
-              <div key={stat.label} className="bg-surface rounded-xl border border-border p-4">
+              <div key={stat.label} className="bg-card rounded-xl border border-border p-4">
                 <div className="flex items-center gap-2 mb-2">
                   <stat.icon className={`w-4 h-4 ${stat.color}`} />
-                  <span className="text-[10px] text-text-muted uppercase">{stat.label}</span>
+                  <span className="text-[10px] text-muted-foreground uppercase">{stat.label}</span>
                 </div>
                 <p className={`text-xl font-bold ${stat.color}`}>{stat.value}</p>
               </div>
@@ -202,29 +202,29 @@ function CompetitorContent() {
 
           {/* Additional stats row */}
           <div className="grid grid-cols-3 gap-4">
-            <div className="bg-surface rounded-xl border border-border p-4 text-center">
-              <FiHeart className="w-5 h-5 text-neon-red mx-auto mb-1" />
-              <p className="text-lg font-bold text-text-primary">{formatNumber(data.stats.totalLikes)}</p>
-              <p className="text-[10px] text-text-muted">Toplam Begeni</p>
+            <div className="bg-card rounded-xl border border-border p-4 text-center">
+              <Heart className="w-5 h-5 text-primary mx-auto mb-1" />
+              <p className="text-lg font-bold text-foreground">{formatNumber(data.stats.totalLikes)}</p>
+              <p className="text-[10px] text-muted-foreground">Toplam Begeni</p>
             </div>
-            <div className="bg-surface rounded-xl border border-border p-4 text-center">
-              <FiMessageCircle className="w-5 h-5 text-teal mx-auto mb-1" />
-              <p className="text-lg font-bold text-text-primary">{formatNumber(data.stats.totalComments)}</p>
-              <p className="text-[10px] text-text-muted">Toplam Yorum</p>
+            <div className="bg-card rounded-xl border border-border p-4 text-center">
+              <MessageCircle className="w-5 h-5 text-teal mx-auto mb-1" />
+              <p className="text-lg font-bold text-foreground">{formatNumber(data.stats.totalComments)}</p>
+              <p className="text-[10px] text-muted-foreground">Toplam Yorum</p>
             </div>
-            <div className="bg-surface rounded-xl border border-border p-4 text-center">
-              <FiShare2 className="w-5 h-5 text-purple-400 mx-auto mb-1" />
-              <p className="text-lg font-bold text-text-primary">{formatNumber(data.stats.totalShares)}</p>
-              <p className="text-[10px] text-text-muted">Toplam Paylasim</p>
+            <div className="bg-card rounded-xl border border-border p-4 text-center">
+              <Share2 className="w-5 h-5 text-purple-400 mx-auto mb-1" />
+              <p className="text-lg font-bold text-foreground">{formatNumber(data.stats.totalShares)}</p>
+              <p className="text-[10px] text-muted-foreground">Toplam Paylasim</p>
             </div>
           </div>
 
           {/* Charts Row */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Posting Hours */}
-            <div className="bg-surface rounded-xl border border-border p-5">
-              <h3 className="text-sm font-semibold text-text-primary mb-1">Paylasim Saatleri</h3>
-              <p className="text-[10px] text-text-muted mb-4">
+            <div className="bg-card rounded-xl border border-border p-5">
+              <h3 className="text-sm font-semibold text-foreground mb-1">Paylasim Saatleri</h3>
+              <p className="text-[10px] text-muted-foreground mb-4">
                 En iyi saatler: {data.bestHours.map((h) => `${h}:00`).join(", ")}
               </p>
               <div className="h-48">
@@ -250,8 +250,8 @@ function CompetitorContent() {
             </div>
 
             {/* Format Distribution */}
-            <div className="bg-surface rounded-xl border border-border p-5">
-              <h3 className="text-sm font-semibold text-text-primary mb-4">Icerik Formati Dagilimi</h3>
+            <div className="bg-card rounded-xl border border-border p-5">
+              <h3 className="text-sm font-semibold text-foreground mb-4">Icerik Formati Dagilimi</h3>
               <div className="h-48 flex items-center">
                 <div className="w-1/2 h-full">
                   <ResponsiveContainer width="100%" height="100%">
@@ -280,8 +280,8 @@ function CompetitorContent() {
                   {data.formatDistribution.slice(0, 6).map((f, i) => (
                     <div key={f.format} className="flex items-center gap-2">
                       <div className="w-2.5 h-2.5 rounded-full shrink-0" style={{ backgroundColor: PIE_COLORS[i % PIE_COLORS.length] }} />
-                      <span className="text-[11px] text-text-secondary truncate">{f.format}</span>
-                      <span className="text-[10px] text-text-muted ml-auto">%{f.percentage}</span>
+                      <span className="text-[11px] text-muted-foreground truncate">{f.format}</span>
+                      <span className="text-[10px] text-muted-foreground ml-auto">%{f.percentage}</span>
                     </div>
                   ))}
                 </div>
@@ -291,9 +291,9 @@ function CompetitorContent() {
 
           {/* Top Hashtags */}
           {data.topHashtags.length > 0 && (
-            <div className="bg-surface rounded-xl border border-border p-5">
-              <h3 className="text-sm font-semibold text-text-primary mb-4">
-                <FiHash className="w-4 h-4 inline mr-1" />
+            <div className="bg-card rounded-xl border border-border p-5">
+              <h3 className="text-sm font-semibold text-foreground mb-4">
+                <Hash className="w-4 h-4 inline mr-1" />
                 En Cok Kullanilan Hashtag&apos;ler
               </h3>
               <div className="flex flex-wrap gap-2">
@@ -302,7 +302,7 @@ function CompetitorContent() {
                     key={ht.tag}
                     className="text-xs bg-teal/10 text-teal px-3 py-1.5 rounded-lg"
                   >
-                    {ht.tag} <span className="text-text-muted ml-1">({ht.count})</span>
+                    {ht.tag} <span className="text-muted-foreground ml-1">({ht.count})</span>
                   </span>
                 ))}
               </div>
@@ -311,8 +311,8 @@ function CompetitorContent() {
 
           {/* Top Videos */}
           <div>
-            <h3 className="text-lg font-semibold text-text-primary mb-4">
-              <FiPlay className="w-4 h-4 inline mr-1" />
+            <h3 className="text-lg font-semibold text-foreground mb-4">
+              <Play className="w-4 h-4 inline mr-1" />
               En Iyi Performans Gosteren Videolar
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
@@ -325,14 +325,13 @@ function CompetitorContent() {
                   initial={{ opacity: 0, y: 20 }}
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: i * 0.04 }}
-                  whileHover={{ scale: 1.03, y: -4 }}
-                  className="bg-surface rounded-xl border border-border overflow-hidden hover:border-neon-red/30 transition-all group"
+                  className="bg-card rounded-xl border border-border overflow-hidden hover:border-border/80 transition-all group"
                 >
-                  <div className="relative aspect-[9/16] max-h-[220px] overflow-hidden bg-surface-light">
+                  <div className="relative aspect-[9/16] max-h-[220px] overflow-hidden bg-muted">
                     <img
                       src={video.thumbnailUrl}
                       alt={video.description}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                      className="w-full h-full object-cover transition-transform duration-500"
                       loading="lazy"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
@@ -341,22 +340,22 @@ function CompetitorContent() {
                     </div>
                     {video.duration > 0 && (
                       <div className="absolute top-2 right-2 bg-black/70 text-white text-[9px] px-1.5 py-0.5 rounded flex items-center gap-0.5">
-                        <FiClock className="w-2.5 h-2.5" />
+                        <Clock className="w-2.5 h-2.5" />
                         {formatDuration(video.duration)}
                       </div>
                     )}
                     <div className="absolute bottom-0 left-0 right-0 px-2 py-1">
                       <span className="text-white/90 text-[9px] flex items-center gap-0.5">
-                        <FiEye className="w-2.5 h-2.5" />{formatNumber(video.views)}
+                        <Eye className="w-2.5 h-2.5" />{formatNumber(video.views)}
                       </span>
                     </div>
                   </div>
                   <div className="px-2 py-1.5">
-                    <p className="text-[10px] text-text-secondary line-clamp-2 leading-relaxed">{video.description || "—"}</p>
+                    <p className="text-[10px] text-muted-foreground line-clamp-2 leading-relaxed">{video.description || "—"}</p>
                     <div className="flex items-center justify-between mt-0.5">
-                      <span className="text-[9px] text-text-muted">{timeAgo(video.publishedAt)}</span>
-                      <span className="text-[9px] text-neon-red flex items-center gap-0.5">
-                        <FiHeart className="w-2.5 h-2.5" />{formatNumber(video.likes)}
+                      <span className="text-[9px] text-muted-foreground">{timeAgo(video.publishedAt)}</span>
+                      <span className="text-[9px] text-primary flex items-center gap-0.5">
+                        <Heart className="w-2.5 h-2.5" />{formatNumber(video.likes)}
                       </span>
                     </div>
                   </div>
@@ -370,9 +369,9 @@ function CompetitorContent() {
       {/* Empty state */}
       {!data && !loading && !error && (
         <div className="text-center py-20">
-          <FiSearch className="w-12 h-12 text-text-muted mx-auto mb-4" />
-          <p className="text-text-secondary text-sm">Bir TikTok kullanici adi girerek analiz baslatin</p>
-          <p className="text-text-muted text-xs mt-1">Ornek: @kullaniciadi</p>
+          <Search className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+          <p className="text-muted-foreground text-sm">Bir TikTok kullanici adi girerek analiz baslatin</p>
+          <p className="text-muted-foreground text-xs mt-1">Ornek: @kullaniciadi</p>
         </div>
       )}
     </motion.div>

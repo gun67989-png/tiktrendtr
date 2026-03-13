@@ -3,16 +3,16 @@
 import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import {
-  FiCreditCard,
-  FiCalendar,
-  FiClock,
-  FiCheckCircle,
-  FiXCircle,
-  FiAlertCircle,
-  FiLoader,
-  FiZap,
-  FiArrowRight,
-} from "react-icons/fi";
+  CreditCard,
+  Calendar,
+  Clock,
+  CheckCircle,
+  XCircle,
+  AlertCircle,
+  Loader,
+  Zap,
+  ArrowRight,
+} from "lucide-react";
 import Link from "next/link";
 
 interface SubscriptionStatus {
@@ -102,28 +102,28 @@ export default function BillingPage() {
       case "success":
         return (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-teal/10 text-teal">
-            <FiCheckCircle className="w-3 h-3" />
+            <CheckCircle className="w-3 h-3" />
             Başarılı
           </span>
         );
       case "failure":
         return (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-red-500/10 text-red-400">
-            <FiXCircle className="w-3 h-3" />
+            <XCircle className="w-3 h-3" />
             Başarısız
           </span>
         );
       case "pending":
         return (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-amber-500/10 text-amber-400">
-            <FiClock className="w-3 h-3" />
+            <Clock className="w-3 h-3" />
             Bekliyor
           </span>
         );
       case "refunded":
         return (
           <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[11px] font-medium bg-blue-500/10 text-blue-400">
-            <FiAlertCircle className="w-3 h-3" />
+            <AlertCircle className="w-3 h-3" />
             İade
           </span>
         );
@@ -135,7 +135,7 @@ export default function BillingPage() {
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-[50vh]">
-        <FiLoader className="w-8 h-8 text-neon-red animate-spin" />
+        <Loader className="w-8 h-8 text-primary animate-spin" />
       </div>
     );
   }
@@ -147,8 +147,8 @@ export default function BillingPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
       >
-        <h1 className="text-2xl font-bold text-text-primary mb-1">Fatura & Abonelik</h1>
-        <p className="text-sm text-text-secondary">
+        <h1 className="text-2xl font-bold text-foreground mb-1">Fatura & Abonelik</h1>
+        <p className="text-sm text-muted-foreground">
           Abonelik durumunuzu yönetin ve ödeme geçmişinizi görüntüleyin.
         </p>
       </motion.div>
@@ -169,19 +169,19 @@ export default function BillingPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.1 }}
-        className="bg-surface rounded-xl border border-border p-6"
+        className="bg-card rounded-xl border border-border p-6"
       >
-        <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
-          <FiCreditCard className="w-5 h-5 text-neon-red" />
+        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+          <CreditCard className="w-5 h-5 text-primary" />
           Mevcut Plan
         </h2>
 
         {status?.is_active ? (
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="px-3 py-1.5 rounded-lg bg-gradient-to-r from-amber-500/10 to-orange-500/10 border border-amber-500/20">
+              <div className="px-3 py-1.5 rounded-lg bg-amber-500/10 border border-amber-500/20">
                 <span className="text-sm font-semibold text-amber-400 flex items-center gap-1.5">
-                  <FiZap className="w-4 h-4" />
+                  <Zap className="w-4 h-4" />
                   Pro Plan
                 </span>
               </div>
@@ -193,21 +193,21 @@ export default function BillingPage() {
             </div>
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="bg-surface-light rounded-lg p-3">
-                <p className="text-[11px] text-text-muted uppercase tracking-wider mb-1">Başlangıç</p>
-                <p className="text-sm font-medium text-text-primary">
+              <div className="bg-muted rounded-lg p-3">
+                <p className="text-[11px] text-muted-foreground uppercase tracking-wider mb-1">Başlangıç</p>
+                <p className="text-sm font-medium text-foreground">
                   {formatDate(status.subscription_start)}
                 </p>
               </div>
-              <div className="bg-surface-light rounded-lg p-3">
-                <p className="text-[11px] text-text-muted uppercase tracking-wider mb-1">Bitiş</p>
-                <p className="text-sm font-medium text-text-primary">
+              <div className="bg-muted rounded-lg p-3">
+                <p className="text-[11px] text-muted-foreground uppercase tracking-wider mb-1">Bitiş</p>
+                <p className="text-sm font-medium text-foreground">
                   {formatDate(status.subscription_end)}
                 </p>
               </div>
-              <div className="bg-surface-light rounded-lg p-3">
-                <p className="text-[11px] text-text-muted uppercase tracking-wider mb-1">Kalan</p>
-                <p className="text-sm font-medium text-text-primary">
+              <div className="bg-muted rounded-lg p-3">
+                <p className="text-[11px] text-muted-foreground uppercase tracking-wider mb-1">Kalan</p>
+                <p className="text-sm font-medium text-foreground">
                   {status.days_remaining} gün
                 </p>
               </div>
@@ -226,21 +226,21 @@ export default function BillingPage() {
         ) : (
           <div className="space-y-4">
             <div className="flex items-center gap-3">
-              <div className="px-3 py-1.5 rounded-lg bg-surface-light border border-border">
-                <span className="text-sm font-medium text-text-secondary">Free Plan</span>
+              <div className="px-3 py-1.5 rounded-lg bg-muted border border-border">
+                <span className="text-sm font-medium text-muted-foreground">Free Plan</span>
               </div>
             </div>
 
-            <p className="text-sm text-text-secondary">
+            <p className="text-sm text-muted-foreground">
               Pro plana yükselterek tüm gelişmiş analiz araçlarına erişin.
             </p>
 
             <Link
               href="/pricing"
-              className="inline-flex items-center gap-2 px-5 py-2.5 bg-gradient-to-r from-neon-red to-pink-600 text-white text-sm font-semibold rounded-xl hover:shadow-lg hover:shadow-neon-red/25 transition-all"
+              className="inline-flex items-center gap-2 px-5 py-2.5 bg-primary text-white text-sm font-semibold rounded-xl hover:border-border/80 transition-all"
             >
               Pro&apos;ya Yükselt
-              <FiArrowRight className="w-4 h-4" />
+              <ArrowRight className="w-4 h-4" />
             </Link>
           </div>
         )}
@@ -251,15 +251,15 @@ export default function BillingPage() {
         initial={{ opacity: 0, y: 10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.2 }}
-        className="bg-surface rounded-xl border border-border p-6"
+        className="bg-card rounded-xl border border-border p-6"
       >
-        <h2 className="text-lg font-semibold text-text-primary mb-4 flex items-center gap-2">
-          <FiCalendar className="w-5 h-5 text-neon-red" />
+        <h2 className="text-lg font-semibold text-foreground mb-4 flex items-center gap-2">
+          <Calendar className="w-5 h-5 text-primary" />
           Ödeme Geçmişi
         </h2>
 
         {payments.length === 0 ? (
-          <p className="text-sm text-text-muted py-8 text-center">
+          <p className="text-sm text-muted-foreground py-8 text-center">
             Henüz ödeme geçmişiniz bulunmuyor.
           </p>
         ) : (
@@ -267,22 +267,22 @@ export default function BillingPage() {
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left text-[11px] text-text-muted uppercase tracking-wider py-3 px-2">
+                  <th className="text-left text-[11px] text-muted-foreground uppercase tracking-wider py-3 px-2">
                     Tarih
                   </th>
-                  <th className="text-left text-[11px] text-text-muted uppercase tracking-wider py-3 px-2">
+                  <th className="text-left text-[11px] text-muted-foreground uppercase tracking-wider py-3 px-2">
                     Tip
                   </th>
-                  <th className="text-left text-[11px] text-text-muted uppercase tracking-wider py-3 px-2">
+                  <th className="text-left text-[11px] text-muted-foreground uppercase tracking-wider py-3 px-2">
                     Tutar
                   </th>
-                  <th className="text-left text-[11px] text-text-muted uppercase tracking-wider py-3 px-2">
+                  <th className="text-left text-[11px] text-muted-foreground uppercase tracking-wider py-3 px-2">
                     Kart
                   </th>
-                  <th className="text-left text-[11px] text-text-muted uppercase tracking-wider py-3 px-2">
+                  <th className="text-left text-[11px] text-muted-foreground uppercase tracking-wider py-3 px-2">
                     Dönem
                   </th>
-                  <th className="text-left text-[11px] text-text-muted uppercase tracking-wider py-3 px-2">
+                  <th className="text-left text-[11px] text-muted-foreground uppercase tracking-wider py-3 px-2">
                     Durum
                   </th>
                 </tr>
@@ -291,21 +291,21 @@ export default function BillingPage() {
                 {payments.map((p) => (
                   <tr
                     key={p.id}
-                    className="border-b border-border/50 hover:bg-surface-light/50 transition-colors"
+                    className="border-b border-border/50 hover:bg-muted/50 transition-colors"
                   >
-                    <td className="py-3 px-2 text-sm text-text-primary">
+                    <td className="py-3 px-2 text-sm text-foreground">
                       {formatDate(p.created_at)}
                     </td>
-                    <td className="py-3 px-2 text-sm text-text-secondary">
+                    <td className="py-3 px-2 text-sm text-muted-foreground">
                       {p.payment_type === "subscription" ? "Abonelik" : "Tek Seferlik"}
                     </td>
-                    <td className="py-3 px-2 text-sm font-medium text-text-primary">
+                    <td className="py-3 px-2 text-sm font-medium text-foreground">
                       {formatAmount(p.amount, p.currency)}
                     </td>
-                    <td className="py-3 px-2 text-sm text-text-secondary">
+                    <td className="py-3 px-2 text-sm text-muted-foreground">
                       {p.card_last_four ? `**** ${p.card_last_four}` : "-"}
                     </td>
-                    <td className="py-3 px-2 text-xs text-text-muted">
+                    <td className="py-3 px-2 text-xs text-muted-foreground">
                       {p.period_start && p.period_end
                         ? `${formatDate(p.period_start)} - ${formatDate(p.period_end)}`
                         : "-"}

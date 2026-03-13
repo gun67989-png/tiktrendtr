@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" width="512" height="512">
+  <!-- Valyze TR Logo - White suitcase with V + Red trend arrow -->
+
+  <!-- Suitcase handle -->
+  <path d="M195 148 L195 105 Q195 82 220 82 L292 82 Q317 82 317 105 L317 148"
+        fill="none" stroke="white" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Suitcase body -->
+  <path d="M68 168 Q55 168 55 185 L55 378 Q55 398 75 398 L180 398"
+        fill="none" stroke="white" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+  <line x1="68" y1="168" x2="444" y2="168"
+        stroke="white" stroke-width="18" stroke-linecap="round"/>
+  <path d="M444 168 Q458 168 458 185 L458 378 Q458 398 438 398 L332 398"
+        fill="none" stroke="white" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- V shape at bottom -->
+  <path d="M180 398 L256 295 L332 398"
+        fill="none" stroke="white" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+
+  <!-- Upward trending arrow - brand neon red -->
+  <line x1="195" y1="388" x2="395" y2="120"
+        stroke="#FF3B5C" stroke-width="32" stroke-linecap="round"/>
+
+  <!-- Arrow head - clean chevron style like original -->
+  <path d="M395 120 L430 78" stroke="#FF3B5C" stroke-width="28" stroke-linecap="round" fill="none"/>
+  <path d="M430 78 L440 130" stroke="#FF3B5C" stroke-width="22" stroke-linecap="round" fill="none"/>
+  <path d="M430 78 L378 95" stroke="#FF3B5C" stroke-width="22" stroke-linecap="round" fill="none"/>
+</svg>

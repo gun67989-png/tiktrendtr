@@ -1,34 +1,34 @@
 "use client";
 
 import Link from "next/link";
-import { FiArrowLeft } from "react-icons/fi";
+import { ArrowLeft } from "lucide-react";
 import LogoLink from "@/components/LogoLink";
 
 export default function TermsOfServicePage() {
   return (
-    <div className="min-h-screen bg-background text-text-primary">
+    <div className="min-h-screen bg-background text-foreground">
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <LogoLink size="sm" />
           <div className="flex items-center gap-3">
-            <Link href="/login" className="text-sm text-text-secondary hover:text-text-primary transition-colors px-4 py-2">Giris Yap</Link>
-            <Link href="/register" className="text-sm bg-neon-red text-white px-4 py-2 rounded-lg hover:bg-neon-red-light transition-colors font-medium">Ucretsiz Basla</Link>
+            <Link href="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors px-4 py-2">Giris Yap</Link>
+            <Link href="/register" className="text-sm bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/80 transition-colors font-medium">Ucretsiz Basla</Link>
           </div>
         </div>
       </nav>
 
       <div className="pt-28 pb-20 px-6">
         <div className="max-w-3xl mx-auto">
-          <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-text-primary transition-colors mb-6">
-            <FiArrowLeft className="w-3 h-3" /> Ana Sayfaya Don
+          <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-6">
+            <ArrowLeft className="w-3 h-3" /> Ana Sayfaya Don
           </Link>
 
           <h1 className="text-3xl font-bold mb-2">Kullanim Sartlari</h1>
-          <p className="text-xs text-text-muted mb-10">Son guncelleme: 11 Mart 2026</p>
+          <p className="text-xs text-muted-foreground mb-10">Son guncelleme: 11 Mart 2026</p>
 
-          <div className="space-y-8 text-sm text-text-secondary leading-relaxed">
+          <div className="space-y-8 text-sm text-muted-foreground leading-relaxed">
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">1. Kabul ve Onay</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">1. Kabul ve Onay</h2>
               <p>
                 Valyze platformuna kayit olarak veya platformu kullanarak bu Kullanim Sartlarini
                 kabul etmis sayilirsiniz. Bu sartlari kabul etmiyorsaniz platformu kullanamazsiniz.
@@ -37,7 +37,7 @@ export default function TermsOfServicePage() {
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">2. Hizmet Tanimi</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">2. Hizmet Tanimi</h2>
               <p>
                 Valyze, TikTok platformundaki trend verileri analiz eden bir SaaS (Software as a Service)
                 platformudur. Sunulan hizmetler:
@@ -52,7 +52,7 @@ export default function TermsOfServicePage() {
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">3. Hesap Sorumlulugu</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">3. Hesap Sorumlulugu</h2>
               <p>Kullanicilar asagidaki sorumluluklara sahiptir:</p>
               <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
                 <li>Hesap bilgilerinizin dogrulugunu ve guncelligini saglamak</li>
@@ -63,9 +63,9 @@ export default function TermsOfServicePage() {
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">4. Abonelik ve Odeme</h2>
-              <p><strong className="text-text-primary">Ucretsiz Plan:</strong> Sinirli ozelliklere erisim saglayan ucretsiz plandir. Kredi karti gerektirmez.</p>
-              <p className="mt-2"><strong className="text-text-primary">Pro Plan:</strong> Aylik $19 ucretli abonelik planidir. Tum premium ozelliklere erisim saglar.</p>
+              <h2 className="text-lg font-semibold text-foreground mb-3">4. Abonelik ve Odeme</h2>
+              <p><strong className="text-foreground">Ucretsiz Plan:</strong> Sinirli ozelliklere erisim saglayan ucretsiz plandir. Kredi karti gerektirmez.</p>
+              <p className="mt-2"><strong className="text-foreground">Pro Plan:</strong> Aylik $19 ucretli abonelik planidir. Tum premium ozelliklere erisim saglar.</p>
               <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
                 <li>Abonelikler aylik olarak faturalandirilir</li>
                 <li>Iptal islemi bir sonraki fatura donemi icin gecerli olur</li>
@@ -75,7 +75,7 @@ export default function TermsOfServicePage() {
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">5. Kabul Edilebilir Kullanim</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">5. Kabul Edilebilir Kullanim</h2>
               <p className="mb-2">Platformu kullanirken asagidaki kurallara uymalisiniz:</p>
               <ul className="list-disc list-inside space-y-1 ml-2">
                 <li>Platformu yalnizca yasal amaclarla kullanmak</li>
@@ -88,7 +88,7 @@ export default function TermsOfServicePage() {
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">6. Fikri Mulkiyet</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">6. Fikri Mulkiyet</h2>
               <p>
                 Platform tasarimi, kodu, logosu, icerik ve analizleri Valyze&apos;nin fikri mulkiyetidir.
                 Platformdaki analiz verileri kisisel ve ticari icerik stratejiniz icin kullanilabilir, ancak
@@ -98,7 +98,7 @@ export default function TermsOfServicePage() {
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">7. Sorumluluk Sinirlamasi</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">7. Sorumluluk Sinirlamasi</h2>
               <p>
                 Valyze, sunulan analizlerin ve tahminlerin dogrulugunu garanti etmez. Platform
                 &quot;oldugu gibi&quot; sunulmaktadir. Platformun kullanimindan dogan dolayli, ozel veya sonuc
@@ -108,7 +108,7 @@ export default function TermsOfServicePage() {
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">8. Hesap Askiya Alma ve Fesih</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">8. Hesap Askiya Alma ve Fesih</h2>
               <p>Asagidaki durumlarda hesabinizi askiya alabilir veya feshedebiliriz:</p>
               <ul className="list-disc list-inside space-y-1 ml-2 mt-2">
                 <li>Kullanim sartlarinin ihlali</li>
@@ -119,7 +119,7 @@ export default function TermsOfServicePage() {
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">9. Degisiklikler</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">9. Degisiklikler</h2>
               <p>
                 Bu Kullanim Sartlarini herhangi bir zamanda degistirme hakkimizi sakli tutariz.
                 Onemli degisiklikler e-posta veya platform ici bildirim yoluyla duyurulur.
@@ -129,7 +129,7 @@ export default function TermsOfServicePage() {
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">10. Uygulanacak Hukuk</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">10. Uygulanacak Hukuk</h2>
               <p>
                 Bu Kullanim Sartlari Turkiye Cumhuriyeti kanunlarina tabidir. Herhangi bir uyusmazlik
                 durumunda Istanbul Mahkemeleri ve Icra Daireleri yetkilidir.
@@ -137,38 +137,38 @@ export default function TermsOfServicePage() {
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">11. Iletisim</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">11. Iletisim</h2>
               <p>
                 Kullanim sartlari hakkinda sorulariniz icin{" "}
-                <Link href="/contact" className="text-neon-red hover:underline">iletisim formu</Link> uzerinden
+                <Link href="/contact" className="text-primary hover:underline">iletisim formu</Link> uzerinden
                 bize ulasabilirsiniz.
               </p>
             </section>
           </div>
 
           <div className="mt-12 flex flex-wrap gap-3">
-            <Link href="/privacy-policy" className="text-xs bg-surface border border-border px-4 py-2 rounded-lg hover:border-neon-red/20 transition-colors">Gizlilik Politikası</Link>
-            <Link href="/mesafeli-satis-sozlesmesi" className="text-xs bg-surface border border-border px-4 py-2 rounded-lg hover:border-neon-red/20 transition-colors">Mesafeli Satış Sözleşmesi</Link>
-            <Link href="/iptal-ve-iade" className="text-xs bg-surface border border-border px-4 py-2 rounded-lg hover:border-neon-red/20 transition-colors">İptal ve İade</Link>
-            <Link href="/cookie-policy" className="text-xs bg-surface border border-border px-4 py-2 rounded-lg hover:border-neon-red/20 transition-colors">Çerez Politikası</Link>
-            <Link href="/contact" className="text-xs bg-surface border border-border px-4 py-2 rounded-lg hover:border-neon-red/20 transition-colors">İletişim</Link>
+            <Link href="/privacy-policy" className="text-xs bg-card border border-border px-4 py-2 rounded-lg hover:border-primary/20 transition-colors">Gizlilik Politikası</Link>
+            <Link href="/mesafeli-satis-sozlesmesi" className="text-xs bg-card border border-border px-4 py-2 rounded-lg hover:border-primary/20 transition-colors">Mesafeli Satış Sözleşmesi</Link>
+            <Link href="/iptal-ve-iade" className="text-xs bg-card border border-border px-4 py-2 rounded-lg hover:border-primary/20 transition-colors">İptal ve İade</Link>
+            <Link href="/cookie-policy" className="text-xs bg-card border border-border px-4 py-2 rounded-lg hover:border-primary/20 transition-colors">Çerez Politikası</Link>
+            <Link href="/contact" className="text-xs bg-card border border-border px-4 py-2 rounded-lg hover:border-primary/20 transition-colors">İletişim</Link>
           </div>
         </div>
       </div>
 
       <footer className="border-t border-border py-8 px-6">
         <div className="max-w-3xl mx-auto">
-          <div className="flex flex-wrap gap-4 text-xs text-text-muted mb-4">
-            <Link href="/privacy-policy" className="hover:text-text-primary transition-colors">Gizlilik Politikası</Link>
-            <Link href="/terms-of-service" className="hover:text-text-primary transition-colors">Kullanım Şartları</Link>
-            <Link href="/mesafeli-satis-sozlesmesi" className="hover:text-text-primary transition-colors">Mesafeli Satış Sözleşmesi</Link>
-            <Link href="/iptal-ve-iade" className="hover:text-text-primary transition-colors">İptal ve İade</Link>
-            <Link href="/cookie-policy" className="hover:text-text-primary transition-colors">Çerez Politikası</Link>
-            <Link href="/contact" className="hover:text-text-primary transition-colors">İletişim</Link>
+          <div className="flex flex-wrap gap-4 text-xs text-muted-foreground mb-4">
+            <Link href="/privacy-policy" className="hover:text-foreground transition-colors">Gizlilik Politikası</Link>
+            <Link href="/terms-of-service" className="hover:text-foreground transition-colors">Kullanım Şartları</Link>
+            <Link href="/mesafeli-satis-sozlesmesi" className="hover:text-foreground transition-colors">Mesafeli Satış Sözleşmesi</Link>
+            <Link href="/iptal-ve-iade" className="hover:text-foreground transition-colors">İptal ve İade</Link>
+            <Link href="/cookie-policy" className="hover:text-foreground transition-colors">Çerez Politikası</Link>
+            <Link href="/contact" className="hover:text-foreground transition-colors">İletişim</Link>
           </div>
           <div className="flex items-center justify-between">
-            <p className="text-[10px] text-text-muted">&copy; 2026 Valyze TR. Tüm hakları saklıdır.</p>
-            <p className="text-[10px] text-text-muted">destek@valyze.app</p>
+            <p className="text-[10px] text-muted-foreground">&copy; 2026 Valyze TR. Tüm hakları saklıdır.</p>
+            <p className="text-[10px] text-muted-foreground">destek@valyze.app</p>
           </div>
         </div>
       </footer>

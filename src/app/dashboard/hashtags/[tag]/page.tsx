@@ -4,14 +4,14 @@ import { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
 import {
-  FiHash,
-  FiArrowLeft,
-  FiTrendingUp,
-  FiEye,
-  FiBarChart2,
-  FiZap,
-  FiPlay,
-} from "react-icons/fi";
+  Hash,
+  ArrowLeft,
+  TrendingUp,
+  Eye,
+  BarChart2,
+  Zap,
+  Play,
+} from "lucide-react";
 import {
   AreaChart,
   Area,
@@ -64,7 +64,7 @@ export default function HashtagDetailPage() {
         <div className="h-8 shimmer rounded w-64" />
         <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
           {Array.from({ length: 5 }).map((_, i) => (
-            <div key={i} className="bg-surface rounded-xl border border-border p-4 h-24 shimmer" />
+            <div key={i} className="bg-card rounded-xl border border-border p-4 h-24 shimmer" />
           ))}
         </div>
         <div className="h-64 shimmer rounded-xl" />
@@ -75,11 +75,11 @@ export default function HashtagDetailPage() {
   if (!data) {
     return (
       <div className="text-center py-20">
-        <FiHash className="w-12 h-12 text-text-muted mx-auto mb-4" />
-        <p className="text-text-secondary">Hashtag bulunamadi</p>
+        <Hash className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+        <p className="text-muted-foreground">Hashtag bulunamadi</p>
         <button
           onClick={() => router.push("/dashboard/hashtags")}
-          className="mt-4 text-sm text-neon-red hover:underline"
+          className="mt-4 text-sm text-primary hover:underline"
         >
           Hashtag&apos;lere don
         </button>
@@ -88,11 +88,11 @@ export default function HashtagDetailPage() {
   }
 
   const stats = [
-    { label: "Toplam Video", value: formatNumber(data.totalUses), icon: FiPlay, color: "text-teal" },
-    { label: "Toplam Goruntulenme", value: formatNumber(data.totalViews), icon: FiEye, color: "text-blue-400" },
-    { label: "Haftalik Buyume", value: `${data.weeklyGrowth >= 0 ? "+" : ""}${data.weeklyGrowth}%`, icon: FiTrendingUp, color: data.weeklyGrowth >= 0 ? "text-teal" : "text-neon-red" },
-    { label: "Etkilesim Orani", value: `%${data.engagementRate}`, icon: FiBarChart2, color: "text-purple-400" },
-    { label: "Viral Skor", value: data.viralScore.toFixed(2), icon: FiZap, color: "text-neon-red" },
+    { label: "Toplam Video", value: formatNumber(data.totalUses), icon: Play, color: "text-teal" },
+    { label: "Toplam Goruntulenme", value: formatNumber(data.totalViews), icon: Eye, color: "text-blue-400" },
+    { label: "Haftalik Buyume", value: `${data.weeklyGrowth >= 0 ? "+" : ""}${data.weeklyGrowth}%`, icon: TrendingUp, color: data.weeklyGrowth >= 0 ? "text-teal" : "text-primary" },
+    { label: "Etkilesim Orani", value: `%${data.engagementRate}`, icon: BarChart2, color: "text-purple-400" },
+    { label: "Viral Skor", value: data.viralScore.toFixed(2), icon: Zap, color: "text-primary" },
   ];
 
   return (
@@ -101,23 +101,23 @@ export default function HashtagDetailPage() {
       <div>
         <button
           onClick={() => router.push("/dashboard/hashtags")}
-          className="flex items-center gap-2 text-sm text-text-secondary hover:text-text-primary transition-colors mb-4"
+          className="flex items-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors mb-4"
         >
-          <FiArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4" />
           Hashtag&apos;lere Don
         </button>
         <div className="flex items-center gap-3">
-          <div className="w-12 h-12 rounded-xl gradient-red flex items-center justify-center">
-            <FiHash className="w-6 h-6 text-white" />
+          <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
+            <Hash className="w-6 h-6 text-white" />
           </div>
           <div>
-            <h1 className="text-2xl font-bold text-text-primary">{data.name}</h1>
+            <h1 className="text-2xl font-bold text-foreground">{data.name}</h1>
             <div className="flex items-center gap-2 mt-1">
-              <span className="text-xs bg-surface-light text-text-secondary px-2 py-0.5 rounded-md">
+              <span className="text-xs bg-muted text-muted-foreground px-2 py-0.5 rounded-md">
                 {data.category}
               </span>
               {data.isEmerging && (
-                <span className="text-xs bg-neon-red/10 text-neon-red px-2 py-0.5 rounded-md">
+                <span className="text-xs bg-primary/10 text-primary px-2 py-0.5 rounded-md">
                   Yukselen Trend
                 </span>
               )}
@@ -129,10 +129,10 @@ export default function HashtagDetailPage() {
       {/* Stats */}
       <div className="grid grid-cols-2 lg:grid-cols-5 gap-4">
         {stats.map((stat) => (
-          <div key={stat.label} className="bg-surface rounded-xl border border-border p-4">
+          <div key={stat.label} className="bg-card rounded-xl border border-border p-4">
             <div className="flex items-center gap-2 mb-2">
               <stat.icon className={`w-4 h-4 ${stat.color}`} />
-              <span className="text-[10px] text-text-muted uppercase">{stat.label}</span>
+              <span className="text-[10px] text-muted-foreground uppercase">{stat.label}</span>
             </div>
             <p className={`text-xl font-bold ${stat.color}`}>{stat.value}</p>
           </div>
@@ -142,8 +142,8 @@ export default function HashtagDetailPage() {
       {/* Charts */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Growth Chart */}
-        <div className="bg-surface rounded-xl border border-border p-5">
-          <h3 className="text-sm font-semibold text-text-primary mb-4">Kullanim Buyumesi (30 Gun)</h3>
+        <div className="bg-card rounded-xl border border-border p-5">
+          <h3 className="text-sm font-semibold text-foreground mb-4">Kullanim Buyumesi (30 Gun)</h3>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <AreaChart data={data.dailyGrowth}>
@@ -172,8 +172,8 @@ export default function HashtagDetailPage() {
         </div>
 
         {/* Engagement Chart */}
-        <div className="bg-surface rounded-xl border border-border p-5">
-          <h3 className="text-sm font-semibold text-text-primary mb-4">Etkilesim Orani (30 Gun)</h3>
+        <div className="bg-card rounded-xl border border-border p-5">
+          <h3 className="text-sm font-semibold text-foreground mb-4">Etkilesim Orani (30 Gun)</h3>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <LineChart data={data.engagementHistory}>
@@ -196,8 +196,8 @@ export default function HashtagDetailPage() {
         </div>
 
         {/* Trend Usage Chart (Bar) */}
-        <div className="bg-surface rounded-xl border border-border p-5 lg:col-span-2">
-          <h3 className="text-sm font-semibold text-text-primary mb-4">Gunluk Video Kullanimi (14 Gun)</h3>
+        <div className="bg-card rounded-xl border border-border p-5 lg:col-span-2">
+          <h3 className="text-sm font-semibold text-foreground mb-4">Gunluk Video Kullanimi (14 Gun)</h3>
           <div className="h-56">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data.trendUsage}>
@@ -222,7 +222,7 @@ export default function HashtagDetailPage() {
 
       {/* Top Viral Videos */}
       <div>
-        <h3 className="text-lg font-semibold text-text-primary mb-4">
+        <h3 className="text-lg font-semibold text-foreground mb-4">
           En Viral Videolar
         </h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-6 gap-4">
@@ -232,32 +232,31 @@ export default function HashtagDetailPage() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.04 }}
-              whileHover={{ scale: 1.03, y: -4 }}
               onClick={() => router.push(`/dashboard/trending-videos/${video.id}`)}
-              className="bg-surface rounded-xl border border-border overflow-hidden cursor-pointer hover:border-neon-red/30 transition-all group"
+              className="bg-card rounded-xl border border-border overflow-hidden cursor-pointer hover:border-border/80 transition-all group"
             >
-              <div className="relative aspect-[9/16] max-h-[220px] overflow-hidden bg-surface-light">
+              <div className="relative aspect-[9/16] max-h-[220px] overflow-hidden bg-muted">
                 <img
                   src={video.thumbnailUrl}
                   alt={video.description}
-                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+                  className="w-full h-full object-cover transition-transform duration-500"
                   loading="lazy"
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-transparent to-transparent" />
-                <div className="absolute top-2 left-2 bg-neon-red/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
+                <div className="absolute top-2 left-2 bg-primary/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">
                   {video.viralScore.toFixed(0)}
                 </div>
                 <div className="absolute bottom-0 left-0 right-0 px-2 py-1">
                   <span className="text-white/90 text-[9px] flex items-center gap-0.5">
-                    <FiEye className="w-2.5 h-2.5" />{formatNumber(video.views)}
+                    <Eye className="w-2.5 h-2.5" />{formatNumber(video.views)}
                   </span>
                 </div>
               </div>
               <div className="px-2 py-1.5">
-                <p className="text-[10px] text-text-primary font-medium truncate">@{video.creator}</p>
+                <p className="text-[10px] text-foreground font-medium truncate">@{video.creator}</p>
                 <div className="flex items-center justify-between mt-0.5">
-                  <span className="text-[9px] text-text-muted">{timeAgo(video.publishedAt)}</span>
-                  <span className="text-[9px] text-neon-red font-medium">%{video.engagementRate.toFixed(1)}</span>
+                  <span className="text-[9px] text-muted-foreground">{timeAgo(video.publishedAt)}</span>
+                  <span className="text-[9px] text-primary font-medium">%{video.engagementRate.toFixed(1)}</span>
                 </div>
               </div>
             </motion.div>

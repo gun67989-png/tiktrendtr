@@ -4,13 +4,13 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import PremiumGate from "@/components/PremiumGate";
 import {
-  FiZap,
-  FiEye,
-  FiTrendingUp,
-  FiBarChart2,
-  FiFilter,
-  FiExternalLink,
-} from "react-icons/fi";
+  Zap,
+  Eye,
+  TrendingUp,
+  BarChart2,
+  Filter,
+  ExternalLink,
+} from "lucide-react";
 import {
   BarChart,
   Bar,
@@ -71,7 +71,7 @@ function getScoreColor(score: number): string {
   if (score >= 60) return "text-blue-400";
   if (score >= 40) return "text-yellow-400";
   if (score >= 20) return "text-orange-400";
-  return "text-neon-red";
+  return "text-primary";
 }
 
 function getScoreBg(score: number): string {
@@ -79,7 +79,7 @@ function getScoreBg(score: number): string {
   if (score >= 60) return "bg-blue-400/10 border-blue-400/20";
   if (score >= 40) return "bg-yellow-400/10 border-yellow-400/20";
   if (score >= 20) return "bg-orange-400/10 border-orange-400/20";
-  return "bg-neon-red/10 border-neon-red/20";
+  return "bg-primary/10 border-primary/20";
 }
 
 function getScoreLabel(score: number): string {
@@ -92,7 +92,7 @@ function getScoreLabel(score: number): string {
 
 const PATTERN_COLORS: Record<string, string> = {
   question: "bg-blue-500/10 text-blue-400",
-  shock: "bg-neon-red/10 text-neon-red",
+  shock: "bg-primary/10 text-primary",
   story: "bg-purple-500/10 text-purple-400",
   tutorial: "bg-teal/10 text-teal",
   list: "bg-yellow-500/10 text-yellow-400",
@@ -125,7 +125,7 @@ function HooksContent() {
         <div className="h-8 shimmer rounded w-64" />
         <div className="grid grid-cols-3 gap-4">
           {Array.from({ length: 3 }).map((_, i) => (
-            <div key={i} className="bg-surface rounded-xl border border-border p-4 h-24 shimmer" />
+            <div key={i} className="bg-card rounded-xl border border-border p-4 h-24 shimmer" />
           ))}
         </div>
         <div className="h-64 shimmer rounded-xl" />
@@ -136,8 +136,8 @@ function HooksContent() {
   if (!data) {
     return (
       <div className="text-center py-20">
-        <FiZap className="w-12 h-12 text-text-muted mx-auto mb-4" />
-        <p className="text-text-secondary">Hook verisi bulunamadi</p>
+        <Zap className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+        <p className="text-muted-foreground">Hook verisi bulunamadi</p>
       </div>
     );
   }
@@ -146,32 +146,32 @@ function HooksContent() {
     <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} className="space-y-6">
       {/* Header */}
       <div>
-        <h1 className="text-2xl font-bold text-text-primary">Viral Hook Analizi</h1>
-        <p className="text-sm text-text-secondary mt-1">
+        <h1 className="text-2xl font-bold text-foreground">Viral Hook Analizi</h1>
+        <p className="text-sm text-muted-foreground mt-1">
           En viral videolarin acilis cumle ve hook stratejilerini analiz edin
         </p>
       </div>
 
       {/* Stats */}
       <div className="grid grid-cols-3 gap-4">
-        <div className="bg-surface rounded-xl border border-border p-4">
+        <div className="bg-card rounded-xl border border-border p-4">
           <div className="flex items-center gap-2 mb-2">
-            <FiBarChart2 className="w-4 h-4 text-teal" />
-            <span className="text-[10px] text-text-muted uppercase">Analiz Edilen</span>
+            <BarChart2 className="w-4 h-4 text-teal" />
+            <span className="text-[10px] text-muted-foreground uppercase">Analiz Edilen</span>
           </div>
           <p className="text-xl font-bold text-teal">{data.stats.totalAnalyzed}</p>
         </div>
-        <div className="bg-surface rounded-xl border border-border p-4">
+        <div className="bg-card rounded-xl border border-border p-4">
           <div className="flex items-center gap-2 mb-2">
-            <FiZap className="w-4 h-4 text-neon-red" />
-            <span className="text-[10px] text-text-muted uppercase">Ort. Hook Skoru</span>
+            <Zap className="w-4 h-4 text-primary" />
+            <span className="text-[10px] text-muted-foreground uppercase">Ort. Hook Skoru</span>
           </div>
-          <p className="text-xl font-bold text-neon-red">{data.stats.avgHookScore}/100</p>
+          <p className="text-xl font-bold text-primary">{data.stats.avgHookScore}/100</p>
         </div>
-        <div className="bg-surface rounded-xl border border-border p-4">
+        <div className="bg-card rounded-xl border border-border p-4">
           <div className="flex items-center gap-2 mb-2">
-            <FiTrendingUp className="w-4 h-4 text-purple-400" />
-            <span className="text-[10px] text-text-muted uppercase">En Basarili Kalip</span>
+            <TrendingUp className="w-4 h-4 text-purple-400" />
+            <span className="text-[10px] text-muted-foreground uppercase">En Basarili Kalip</span>
           </div>
           <p className="text-xl font-bold text-purple-400">{data.stats.topPattern}</p>
         </div>
@@ -179,15 +179,15 @@ function HooksContent() {
 
       {/* Category Filter */}
       <div className="flex items-center gap-2 flex-wrap">
-        <FiFilter className="w-4 h-4 text-text-muted" />
+        <Filter className="w-4 h-4 text-muted-foreground" />
         {CATEGORIES.map((cat) => (
           <button
             key={cat}
             onClick={() => setCategory(cat)}
             className={`px-3 py-1.5 text-xs rounded-lg transition-colors ${
               category === cat
-                ? "bg-neon-red/10 text-neon-red border border-neon-red/20"
-                : "bg-surface text-text-secondary border border-border hover:border-neon-red/20"
+                ? "bg-primary/10 text-primary border border-primary/20"
+                : "bg-card text-muted-foreground border border-border hover:border-primary/20"
             }`}
           >
             {cat}
@@ -197,8 +197,8 @@ function HooksContent() {
 
       {/* Pattern Analysis Chart */}
       {data.patternAnalysis.length > 0 && (
-        <div className="bg-surface rounded-xl border border-border p-5">
-          <h3 className="text-sm font-semibold text-text-primary mb-4">Hook Kalip Performansi</h3>
+        <div className="bg-card rounded-xl border border-border p-5">
+          <h3 className="text-sm font-semibold text-foreground mb-4">Hook Kalip Performansi</h3>
           <div className="h-48">
             <ResponsiveContainer width="100%" height="100%">
               <BarChart data={data.patternAnalysis} layout="vertical">
@@ -231,18 +231,18 @@ function HooksContent() {
           {data.patternAnalysis.map((p) => (
             <div
               key={p.pattern}
-              className={`rounded-xl border p-3 ${PATTERN_COLORS[p.pattern]?.replace("text-", "border-").replace("/10", "/20") || "border-border"} bg-surface`}
+              className={`rounded-xl border p-3 ${PATTERN_COLORS[p.pattern]?.replace("text-", "border-").replace("/10", "/20") || "border-border"} bg-card`}
             >
               <div className="flex items-center gap-2 mb-1">
-                <span className={`text-xs font-bold px-2 py-0.5 rounded ${PATTERN_COLORS[p.pattern] || "bg-surface-light text-text-secondary"}`}>
+                <span className={`text-xs font-bold px-2 py-0.5 rounded ${PATTERN_COLORS[p.pattern] || "bg-muted text-muted-foreground"}`}>
                   {p.label}
                 </span>
-                <span className="text-[10px] text-text-muted ml-auto">{p.count} video</span>
+                <span className="text-[10px] text-muted-foreground ml-auto">{p.count} video</span>
               </div>
-              <p className="text-[10px] text-text-secondary leading-relaxed mt-1">{p.description}</p>
+              <p className="text-[10px] text-muted-foreground leading-relaxed mt-1">{p.description}</p>
               <div className="flex items-center justify-between mt-2 pt-1 border-t border-border/50">
-                <span className="text-[10px] text-text-muted">Ort. Skor: <span className="text-text-primary font-medium">{p.avgScore}</span></span>
-                <span className="text-[10px] text-text-muted">Ort. <FiEye className="w-2.5 h-2.5 inline" /> {formatNumber(p.avgViews)}</span>
+                <span className="text-[10px] text-muted-foreground">Ort. Skor: <span className="text-foreground font-medium">{p.avgScore}</span></span>
+                <span className="text-[10px] text-muted-foreground">Ort. <Eye className="w-2.5 h-2.5 inline" /> {formatNumber(p.avgViews)}</span>
               </div>
             </div>
           ))}
@@ -251,7 +251,7 @@ function HooksContent() {
 
       {/* Hook List */}
       <div>
-        <h3 className="text-lg font-semibold text-text-primary mb-4">En Etkili Hook&apos;lar</h3>
+        <h3 className="text-lg font-semibold text-foreground mb-4">En Etkili Hook&apos;lar</h3>
         <div className="space-y-3">
           {data.hooks.slice(0, 30).map((h, i) => (
             <motion.div
@@ -259,7 +259,7 @@ function HooksContent() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.03 }}
-              className={`bg-surface rounded-xl border p-4 hover:border-neon-red/20 transition-colors ${getScoreBg(h.hookScore)}`}
+              className={`bg-card rounded-xl border p-4 hover:border-primary/20 transition-colors ${getScoreBg(h.hookScore)}`}
             >
               <div className="flex items-start gap-4">
                 {/* Score */}
@@ -274,25 +274,25 @@ function HooksContent() {
 
                 {/* Content */}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm text-text-primary font-medium leading-relaxed">
+                  <p className="text-sm text-foreground font-medium leading-relaxed">
                     &ldquo;{h.hook}&rdquo;
                   </p>
                   <div className="flex items-center gap-3 mt-2">
-                    <span className="text-[10px] text-text-muted">@{h.creator}</span>
-                    <span className="text-[10px] text-text-muted flex items-center gap-0.5">
-                      <FiEye className="w-2.5 h-2.5" />{formatNumber(h.views)}
+                    <span className="text-[10px] text-muted-foreground">@{h.creator}</span>
+                    <span className="text-[10px] text-muted-foreground flex items-center gap-0.5">
+                      <Eye className="w-2.5 h-2.5" />{formatNumber(h.views)}
                     </span>
-                    <span className="text-[10px] text-text-muted">%{h.engagementRate} etkilesim</span>
+                    <span className="text-[10px] text-muted-foreground">%{h.engagementRate} etkilesim</span>
                     <span className="text-[10px] text-teal bg-teal/10 px-1.5 py-0.5 rounded">{h.format}</span>
                     {h.tiktokUrl && (
                       <a
                         href={h.tiktokUrl}
                         target="_blank"
                         rel="noopener noreferrer"
-                        className="text-[10px] text-text-muted hover:text-neon-red flex items-center gap-0.5 ml-auto"
+                        className="text-[10px] text-muted-foreground hover:text-primary flex items-center gap-0.5 ml-auto"
                         onClick={(e) => e.stopPropagation()}
                       >
-                        <FiExternalLink className="w-2.5 h-2.5" /> TikTok
+                        <ExternalLink className="w-2.5 h-2.5" /> TikTok
                       </a>
                     )}
                   </div>
@@ -302,7 +302,7 @@ function HooksContent() {
                       {h.patterns.map((p) => (
                         <span
                           key={p}
-                          className={`text-[9px] px-1.5 py-0.5 rounded ${PATTERN_COLORS[p] || "bg-surface-light text-text-secondary"}`}
+                          className={`text-[9px] px-1.5 py-0.5 rounded ${PATTERN_COLORS[p] || "bg-muted text-muted-foreground"}`}
                         >
                           {data.patterns[p]?.label || p}
                         </span>

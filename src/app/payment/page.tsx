@@ -3,12 +3,12 @@
 import { Suspense, useEffect, useState, useRef, useCallback } from "react";
 import { useSearchParams } from "next/navigation";
 import { motion } from "framer-motion";
-import { FiLoader, FiAlertCircle, FiArrowLeft, FiShield } from "react-icons/fi";
+import { Loader, AlertCircle, ArrowLeft, Shield } from "lucide-react";
 import Link from "next/link";
 
 export default function PaymentPage() {
   return (
-    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><FiLoader className="w-8 h-8 text-neon-red animate-spin" /></div>}>
+    <Suspense fallback={<div className="min-h-screen bg-background flex items-center justify-center"><Loader className="w-8 h-8 text-primary animate-spin" /></div>}>
       <PaymentPageContent />
     </Suspense>
   );
@@ -84,17 +84,17 @@ function PaymentPageContent() {
   return (
     <div className="min-h-screen bg-background">
       {/* Navbar */}
-      <nav className="border-b border-border bg-surface/50 backdrop-blur-xl sticky top-0 z-50">
+      <nav className="border-b border-border bg-card/50 backdrop-blur-xl sticky top-0 z-50">
         <div className="max-w-3xl mx-auto px-6 py-4 flex items-center justify-between">
           <Link
             href="/pricing"
-            className="flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors"
+            className="flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors"
           >
-            <FiArrowLeft className="w-4 h-4" />
+            <ArrowLeft className="w-4 h-4" />
             <span className="text-sm">Planlara Dön</span>
           </Link>
-          <div className="flex items-center gap-2 text-text-muted text-xs">
-            <FiShield className="w-3.5 h-3.5 text-teal" />
+          <div className="flex items-center gap-2 text-muted-foreground text-xs">
+            <Shield className="w-3.5 h-3.5 text-teal" />
             <span>256-bit SSL ile korunuyor</span>
           </div>
         </div>
@@ -107,10 +107,10 @@ function PaymentPageContent() {
           animate={{ opacity: 1, y: 0 }}
           className="text-center mb-8"
         >
-          <h1 className="text-2xl font-bold text-text-primary mb-2">
+          <h1 className="text-2xl font-bold text-foreground mb-2">
             {paymentType === "subscription" ? "Pro Abonelik" : "Pro Plan (30 Gün)"}
           </h1>
-          <p className="text-text-secondary text-sm">
+          <p className="text-muted-foreground text-sm">
             {paymentType === "subscription"
               ? "Aylık otomatik yenilenen abonelik - ₺299/ay"
               : "Tek seferlik ödeme ile 30 gün Pro erişimi - ₺299"}
@@ -122,18 +122,18 @@ function PaymentPageContent() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.1 }}
-          className="bg-surface rounded-xl border border-border p-6 mb-8"
+          className="bg-card rounded-xl border border-border p-6 mb-8"
         >
           <div className="flex justify-between items-center mb-4">
-            <span className="text-sm text-text-secondary">Valyze Pro Plan</span>
-            <span className="text-sm font-semibold text-text-primary">₺299,00</span>
+            <span className="text-sm text-muted-foreground">Valyze Pro Plan</span>
+            <span className="text-sm font-semibold text-foreground">₺299,00</span>
           </div>
           <div className="border-t border-border pt-4 flex justify-between items-center">
-            <span className="text-sm font-semibold text-text-primary">Toplam</span>
-            <span className="text-lg font-bold text-neon-red">₺299,00</span>
+            <span className="text-sm font-semibold text-foreground">Toplam</span>
+            <span className="text-lg font-bold text-primary">₺299,00</span>
           </div>
           {paymentType === "subscription" && (
-            <p className="text-[11px] text-text-muted mt-3">
+            <p className="text-[11px] text-muted-foreground mt-3">
               Her ay otomatik olarak yenilenecektir. İstediğiniz zaman iptal edebilirsiniz.
             </p>
           )}
@@ -144,12 +144,12 @@ function PaymentPageContent() {
           initial={{ opacity: 0, y: 10 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.2 }}
-          className="bg-surface rounded-xl border border-border p-6"
+          className="bg-card rounded-xl border border-border p-6"
         >
           {loading && (
             <div className="flex flex-col items-center justify-center py-16 gap-4">
-              <FiLoader className="w-8 h-8 text-neon-red animate-spin" />
-              <p className="text-sm text-text-secondary">
+              <Loader className="w-8 h-8 text-primary animate-spin" />
+              <p className="text-sm text-muted-foreground">
                 Ödeme formu yükleniyor...
               </p>
             </div>
@@ -158,19 +158,19 @@ function PaymentPageContent() {
           {error && (
             <div className="flex flex-col items-center justify-center py-16 gap-4">
               <div className="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center">
-                <FiAlertCircle className="w-6 h-6 text-red-400" />
+                <AlertCircle className="w-6 h-6 text-red-400" />
               </div>
               <p className="text-sm text-red-400 text-center">{error}</p>
               <div className="flex gap-3">
                 <button
                   onClick={() => initCheckout()}
-                  className="px-4 py-2 text-sm rounded-lg bg-neon-red/10 text-neon-red hover:bg-neon-red/20 transition-colors"
+                  className="px-4 py-2 text-sm rounded-lg bg-primary/10 text-primary hover:bg-primary/20 transition-colors"
                 >
                   Tekrar Dene
                 </button>
                 <Link
                   href="/pricing"
-                  className="px-4 py-2 text-sm rounded-lg border border-border text-text-secondary hover:bg-surface-light transition-colors"
+                  className="px-4 py-2 text-sm rounded-lg border border-border text-muted-foreground hover:bg-muted transition-colors"
                 >
                   Planlara Dön
                 </Link>
@@ -190,9 +190,9 @@ function PaymentPageContent() {
           transition={{ delay: 0.4 }}
           className="text-center mt-8 space-y-2"
         >
-          <div className="flex items-center justify-center gap-4 text-text-muted">
+          <div className="flex items-center justify-center gap-4 text-muted-foreground">
             <div className="flex items-center gap-1.5">
-              <FiShield className="w-3.5 h-3.5" />
+              <Shield className="w-3.5 h-3.5" />
               <span className="text-[11px]">3D Secure</span>
             </div>
             <div className="w-px h-3 bg-border" />

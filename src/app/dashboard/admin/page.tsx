@@ -3,20 +3,20 @@
 import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import {
-  FiUsers,
-  FiUserPlus,
-  FiTrash2,
-  FiShield,
-  FiUser,
-  FiMail,
-  FiLock,
-  FiX,
-  FiCheck,
-  FiSlash,
-  FiRefreshCw,
-  FiSearch,
-  FiEdit2,
-} from "react-icons/fi";
+  Users,
+  UserPlus,
+  Trash2,
+  Shield,
+  User,
+  Mail,
+  Lock,
+  X,
+  Check,
+  Slash,
+  RefreshCw,
+  Search,
+  Pencil,
+} from "lucide-react";
 
 interface UserData {
   id: string;
@@ -150,16 +150,16 @@ export default function AdminPage() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div>
-          <h1 className="text-2xl font-bold text-text-primary">Admin Paneli</h1>
-          <p className="text-text-secondary text-sm mt-1">
+          <h1 className="text-2xl font-bold text-foreground">Admin Paneli</h1>
+          <p className="text-muted-foreground text-sm mt-1">
             Kullanıcı yönetimi ve sistem ayarları
           </p>
         </div>
         <button
           onClick={() => setShowCreateModal(true)}
-          className="gradient-red text-white font-medium px-4 py-2.5 rounded-xl hover:opacity-90 transition-all flex items-center gap-2 text-sm w-fit"
+          className="bg-primary text-white font-medium px-4 py-2.5 rounded-xl hover:opacity-90 transition-all flex items-center gap-2 text-sm w-fit"
         >
-          <FiUserPlus className="w-4 h-4" />
+          <UserPlus className="w-4 h-4" />
           Yeni Kullanıcı
         </button>
       </div>
@@ -170,28 +170,28 @@ export default function AdminPage() {
           {
             label: "Toplam Kullanıcı",
             value: stats.total,
-            icon: FiUsers,
-            color: "text-neon-red",
-            bg: "bg-neon-red/10",
+            icon: Users,
+            color: "text-primary",
+            bg: "bg-primary/10",
           },
           {
             label: "Yönetici",
             value: stats.admins,
-            icon: FiShield,
+            icon: Shield,
             color: "text-teal",
             bg: "bg-teal/10",
           },
           {
             label: "Aktif",
             value: stats.active,
-            icon: FiCheck,
+            icon: Check,
             color: "text-green-400",
             bg: "bg-green-400/10",
           },
           {
             label: "Devre Dışı",
             value: stats.disabled,
-            icon: FiSlash,
+            icon: Slash,
             color: "text-yellow-400",
             bg: "bg-yellow-400/10",
           },
@@ -200,7 +200,7 @@ export default function AdminPage() {
             key={stat.label}
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            className="bg-surface border border-border rounded-xl p-4"
+            className="bg-card border border-border rounded-xl p-4"
           >
             <div className="flex items-center gap-3">
               <div
@@ -209,10 +209,10 @@ export default function AdminPage() {
                 <stat.icon className={`w-5 h-5 ${stat.color}`} />
               </div>
               <div>
-                <p className="text-2xl font-bold text-text-primary">
+                <p className="text-2xl font-bold text-foreground">
                   {stat.value}
                 </p>
-                <p className="text-xs text-text-muted">{stat.label}</p>
+                <p className="text-xs text-muted-foreground">{stat.label}</p>
               </div>
             </div>
           </motion.div>
@@ -222,13 +222,13 @@ export default function AdminPage() {
       {/* Search & Refresh */}
       <div className="flex items-center gap-3">
         <div className="relative flex-1">
-          <FiSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted w-4 h-4" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
           <input
             type="text"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Kullanıcı ara..."
-            className="w-full bg-surface border border-border rounded-xl py-2.5 pl-10 pr-4 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-neon-red/50 transition-all"
+            className="w-full bg-card border border-border rounded-xl py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 transition-all"
           />
         </div>
         <button
@@ -236,10 +236,10 @@ export default function AdminPage() {
             setLoading(true);
             fetchUsers();
           }}
-          className="p-2.5 rounded-xl bg-surface border border-border hover:bg-surface-light transition-all"
+          className="p-2.5 rounded-xl bg-card border border-border hover:bg-muted transition-all"
         >
-          <FiRefreshCw
-            className={`w-4 h-4 text-text-secondary ${loading ? "animate-spin" : ""}`}
+          <RefreshCw
+            className={`w-4 h-4 text-muted-foreground ${loading ? "animate-spin" : ""}`}
           />
         </button>
       </div>
@@ -254,7 +254,7 @@ export default function AdminPage() {
             className={`p-3 rounded-xl text-sm font-medium text-center ${
               message.type === "success"
                 ? "bg-teal/10 border border-teal/20 text-teal"
-                : "bg-neon-red/10 border border-neon-red/20 text-neon-red"
+                : "bg-primary/10 border border-primary/20 text-primary"
             }`}
           >
             {message.text}
@@ -263,38 +263,38 @@ export default function AdminPage() {
       </AnimatePresence>
 
       {/* Users Table */}
-      <div className="bg-surface border border-border rounded-xl overflow-hidden">
+      <div className="bg-card border border-border rounded-xl overflow-hidden">
         {loading ? (
           <div className="p-8 text-center">
-            <div className="w-8 h-8 border-2 border-neon-red/30 border-t-neon-red rounded-full animate-spin mx-auto" />
-            <p className="text-text-muted text-sm mt-3">Yükleniyor...</p>
+            <div className="w-8 h-8 border-2 border-primary/30 border-t-primary rounded-full animate-spin mx-auto" />
+            <p className="text-muted-foreground text-sm mt-3">Yükleniyor...</p>
           </div>
         ) : filteredUsers.length === 0 ? (
           <div className="p-8 text-center">
-            <FiUsers className="w-8 h-8 text-text-muted mx-auto mb-2" />
-            <p className="text-text-muted text-sm">Kullanıcı bulunamadı</p>
+            <Users className="w-8 h-8 text-muted-foreground mx-auto mb-2" />
+            <p className="text-muted-foreground text-sm">Kullanıcı bulunamadı</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full">
               <thead>
                 <tr className="border-b border-border">
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     Kullanıcı
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider hidden md:table-cell">
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden md:table-cell">
                     E-posta
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     Rol
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider hidden lg:table-cell">
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider hidden lg:table-cell">
                     Kayıt Tarihi
                   </th>
-                  <th className="text-left px-4 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">
+                  <th className="text-left px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     Durum
                   </th>
-                  <th className="text-right px-4 py-3 text-xs font-semibold text-text-muted uppercase tracking-wider">
+                  <th className="text-right px-4 py-3 text-xs font-semibold text-muted-foreground uppercase tracking-wider">
                     İşlemler
                   </th>
                 </tr>
@@ -303,35 +303,35 @@ export default function AdminPage() {
                 {filteredUsers.map((user) => (
                   <tr
                     key={user.id}
-                    className="hover:bg-surface-light/50 transition-colors"
+                    className="hover:bg-muted/50 transition-colors"
                   >
                     <td className="px-4 py-3">
                       <div className="flex items-center gap-3">
                         <div
                           className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
                             user.role === "admin"
-                              ? "gradient-red"
-                              : "bg-surface-light"
+                              ? "bg-primary"
+                              : "bg-muted"
                           }`}
                         >
                           {user.role === "admin" ? (
-                            <FiShield className="w-3.5 h-3.5 text-white" />
+                            <Shield className="w-3.5 h-3.5 text-white" />
                           ) : (
-                            <FiUser className="w-3.5 h-3.5 text-text-secondary" />
+                            <User className="w-3.5 h-3.5 text-muted-foreground" />
                           )}
                         </div>
                         <div>
-                          <p className="text-sm font-medium text-text-primary">
+                          <p className="text-sm font-medium text-foreground">
                             {user.username}
                           </p>
-                          <p className="text-xs text-text-muted md:hidden">
+                          <p className="text-xs text-muted-foreground md:hidden">
                             {user.email}
                           </p>
                         </div>
                       </div>
                     </td>
                     <td className="px-4 py-3 hidden md:table-cell">
-                      <span className="text-sm text-text-secondary">
+                      <span className="text-sm text-muted-foreground">
                         {user.email}
                       </span>
                     </td>
@@ -339,20 +339,20 @@ export default function AdminPage() {
                       <span
                         className={`inline-flex items-center gap-1 px-2 py-1 rounded-full text-xs font-medium ${
                           user.role === "admin"
-                            ? "bg-neon-red/10 text-neon-red"
-                            : "bg-surface-light text-text-secondary"
+                            ? "bg-primary/10 text-primary"
+                            : "bg-muted text-muted-foreground"
                         }`}
                       >
                         {user.role === "admin" ? (
-                          <FiShield className="w-3 h-3" />
+                          <Shield className="w-3 h-3" />
                         ) : (
-                          <FiUser className="w-3 h-3" />
+                          <User className="w-3 h-3" />
                         )}
                         {user.role === "admin" ? "Yönetici" : "Kullanıcı"}
                       </span>
                     </td>
                     <td className="px-4 py-3 hidden lg:table-cell">
-                      <span className="text-sm text-text-muted">
+                      <span className="text-sm text-muted-foreground">
                         {new Date(user.created_at).toLocaleDateString("tr-TR", {
                           day: "2-digit",
                           month: "2-digit",
@@ -386,9 +386,9 @@ export default function AdminPage() {
                               ? "Kullanıcıya düşür"
                               : "Yöneticiye yükselt"
                           }
-                          className="p-2 rounded-lg hover:bg-surface-light text-text-muted hover:text-teal transition-all disabled:opacity-50"
+                          className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-teal transition-all disabled:opacity-50"
                         >
-                          <FiShield className="w-3.5 h-3.5" />
+                          <Shield className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => handleToggleDisabled(user)}
@@ -396,16 +396,16 @@ export default function AdminPage() {
                           title={
                             user.disabled ? "Aktifleştir" : "Devre dışı bırak"
                           }
-                          className="p-2 rounded-lg hover:bg-surface-light text-text-muted hover:text-yellow-400 transition-all disabled:opacity-50"
+                          className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-yellow-400 transition-all disabled:opacity-50"
                         >
-                          <FiSlash className="w-3.5 h-3.5" />
+                          <Slash className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() => setEditingUser(user)}
                           title="Düzenle"
-                          className="p-2 rounded-lg hover:bg-surface-light text-text-muted hover:text-blue-400 transition-all"
+                          className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-blue-400 transition-all"
                         >
-                          <FiEdit2 className="w-3.5 h-3.5" />
+                          <Pencil className="w-3.5 h-3.5" />
                         </button>
                         <button
                           onClick={() =>
@@ -413,9 +413,9 @@ export default function AdminPage() {
                           }
                           disabled={actionLoading === user.id}
                           title="Sil"
-                          className="p-2 rounded-lg hover:bg-surface-light text-text-muted hover:text-neon-red transition-all disabled:opacity-50"
+                          className="p-2 rounded-lg hover:bg-muted text-muted-foreground hover:text-primary transition-all disabled:opacity-50"
                         >
-                          <FiTrash2 className="w-3.5 h-3.5" />
+                          <Trash2 className="w-3.5 h-3.5" />
                         </button>
                       </div>
                     </td>
@@ -514,75 +514,75 @@ function CreateUserModal({
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="bg-surface border border-border rounded-2xl p-6 w-full max-w-md"
+        className="bg-card border border-border rounded-xl p-6 w-full max-w-md"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-text-primary">
+          <h2 className="text-lg font-bold text-foreground">
             Yeni Kullanıcı Oluştur
           </h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-surface-light transition-colors"
+            className="p-2 rounded-lg hover:bg-muted transition-colors"
           >
-            <FiX className="w-4 h-4 text-text-muted" />
+            <X className="w-4 h-4 text-muted-foreground" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1.5">
+            <label className="block text-sm font-medium text-muted-foreground mb-1.5">
               Kullanıcı Adı
             </label>
             <div className="relative">
-              <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted w-4 h-4" />
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
                 placeholder="Kullanıcı adı"
-                className="w-full bg-surface-light border border-border rounded-xl py-2.5 pl-10 pr-4 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-neon-red/50 transition-all"
+                className="w-full bg-muted border border-border rounded-xl py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 transition-all"
                 required
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1.5">
+            <label className="block text-sm font-medium text-muted-foreground mb-1.5">
               E-posta
             </label>
             <div className="relative">
-              <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted w-4 h-4" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="E-posta adresi"
-                className="w-full bg-surface-light border border-border rounded-xl py-2.5 pl-10 pr-4 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-neon-red/50 transition-all"
+                className="w-full bg-muted border border-border rounded-xl py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 transition-all"
                 required
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1.5">
+            <label className="block text-sm font-medium text-muted-foreground mb-1.5">
               Şifre
             </label>
             <div className="relative">
-              <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted w-4 h-4" />
+              <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <input
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder="En az 6 karakter"
-                className="w-full bg-surface-light border border-border rounded-xl py-2.5 pl-10 pr-4 text-sm text-text-primary placeholder-text-muted focus:outline-none focus:border-neon-red/50 transition-all"
+                className="w-full bg-muted border border-border rounded-xl py-2.5 pl-10 pr-4 text-sm text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 transition-all"
                 required
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1.5">
+            <label className="block text-sm font-medium text-muted-foreground mb-1.5">
               Rol
             </label>
             <div className="flex gap-3">
@@ -591,11 +591,11 @@ function CreateUserModal({
                 onClick={() => setRole("user")}
                 className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all border ${
                   role === "user"
-                    ? "bg-surface-light border-neon-red/50 text-neon-red"
-                    : "border-border text-text-muted hover:border-border"
+                    ? "bg-muted border-primary/50 text-primary"
+                    : "border-border text-muted-foreground hover:border-border"
                 }`}
               >
-                <FiUser className="w-4 h-4" />
+                <User className="w-4 h-4" />
                 Kullanıcı
               </button>
               <button
@@ -604,17 +604,17 @@ function CreateUserModal({
                 className={`flex-1 flex items-center justify-center gap-2 py-2.5 rounded-xl text-sm font-medium transition-all border ${
                   role === "admin"
                     ? "bg-teal/10 border-teal/50 text-teal"
-                    : "border-border text-text-muted hover:border-border"
+                    : "border-border text-muted-foreground hover:border-border"
                 }`}
               >
-                <FiShield className="w-4 h-4" />
+                <Shield className="w-4 h-4" />
                 Yönetici
               </button>
             </div>
           </div>
 
           {error && (
-            <div className="bg-neon-red/10 border border-neon-red/20 rounded-lg p-3 text-neon-red text-sm text-center">
+            <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-primary text-sm text-center">
               {error}
             </div>
           )}
@@ -622,13 +622,13 @@ function CreateUserModal({
           <button
             type="submit"
             disabled={loading || !username || !email || !password}
-            className="w-full gradient-red text-white font-medium py-2.5 rounded-xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
+            className="w-full bg-primary text-white font-medium py-2.5 rounded-xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
           >
             {loading ? (
               <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
             ) : (
               <>
-                <FiUserPlus className="w-4 h-4" />
+                <UserPlus className="w-4 h-4" />
                 Oluştur
               </>
             )}
@@ -701,56 +701,56 @@ function EditUserModal({
         initial={{ opacity: 0, scale: 0.95, y: 20 }}
         animate={{ opacity: 1, scale: 1, y: 0 }}
         exit={{ opacity: 0, scale: 0.95, y: 20 }}
-        className="bg-surface border border-border rounded-2xl p-6 w-full max-w-md"
+        className="bg-card border border-border rounded-xl p-6 w-full max-w-md"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="flex items-center justify-between mb-6">
-          <h2 className="text-lg font-bold text-text-primary">
+          <h2 className="text-lg font-bold text-foreground">
             Kullanıcı Düzenle
           </h2>
           <button
             onClick={onClose}
-            className="p-2 rounded-lg hover:bg-surface-light transition-colors"
+            className="p-2 rounded-lg hover:bg-muted transition-colors"
           >
-            <FiX className="w-4 h-4 text-text-muted" />
+            <X className="w-4 h-4 text-muted-foreground" />
           </button>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1.5">
+            <label className="block text-sm font-medium text-muted-foreground mb-1.5">
               Kullanıcı Adı
             </label>
             <div className="relative">
-              <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted w-4 h-4" />
+              <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <input
                 type="text"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
-                className="w-full bg-surface-light border border-border rounded-xl py-2.5 pl-10 pr-4 text-sm text-text-primary focus:outline-none focus:border-neon-red/50 transition-all"
+                className="w-full bg-muted border border-border rounded-xl py-2.5 pl-10 pr-4 text-sm text-foreground focus:outline-none focus:border-primary/50 transition-all"
                 required
               />
             </div>
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-text-secondary mb-1.5">
+            <label className="block text-sm font-medium text-muted-foreground mb-1.5">
               E-posta
             </label>
             <div className="relative">
-              <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted w-4 h-4" />
+              <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <input
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full bg-surface-light border border-border rounded-xl py-2.5 pl-10 pr-4 text-sm text-text-primary focus:outline-none focus:border-neon-red/50 transition-all"
+                className="w-full bg-muted border border-border rounded-xl py-2.5 pl-10 pr-4 text-sm text-foreground focus:outline-none focus:border-primary/50 transition-all"
                 required
               />
             </div>
           </div>
 
           {error && (
-            <div className="bg-neon-red/10 border border-neon-red/20 rounded-lg p-3 text-neon-red text-sm text-center">
+            <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-primary text-sm text-center">
               {error}
             </div>
           )}
@@ -759,20 +759,20 @@ function EditUserModal({
             <button
               type="button"
               onClick={onClose}
-              className="flex-1 py-2.5 rounded-xl text-sm font-medium border border-border text-text-secondary hover:bg-surface-light transition-all"
+              className="flex-1 py-2.5 rounded-xl text-sm font-medium border border-border text-muted-foreground hover:bg-muted transition-all"
             >
               İptal
             </button>
             <button
               type="submit"
               disabled={loading}
-              className="flex-1 gradient-red text-white font-medium py-2.5 rounded-xl hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
+              className="flex-1 bg-primary text-white font-medium py-2.5 rounded-xl hover:opacity-90 transition-all disabled:opacity-50 flex items-center justify-center gap-2 text-sm"
             >
               {loading ? (
                 <div className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
               ) : (
                 <>
-                  <FiCheck className="w-4 h-4" />
+                  <Check className="w-4 h-4" />
                   Kaydet
                 </>
               )}

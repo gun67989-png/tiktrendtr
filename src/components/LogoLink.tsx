@@ -43,11 +43,11 @@ export default function LogoLink({ size = "md", showSubtitle, subtitle }: LogoLi
         unoptimized
       />
       <div>
-        <span className={`${textSizes[size]} font-bold text-text-primary`}>
-          Valyze <span className="text-neon-red">TR</span>
+        <span className={`${textSizes[size]} font-semibold text-foreground tracking-tight`}>
+          Valyze <span className="text-teal">TR</span>
         </span>
         {showSubtitle && subtitle && (
-          <p className="text-[10px] text-text-muted uppercase tracking-wider">{subtitle}</p>
+          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{subtitle}</p>
         )}
       </div>
     </Link>

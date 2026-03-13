@@ -1,35 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { FiArrowLeft } from "react-icons/fi";
+import { ArrowLeft } from "lucide-react";
 import LogoLink from "@/components/LogoLink";
 
 export default function PrivacyPolicyPage() {
   return (
-    <div className="min-h-screen bg-background text-text-primary">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Navbar */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
         <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
           <LogoLink size="sm" />
           <div className="flex items-center gap-3">
-            <Link href="/login" className="text-sm text-text-secondary hover:text-text-primary transition-colors px-4 py-2">Giris Yap</Link>
-            <Link href="/register" className="text-sm bg-neon-red text-white px-4 py-2 rounded-lg hover:bg-neon-red-light transition-colors font-medium">Ucretsiz Basla</Link>
+            <Link href="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors px-4 py-2">Giris Yap</Link>
+            <Link href="/register" className="text-sm bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/80 transition-colors font-medium">Ucretsiz Basla</Link>
           </div>
         </div>
       </nav>
 
       <div className="pt-28 pb-20 px-6">
         <div className="max-w-3xl mx-auto">
-          <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-text-primary transition-colors mb-6">
-            <FiArrowLeft className="w-3 h-3" /> Ana Sayfaya Don
+          <Link href="/" className="inline-flex items-center gap-1.5 text-xs text-muted-foreground hover:text-foreground transition-colors mb-6">
+            <ArrowLeft className="w-3 h-3" /> Ana Sayfaya Don
           </Link>
 
           <h1 className="text-3xl font-bold mb-2">Gizlilik Politikasi</h1>
-          <p className="text-xs text-text-muted mb-10">Son guncelleme: 11 Mart 2026</p>
+          <p className="text-xs text-muted-foreground mb-10">Son guncelleme: 11 Mart 2026</p>
 
-          <div className="space-y-8 text-sm text-text-secondary leading-relaxed">
+          <div className="space-y-8 text-sm text-muted-foreground leading-relaxed">
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">1. Genel Bakis</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">1. Genel Bakis</h2>
               <p>
                 Valyze (&quot;Platform&quot;, &quot;biz&quot;, &quot;bizim&quot;) olarak kullanicilarimizin gizliligini korumaya buyuk onem veriyoruz.
                 Bu Gizlilik Politikasi, platformumuzu kullandiginizda hangi kisisel verilerin toplandigini,
@@ -42,19 +42,19 @@ export default function PrivacyPolicyPage() {
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">2. Toplanan Veriler</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">2. Toplanan Veriler</h2>
               <p className="mb-2">Platformumuzu kullandiginizda asagidaki verileri toplayabiliriz:</p>
               <ul className="list-disc list-inside space-y-1 ml-2">
-                <li><strong className="text-text-primary">Hesap Bilgileri:</strong> Kullanici adi, e-posta adresi, sifre (sifreli olarak saklanir)</li>
-                <li><strong className="text-text-primary">Abonelik Bilgileri:</strong> Plan turu, abonelik baslangic ve bitis tarihleri</li>
-                <li><strong className="text-text-primary">Kullanim Verileri:</strong> Platform icerisindeki etkilesimleriniz, ziyaret ettiginiz sayfalar</li>
-                <li><strong className="text-text-primary">Cihaz Bilgileri:</strong> IP adresi, tarayici turu, isletim sistemi</li>
-                <li><strong className="text-text-primary">Cerez Verileri:</strong> Oturum cerezleri ve tercih cerezleri</li>
+                <li><strong className="text-foreground">Hesap Bilgileri:</strong> Kullanici adi, e-posta adresi, sifre (sifreli olarak saklanir)</li>
+                <li><strong className="text-foreground">Abonelik Bilgileri:</strong> Plan turu, abonelik baslangic ve bitis tarihleri</li>
+                <li><strong className="text-foreground">Kullanim Verileri:</strong> Platform icerisindeki etkilesimleriniz, ziyaret ettiginiz sayfalar</li>
+                <li><strong className="text-foreground">Cihaz Bilgileri:</strong> IP adresi, tarayici turu, isletim sistemi</li>
+                <li><strong className="text-foreground">Cerez Verileri:</strong> Oturum cerezleri ve tercih cerezleri</li>
               </ul>
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">3. Verilerin Kullanim Amaci</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">3. Verilerin Kullanim Amaci</h2>
               <p className="mb-2">Toplanan veriler asagidaki amaclarla kullanilmaktadir:</p>
               <ul className="list-disc list-inside space-y-1 ml-2">
                 <li>Hesabinizin olusturulmasi ve yonetimi</li>
@@ -67,7 +67,7 @@ export default function PrivacyPolicyPage() {
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">4. Veri Guvenligi</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">4. Veri Guvenligi</h2>
               <p>
                 Kisisel verileriniz endustri standardlarinda guvenlik onlemleriyle korunmaktadir.
                 Sifreleriniz bcrypt algoritmasi ile hashlenerek saklanir. Oturum yonetimi JWT (JSON Web Token)
@@ -77,7 +77,7 @@ export default function PrivacyPolicyPage() {
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">5. Ucuncu Taraf Paylasimi</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">5. Ucuncu Taraf Paylasimi</h2>
               <p>
                 Kisisel verileriniz ucuncu taraflarla pazarlama amaciyla paylasilmaz. Verileriniz yalnizca
                 asagidaki durumlarda paylasilabilir:
@@ -90,7 +90,7 @@ export default function PrivacyPolicyPage() {
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">6. KVKK Kapsamindaki Haklariniz</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">6. KVKK Kapsamindaki Haklariniz</h2>
               <p className="mb-2">6698 sayili KVKK kapsaminda asagidaki haklara sahipsiniz:</p>
               <ul className="list-disc list-inside space-y-1 ml-2">
                 <li>Kisisel verilerinizin islenip islenmedigini ogrenme</li>
@@ -101,12 +101,12 @@ export default function PrivacyPolicyPage() {
                 <li>Islenen verilerin munhasiran otomatik sistemler vasitasiyla analiz edilmesi suretiyle aleyhinize bir sonucun ortaya cikmasina itiraz etme</li>
               </ul>
               <p className="mt-2">
-                Bu haklarinizi kullanmak icin <Link href="/contact" className="text-neon-red hover:underline">iletisim sayfamiz</Link> uzerinden bize ulasabilirsiniz.
+                Bu haklarinizi kullanmak icin <Link href="/contact" className="text-primary hover:underline">iletisim sayfamiz</Link> uzerinden bize ulasabilirsiniz.
               </p>
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">7. Veri Saklama Suresi</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">7. Veri Saklama Suresi</h2>
               <p>
                 Kisisel verileriniz, hesabiniz aktif oldugu surece veya yasal zorunluluklar gerektirdigi
                 surece saklanir. Hesabinizi silmeniz halinde verileriniz 30 gun icerisinde kalici olarak
@@ -115,7 +115,7 @@ export default function PrivacyPolicyPage() {
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">8. Degisiklikler</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">8. Degisiklikler</h2>
               <p>
                 Bu Gizlilik Politikasi zaman zaman guncellenebilir. Onemli degisiklikler yapildiginda
                 e-posta veya platform ici bildirim yoluyla bilgilendirilirsiniz. Politikayi duzenli olarak
@@ -124,10 +124,10 @@ export default function PrivacyPolicyPage() {
             </section>
 
             <section>
-              <h2 className="text-lg font-semibold text-text-primary mb-3">9. Iletisim</h2>
+              <h2 className="text-lg font-semibold text-foreground mb-3">9. Iletisim</h2>
               <p>
                 Gizlilik politikamiz hakkinda sorulariniz icin{" "}
-                <Link href="/contact" className="text-neon-red hover:underline">iletisim formu</Link> uzerinden
+                <Link href="/contact" className="text-primary hover:underline">iletisim formu</Link> uzerinden
                 bize ulasabilirsiniz.
               </p>
             </section>
@@ -135,28 +135,28 @@ export default function PrivacyPolicyPage() {
 
           {/* Related links */}
           <div className="mt-12 flex flex-wrap gap-3">
-            <Link href="/terms-of-service" className="text-xs bg-surface border border-border px-4 py-2 rounded-lg hover:border-neon-red/20 transition-colors">Kullanım Şartları</Link>
-            <Link href="/mesafeli-satis-sozlesmesi" className="text-xs bg-surface border border-border px-4 py-2 rounded-lg hover:border-neon-red/20 transition-colors">Mesafeli Satış Sözleşmesi</Link>
-            <Link href="/iptal-ve-iade" className="text-xs bg-surface border border-border px-4 py-2 rounded-lg hover:border-neon-red/20 transition-colors">İptal ve İade</Link>
-            <Link href="/cookie-policy" className="text-xs bg-surface border border-border px-4 py-2 rounded-lg hover:border-neon-red/20 transition-colors">Çerez Politikası</Link>
-            <Link href="/contact" className="text-xs bg-surface border border-border px-4 py-2 rounded-lg hover:border-neon-red/20 transition-colors">İletişim</Link>
+            <Link href="/terms-of-service" className="text-xs bg-card border border-border px-4 py-2 rounded-lg hover:border-primary/20 transition-colors">Kullanım Şartları</Link>
+            <Link href="/mesafeli-satis-sozlesmesi" className="text-xs bg-card border border-border px-4 py-2 rounded-lg hover:border-primary/20 transition-colors">Mesafeli Satış Sözleşmesi</Link>
+            <Link href="/iptal-ve-iade" className="text-xs bg-card border border-border px-4 py-2 rounded-lg hover:border-primary/20 transition-colors">İptal ve İade</Link>
+            <Link href="/cookie-policy" className="text-xs bg-card border border-border px-4 py-2 rounded-lg hover:border-primary/20 transition-colors">Çerez Politikası</Link>
+            <Link href="/contact" className="text-xs bg-card border border-border px-4 py-2 rounded-lg hover:border-primary/20 transition-colors">İletişim</Link>
           </div>
         </div>
       </div>
 
       <footer className="border-t border-border py-8 px-6">
         <div className="max-w-3xl mx-auto">
-          <div className="flex flex-wrap gap-4 text-xs text-text-muted mb-4">
-            <Link href="/privacy-policy" className="hover:text-text-primary transition-colors">Gizlilik Politikası</Link>
-            <Link href="/terms-of-service" className="hover:text-text-primary transition-colors">Kullanım Şartları</Link>
-            <Link href="/mesafeli-satis-sozlesmesi" className="hover:text-text-primary transition-colors">Mesafeli Satış Sözleşmesi</Link>
-            <Link href="/iptal-ve-iade" className="hover:text-text-primary transition-colors">İptal ve İade</Link>
-            <Link href="/cookie-policy" className="hover:text-text-primary transition-colors">Çerez Politikası</Link>
-            <Link href="/contact" className="hover:text-text-primary transition-colors">İletişim</Link>
+          <div className="flex flex-wrap gap-4 text-xs text-muted-foreground mb-4">
+            <Link href="/privacy-policy" className="hover:text-foreground transition-colors">Gizlilik Politikası</Link>
+            <Link href="/terms-of-service" className="hover:text-foreground transition-colors">Kullanım Şartları</Link>
+            <Link href="/mesafeli-satis-sozlesmesi" className="hover:text-foreground transition-colors">Mesafeli Satış Sözleşmesi</Link>
+            <Link href="/iptal-ve-iade" className="hover:text-foreground transition-colors">İptal ve İade</Link>
+            <Link href="/cookie-policy" className="hover:text-foreground transition-colors">Çerez Politikası</Link>
+            <Link href="/contact" className="hover:text-foreground transition-colors">İletişim</Link>
           </div>
           <div className="flex items-center justify-between">
-            <p className="text-[10px] text-text-muted">&copy; 2026 Valyze TR. Tüm hakları saklıdır.</p>
-            <p className="text-[10px] text-text-muted">destek@valyze.app</p>
+            <p className="text-[10px] text-muted-foreground">&copy; 2026 Valyze TR. Tüm hakları saklıdır.</p>
+            <p className="text-[10px] text-muted-foreground">destek@valyze.app</p>
           </div>
         </div>
       </footer>

@@ -3,18 +3,18 @@
 import { useState, useEffect, Suspense } from "react";
 import { motion } from "framer-motion";
 import {
-  FiEye,
-  FiEyeOff,
-  FiLock,
-  FiUser,
-  FiMail,
-  FiUserPlus,
-  FiArrowLeft,
-  FiTrendingUp,
-  FiCheck,
-  FiShield,
-  FiZap,
-} from "react-icons/fi";
+  Eye,
+  EyeOff,
+  Lock,
+  User,
+  Mail,
+  UserPlus,
+  ArrowLeft,
+  TrendingUp,
+  Check,
+  Shield,
+  Zap,
+} from "lucide-react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import LogoLink from "@/components/LogoLink";
@@ -33,17 +33,17 @@ const OAUTH_ERRORS: Record<string, string> = {
 
 const benefits = [
   {
-    icon: FiTrendingUp,
+    icon: TrendingUp,
     title: "Gerçek Zamanlı Trendler",
     desc: "Türkiye'de viral olan tüm trendleri anında keşfedin",
   },
   {
-    icon: FiZap,
+    icon: Zap,
     title: "AI İçerik Önerileri",
     desc: "Yapay zeka destekli kişiselleştirilmiş içerik fikirleri",
   },
   {
-    icon: FiShield,
+    icon: Shield,
     title: "Güvenli & Hızlı",
     desc: "Verileriniz güvende, analizler saniyeler içinde hazır",
   },
@@ -134,15 +134,8 @@ function RegisterContent() {
       <div className="hidden lg:flex lg:w-[55%] xl:w-[60%] relative flex-col justify-between p-10 xl:p-16 overflow-hidden">
         {/* Arka plan efektleri */}
         <div className="absolute inset-0">
-          <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-teal/15 rounded-full blur-[150px] animate-pulse" />
-          <div
-            className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-neon-red/10 rounded-full blur-[120px] animate-pulse"
-            style={{ animationDelay: "3s" }}
-          />
-          <div
-            className="absolute top-1/3 left-1/2 -translate-x-1/2 w-[300px] h-[300px] bg-amber-500/8 rounded-full blur-[100px] animate-pulse"
-            style={{ animationDelay: "6s" }}
-          />
+          <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-teal/8 rounded-full blur-[150px]" />
+          <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[120px]" />
         </div>
 
         {/* Grid pattern */}
@@ -155,8 +148,8 @@ function RegisterContent() {
         />
 
         {/* Köşe dekorasyon */}
-        <div className="absolute top-0 right-0 w-px h-40 bg-gradient-to-b from-teal/30 to-transparent" />
-        <div className="absolute bottom-0 left-0 w-40 h-px bg-gradient-to-r from-neon-red/30 to-transparent" />
+        <div className="absolute top-0 right-0 w-px h-40 bg-teal/20" />
+        <div className="absolute bottom-0 left-0 w-40 h-px bg-primary/20" />
 
         {/* Üst — Logo */}
         <motion.div
@@ -165,20 +158,20 @@ function RegisterContent() {
           transition={{ duration: 0.6 }}
           className="relative z-10"
         >
-          <Link href="/" className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors text-sm mb-8">
-            <FiArrowLeft className="w-4 h-4" />
+          <Link href="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm mb-8">
+            <ArrowLeft className="w-4 h-4" />
             Ana Sayfa
           </Link>
 
           <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 rounded-2xl gradient-red flex items-center justify-center shadow-lg shadow-neon-red/20">
-              <FiTrendingUp className="w-6 h-6 text-white" />
+            <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
+              <TrendingUp className="w-6 h-6 text-white" />
             </div>
             <div>
-              <h1 className="text-3xl xl:text-4xl font-bold text-text-primary">
-                Val<span className="text-neon-red">yze</span>
+              <h1 className="text-3xl xl:text-4xl font-bold text-foreground">
+                Val<span className="text-primary">yze</span>
               </h1>
-              <p className="text-text-muted text-sm tracking-wide">
+              <p className="text-muted-foreground text-sm tracking-wide">
                 TikTok Trend Analiz Platformu
               </p>
             </div>
@@ -192,7 +185,7 @@ function RegisterContent() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3, duration: 0.5 }}
-              className="text-xl xl:text-2xl font-semibold text-text-primary mb-2"
+              className="text-xl xl:text-2xl font-semibold text-foreground mb-2"
             >
               Ücretsiz Başlayın
             </motion.h2>
@@ -200,7 +193,7 @@ function RegisterContent() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
-              className="text-text-secondary text-sm mb-8"
+              className="text-muted-foreground text-sm mb-8"
             >
               Hesap oluşturun ve Türkiye&apos;nin TikTok trendlerini analiz etmeye hemen başlayın.
             </motion.p>
@@ -215,16 +208,16 @@ function RegisterContent() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 + i * 0.1, duration: 0.4 }}
-                    className="flex items-start gap-4 p-4 rounded-xl bg-surface/40 border border-border/50"
+                    className="flex items-start gap-4 p-4 rounded-xl bg-card/40 border border-border/50"
                   >
                     <div className="w-10 h-10 rounded-lg bg-teal/10 flex items-center justify-center flex-shrink-0">
                       <Icon className="w-5 h-5 text-teal" />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-text-primary">
+                      <p className="text-sm font-medium text-foreground">
                         {benefit.title}
                       </p>
-                      <p className="text-xs text-text-muted mt-0.5">
+                      <p className="text-xs text-muted-foreground mt-0.5">
                         {benefit.desc}
                       </p>
                     </div>
@@ -238,9 +231,9 @@ function RegisterContent() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9, duration: 0.4 }}
-              className="bg-surface/30 border border-border/30 rounded-xl p-4"
+              className="bg-card/30 border border-border/30 rounded-xl p-4"
             >
-              <p className="text-xs font-semibold text-text-secondary mb-3 uppercase tracking-wider">
+              <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">
                 Free Plana Dahil
               </p>
               <div className="grid grid-cols-2 gap-2">
@@ -252,8 +245,8 @@ function RegisterContent() {
                     transition={{ delay: 1 + i * 0.08 }}
                     className="flex items-center gap-2"
                   >
-                    <FiCheck className="w-3.5 h-3.5 text-teal flex-shrink-0" />
-                    <span className="text-xs text-text-secondary">{item}</span>
+                    <Check className="w-3.5 h-3.5 text-teal flex-shrink-0" />
+                    <span className="text-xs text-muted-foreground">{item}</span>
                   </motion.div>
                 ))}
               </div>
@@ -268,29 +261,22 @@ function RegisterContent() {
           transition={{ delay: 1.2, duration: 0.5 }}
           className="relative z-10"
         >
-          <p className="text-text-muted text-xs flex items-center gap-2">
-            <FiShield className="w-3.5 h-3.5 text-teal" />
+          <p className="text-muted-foreground text-xs flex items-center gap-2">
+            <Shield className="w-3.5 h-3.5 text-teal" />
             256-bit SSL şifreleme ile korunmaktadır
           </p>
         </motion.div>
       </div>
 
       {/* ─────────── Dikey Ayırıcı (desktop) ─────────── */}
-      <div className="hidden lg:block w-px bg-gradient-to-b from-transparent via-border to-transparent" />
+      <div className="hidden lg:block w-px bg-border" />
 
       {/* ─────────── SAĞ PANEL — Form ─────────── */}
       <div className="flex-1 flex items-center justify-center relative">
         {/* Mobile arka plan */}
         <div className="lg:hidden absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -left-40 w-80 h-80 bg-neon-red/12 rounded-full blur-[100px] bg-animate" />
-          <div
-            className="absolute top-1/2 -right-40 w-96 h-96 bg-teal/10 rounded-full blur-[120px] bg-animate"
-            style={{ animationDelay: "5s" }}
-          />
-          <div
-            className="absolute -bottom-40 left-1/3 w-72 h-72 bg-purple-400/8 rounded-full blur-[80px] bg-animate"
-            style={{ animationDelay: "10s" }}
-          />
+          <div className="absolute -top-40 -left-40 w-80 h-80 bg-primary/8 rounded-full blur-[100px]" />
+          <div className="absolute top-1/2 -right-40 w-96 h-96 bg-teal/5 rounded-full blur-[120px]" />
         </div>
 
         {/* Mobile grid pattern */}
@@ -311,9 +297,9 @@ function RegisterContent() {
           <div className="max-w-md mx-auto">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors text-sm"
+              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm"
             >
-              <FiArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4" />
               Ana Sayfa
             </Link>
           </div>
@@ -326,7 +312,7 @@ function RegisterContent() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="relative z-10 w-full max-w-md px-6 py-8 lg:px-10 xl:px-14"
         >
-          <div className="lg:bg-transparent lg:shadow-none glass lg:backdrop-blur-none rounded-2xl p-8 lg:p-0 shadow-2xl">
+          <div className="lg:bg-transparent lg:shadow-none glass lg:backdrop-blur-none rounded-xl p-8 lg:p-0 shadow-2xl">
             {/* Başlık */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
@@ -337,10 +323,10 @@ function RegisterContent() {
               <div className="inline-flex mb-4 lg:hidden">
                 <LogoLink size="lg" />
               </div>
-              <h2 className="hidden lg:block text-2xl xl:text-3xl font-bold text-text-primary mb-2">
+              <h2 className="hidden lg:block text-2xl xl:text-3xl font-bold text-foreground mb-2">
                 Hesap Oluştur
               </h2>
-              <p className="text-text-secondary text-sm">
+              <p className="text-muted-foreground text-sm">
                 <span className="lg:hidden">Yeni Hesap Oluştur</span>
                 <span className="hidden lg:inline">
                   Bilgilerinizi girerek hemen başlayın
@@ -355,17 +341,17 @@ function RegisterContent() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.25 }}
               >
-                <label className="block text-sm font-medium text-text-secondary mb-1.5">
+                <label className="block text-sm font-medium text-muted-foreground mb-1.5">
                   Kullanıcı Adı
                 </label>
                 <div className="relative">
-                  <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted w-5 h-5" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
                   <input
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="Kullanıcı adınız"
-                    className="w-full bg-surface-light border border-border rounded-xl py-3 pl-10 pr-4 text-text-primary placeholder-text-muted focus:outline-none focus:border-neon-red/50 focus:ring-1 focus:ring-neon-red/20 transition-all"
+                    className="w-full bg-muted border border-border rounded-xl py-3 pl-10 pr-4 text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
                     required
                   />
                 </div>
@@ -376,17 +362,17 @@ function RegisterContent() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <label className="block text-sm font-medium text-text-secondary mb-1.5">
+                <label className="block text-sm font-medium text-muted-foreground mb-1.5">
                   E-posta
                 </label>
                 <div className="relative">
-                  <FiMail className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted w-5 h-5" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="E-posta adresiniz"
-                    className="w-full bg-surface-light border border-border rounded-xl py-3 pl-10 pr-4 text-text-primary placeholder-text-muted focus:outline-none focus:border-neon-red/50 focus:ring-1 focus:ring-neon-red/20 transition-all"
+                    className="w-full bg-muted border border-border rounded-xl py-3 pl-10 pr-4 text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
                     required
                   />
                 </div>
@@ -397,28 +383,28 @@ function RegisterContent() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.35 }}
               >
-                <label className="block text-sm font-medium text-text-secondary mb-1.5">
+                <label className="block text-sm font-medium text-muted-foreground mb-1.5">
                   Şifre
                 </label>
                 <div className="relative">
-                  <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted w-5 h-5" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="En az 6 karakter"
-                    className="w-full bg-surface-light border border-border rounded-xl py-3 pl-10 pr-12 text-text-primary placeholder-text-muted focus:outline-none focus:border-neon-red/50 focus:ring-1 focus:ring-neon-red/20 transition-all"
+                    className="w-full bg-muted border border-border rounded-xl py-3 pl-10 pr-12 text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition-colors"
                   >
                     {showPassword ? (
-                      <FiEyeOff className="w-5 h-5" />
+                      <EyeOff className="w-5 h-5" />
                     ) : (
-                      <FiEye className="w-5 h-5" />
+                      <Eye className="w-5 h-5" />
                     )}
                   </button>
                 </div>
@@ -429,17 +415,17 @@ function RegisterContent() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                <label className="block text-sm font-medium text-text-secondary mb-1.5">
+                <label className="block text-sm font-medium text-muted-foreground mb-1.5">
                   Şifre Tekrar
                 </label>
                 <div className="relative">
-                  <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted w-5 h-5" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
                   <input
                     type={showPassword ? "text" : "password"}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Şifrenizi tekrar girin"
-                    className="w-full bg-surface-light border border-border rounded-xl py-3 pl-10 pr-4 text-text-primary placeholder-text-muted focus:outline-none focus:border-neon-red/50 focus:ring-1 focus:ring-neon-red/20 transition-all"
+                    className="w-full bg-muted border border-border rounded-xl py-3 pl-10 pr-4 text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
                     required
                   />
                 </div>
@@ -449,7 +435,7 @@ function RegisterContent() {
                 <motion.div
                   initial={{ opacity: 0, y: -5 }}
                   animate={{ opacity: 1, y: 0 }}
-                  className="bg-neon-red/10 border border-neon-red/20 rounded-lg p-3 text-neon-red text-sm text-center"
+                  className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-primary text-sm text-center"
                 >
                   {error}
                 </motion.div>
@@ -463,13 +449,13 @@ function RegisterContent() {
                 disabled={
                   loading || !username || !email || !password || !confirmPassword
                 }
-                className="w-full gradient-red text-white font-semibold py-3 rounded-xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-primary text-white font-semibold py-3 rounded-md hover:bg-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>
-                    <FiUserPlus className="w-4 h-4" />
+                    <UserPlus className="w-4 h-4" />
                     Kayıt Ol
                   </>
                 )}
@@ -492,11 +478,11 @@ function RegisterContent() {
               transition={{ delay: 0.55 }}
               className="text-center mt-6"
             >
-              <p className="text-text-secondary text-sm">
+              <p className="text-muted-foreground text-sm">
                 Zaten hesabınız var mı?{" "}
                 <Link
                   href="/login"
-                  className="text-neon-red hover:text-neon-red/80 font-medium transition-colors"
+                  className="text-primary hover:text-primary/80 font-medium transition-colors"
                 >
                   Giriş Yap
                 </Link>

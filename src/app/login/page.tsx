@@ -2,18 +2,18 @@
 
 import { useState, useEffect, Suspense } from "react";
 import {
-  FiEye,
-  FiEyeOff,
-  FiLock,
-  FiUser,
-  FiArrowLeft,
-  FiTrendingUp,
-  FiHash,
-  FiMusic,
-  FiZap,
-  FiBarChart2,
-  FiTarget,
-} from "react-icons/fi";
+  Eye,
+  EyeOff,
+  Lock,
+  User,
+  ArrowLeft,
+  TrendingUp,
+  Hash,
+  Music,
+  Zap,
+  BarChart2,
+  Target,
+} from "lucide-react";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
@@ -33,39 +33,39 @@ const OAUTH_ERRORS: Record<string, string> = {
 
 const features = [
   {
-    icon: FiTrendingUp,
+    icon: TrendingUp,
     title: "Trend Analizi",
     desc: "Türkiye'deki güncel TikTok trendlerini takip edin",
   },
   {
-    icon: FiHash,
+    icon: Hash,
     title: "Hashtag Keşfi",
     desc: "En popüler hashtag'leri ve büyüme oranlarını görün",
   },
   {
-    icon: FiMusic,
+    icon: Music,
     title: "Ses Trendleri",
     desc: "Viral olan sesleri ve kullanım istatistiklerini inceleyin",
   },
   {
-    icon: FiZap,
+    icon: Zap,
     title: "İçerik Fikirleri",
     desc: "AI destekli içerik önerileriyle öne çıkın",
   },
   {
-    icon: FiBarChart2,
+    icon: BarChart2,
     title: "Günlük Raporlar",
     desc: "Detaylı analizlerle stratejinizi şekillendirin",
   },
   {
-    icon: FiTarget,
+    icon: Target,
     title: "Rakip Analizi",
     desc: "Rakiplerinizin stratejilerini analiz edin",
   },
 ];
 
 const floatingStats = [
-  { label: "Aktif Trend", value: "2.4K+", color: "text-neon-red" },
+  { label: "Aktif Trend", value: "2.4K+", color: "text-primary" },
   { label: "Hashtag", value: "15K+", color: "text-teal" },
   { label: "Günlük Analiz", value: "500+", color: "text-amber-400" },
 ];
@@ -118,15 +118,8 @@ function LoginContent() {
       <div className="hidden lg:flex lg:w-[55%] xl:w-[60%] relative flex-col justify-between p-10 xl:p-16 overflow-hidden">
         {/* Arka plan efektleri */}
         <div className="absolute inset-0">
-          <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-neon-red/15 rounded-full blur-[150px] animate-pulse" />
-          <div
-            className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-teal/10 rounded-full blur-[120px] animate-pulse"
-            style={{ animationDelay: "3s" }}
-          />
-          <div
-            className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[300px] h-[300px] bg-purple-500/8 rounded-full blur-[100px] animate-pulse"
-            style={{ animationDelay: "6s" }}
-          />
+          <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-primary/8 rounded-full blur-[150px]" />
+          <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-teal/5 rounded-full blur-[120px]" />
         </div>
 
         {/* Grid pattern */}
@@ -139,13 +132,13 @@ function LoginContent() {
         />
 
         {/* Köşe dekorasyon */}
-        <div className="absolute top-0 right-0 w-px h-40 bg-gradient-to-b from-neon-red/30 to-transparent" />
-        <div className="absolute bottom-0 left-0 w-40 h-px bg-gradient-to-r from-teal/30 to-transparent" />
+        <div className="absolute top-0 right-0 w-px h-40 bg-primary/20" />
+        <div className="absolute bottom-0 left-0 w-40 h-px bg-teal/20" />
 
         {/* Üst — Logo & Navigasyon */}
         <div className="relative z-10">
-          <Link href="/" className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors text-sm mb-8">
-            <FiArrowLeft className="w-4 h-4" />
+          <Link href="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm mb-8">
+            <ArrowLeft className="w-4 h-4" />
             Ana Sayfa
           </Link>
 
@@ -155,14 +148,14 @@ function LoginContent() {
               alt="Valyze TR"
               width={96}
               height={96}
-              className="rounded-2xl shadow-lg shadow-neon-red/20"
+              className="rounded-xl"
               unoptimized
             />
             <div>
-              <h1 className="text-3xl xl:text-4xl font-bold text-text-primary">
-                Valyze <span className="text-neon-red">TR</span>
+              <h1 className="text-3xl xl:text-4xl font-bold text-foreground">
+                Valyze <span className="text-primary">TR</span>
               </h1>
-              <p className="text-text-muted text-sm tracking-wide">
+              <p className="text-muted-foreground text-sm tracking-wide">
                 TikTok Trend Analiz Platformu
               </p>
             </div>
@@ -172,10 +165,10 @@ function LoginContent() {
         {/* Orta — Özellikler Grid */}
         <div className="relative z-10 flex-1 flex items-center">
           <div>
-            <h2 className="text-xl xl:text-2xl font-semibold text-text-primary mb-2">
+            <h2 className="text-xl xl:text-2xl font-semibold text-foreground mb-2">
               Trendleri Yakala, Öne Çık
             </h2>
-            <p className="text-text-secondary text-sm mb-8 max-w-md">
+            <p className="text-muted-foreground text-sm mb-8 max-w-md">
               Türkiye&apos;nin en kapsamlı TikTok analiz aracıyla içeriklerinizi
               bir üst seviyeye taşıyın.
             </p>
@@ -186,16 +179,16 @@ function LoginContent() {
                 return (
                   <div
                     key={feature.title}
-                    className="group flex items-start gap-3 p-3 rounded-xl bg-surface/40 border border-border/50 hover:border-neon-red/20 hover:bg-surface-light/50 transition-all duration-300"
+                    className="group flex items-start gap-3 p-3 rounded-xl bg-card/40 border border-border/50 hover:border-primary/20 hover:bg-muted/50 transition-all duration-300"
                   >
-                    <div className="w-9 h-9 rounded-lg bg-neon-red/10 flex items-center justify-center flex-shrink-0 group-hover:bg-neon-red/20 transition-colors">
-                      <Icon className="w-4 h-4 text-neon-red" />
+                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+                      <Icon className="w-4 h-4 text-primary" />
                     </div>
                     <div className="min-w-0">
-                      <p className="text-sm font-medium text-text-primary leading-tight">
+                      <p className="text-sm font-medium text-foreground leading-tight">
                         {feature.title}
                       </p>
-                      <p className="text-[11px] text-text-muted mt-0.5 leading-snug">
+                      <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">
                         {feature.desc}
                       </p>
                     </div>
@@ -211,31 +204,24 @@ function LoginContent() {
           {floatingStats.map((stat) => (
             <div
               key={stat.label}
-              className="flex-1 bg-surface/50 backdrop-blur-sm border border-border/50 rounded-xl p-3 text-center"
+              className="flex-1 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-3 text-center"
             >
               <p className={`text-xl font-bold ${stat.color}`}>{stat.value}</p>
-              <p className="text-[10px] text-text-muted mt-0.5">{stat.label}</p>
+              <p className="text-[10px] text-muted-foreground mt-0.5">{stat.label}</p>
             </div>
           ))}
         </div>
       </div>
 
       {/* ─────────── Dikey Ayırıcı (desktop) ─────────── */}
-      <div className="hidden lg:block w-px bg-gradient-to-b from-transparent via-border to-transparent" />
+      <div className="hidden lg:block w-px bg-border" />
 
       {/* ─────────── SAĞ PANEL — Form ─────────── */}
       <div className="flex-1 flex items-center justify-center relative">
         {/* Mobile arka plan (desktop'ta sol panel karşılıyor) */}
         <div className="lg:hidden absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -left-40 w-80 h-80 bg-neon-red/12 rounded-full blur-[100px] bg-animate" />
-          <div
-            className="absolute top-1/2 -right-40 w-96 h-96 bg-teal/10 rounded-full blur-[120px] bg-animate"
-            style={{ animationDelay: "5s" }}
-          />
-          <div
-            className="absolute -bottom-40 left-1/3 w-72 h-72 bg-purple-400/8 rounded-full blur-[80px] bg-animate"
-            style={{ animationDelay: "10s" }}
-          />
+          <div className="absolute -top-40 -left-40 w-80 h-80 bg-primary/8 rounded-full blur-[100px]" />
+          <div className="absolute top-1/2 -right-40 w-96 h-96 bg-teal/5 rounded-full blur-[120px]" />
         </div>
 
         {/* Mobile grid pattern */}
@@ -252,9 +238,9 @@ function LoginContent() {
           <div className="max-w-md mx-auto">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-text-secondary hover:text-text-primary transition-colors text-sm"
+              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm"
             >
-              <FiArrowLeft className="w-4 h-4" />
+              <ArrowLeft className="w-4 h-4" />
               Ana Sayfa
             </Link>
           </div>
@@ -263,18 +249,18 @@ function LoginContent() {
         {/* Form kartı */}
         <div className="relative z-10 w-full max-w-md px-6 py-8 lg:px-10 xl:px-14">
           {/* Desktop sağ panel üst dekorasyon */}
-          <div className="hidden lg:block absolute top-0 right-0 w-20 h-px bg-gradient-to-l from-neon-red/20 to-transparent" />
+          <div className="hidden lg:block absolute top-0 right-0 w-20 h-px bg-primary/10" />
 
-          <div className="lg:bg-transparent lg:shadow-none glass lg:backdrop-blur-none rounded-2xl p-8 lg:p-0 shadow-2xl">
+          <div className="lg:bg-transparent lg:shadow-none glass lg:backdrop-blur-none rounded-xl p-8 lg:p-0 shadow-2xl">
             {/* Logo */}
             <div className="text-center lg:text-left mb-8">
               <div className="inline-flex mb-4 lg:hidden">
                 <LogoLink size="lg" />
               </div>
-              <h2 className="hidden lg:block text-2xl xl:text-3xl font-bold text-text-primary mb-2">
+              <h2 className="hidden lg:block text-2xl xl:text-3xl font-bold text-foreground mb-2">
                 Hoş Geldiniz
               </h2>
-              <p className="text-text-secondary text-sm">
+              <p className="text-muted-foreground text-sm">
                 <span className="lg:hidden">TikTok Trend Analiz Platformu</span>
                 <span className="hidden lg:inline">
                   Hesabınıza giriş yaparak trendleri keşfedin
@@ -285,52 +271,52 @@ function LoginContent() {
             {/* Form */}
             <form onSubmit={handleSubmit} className="space-y-5">
               <div>
-                <label className="block text-sm font-medium text-text-secondary mb-2">
+                <label className="block text-sm font-medium text-muted-foreground mb-2">
                   Kullanıcı Adı veya E-posta
                 </label>
                 <div className="relative">
-                  <FiUser className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted w-5 h-5" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
                   <input
                     type="text"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
                     placeholder="Kullanıcı adınız veya e-postanız"
-                    className="w-full bg-surface-light border border-border rounded-xl py-3 pl-10 pr-4 text-text-primary placeholder-text-muted focus:outline-none focus:border-neon-red/50 focus:ring-1 focus:ring-neon-red/20 transition-all"
+                    className="w-full bg-muted border border-border rounded-xl py-3 pl-10 pr-4 text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-text-secondary mb-2">
+                <label className="block text-sm font-medium text-muted-foreground mb-2">
                   Şifre
                 </label>
                 <div className="relative">
-                  <FiLock className="absolute left-3 top-1/2 -translate-y-1/2 text-text-muted w-5 h-5" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="Şifrenizi girin"
-                    className="w-full bg-surface-light border border-border rounded-xl py-3 pl-10 pr-12 text-text-primary placeholder-text-muted focus:outline-none focus:border-neon-red/50 focus:ring-1 focus:ring-neon-red/20 transition-all"
+                    className="w-full bg-muted border border-border rounded-xl py-3 pl-10 pr-12 text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-text-muted hover:text-text-secondary transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition-colors"
                   >
                     {showPassword ? (
-                      <FiEyeOff className="w-5 h-5" />
+                      <EyeOff className="w-5 h-5" />
                     ) : (
-                      <FiEye className="w-5 h-5" />
+                      <Eye className="w-5 h-5" />
                     )}
                   </button>
                 </div>
               </div>
 
               {error && (
-                <div className="bg-neon-red/10 border border-neon-red/20 rounded-lg p-3 text-neon-red text-sm text-center">
+                <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-primary text-sm text-center">
                   {error}
                 </div>
               )}
@@ -338,13 +324,13 @@ function LoginContent() {
               <button
                 type="submit"
                 disabled={loading || !identifier || !password}
-                className="w-full gradient-red text-white font-semibold py-3 rounded-xl hover:opacity-90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-primary text-white font-semibold py-3 rounded-md hover:bg-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>
-                    <FiLock className="w-4 h-4" />
+                    <Lock className="w-4 h-4" />
                     Giriş Yap
                   </>
                 )}
@@ -358,11 +344,11 @@ function LoginContent() {
 
             {/* Register Link */}
             <div className="text-center mt-6">
-              <p className="text-text-secondary text-sm">
+              <p className="text-muted-foreground text-sm">
                 Hesabınız yok mu?{" "}
                 <Link
                   href="/register"
-                  className="text-neon-red hover:text-neon-red/80 font-medium transition-colors"
+                  className="text-primary hover:text-primary/80 font-medium transition-colors"
                 >
                   Kayıt Ol
                 </Link>
@@ -370,7 +356,7 @@ function LoginContent() {
             </div>
 
             {/* Footer */}
-            <p className="text-center text-text-muted text-xs mt-4">
+            <p className="text-center text-muted-foreground text-xs mt-4">
               Sadece yetkili kullanıcılar erişebilir
             </p>
           </div>

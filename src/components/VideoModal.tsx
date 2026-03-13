@@ -1,7 +1,7 @@
 "use client";
 
 import { motion, AnimatePresence } from "framer-motion";
-import { FiX, FiEye, FiHeart, FiMessageCircle, FiShare2, FiExternalLink, FiMusic, FiBarChart2, FiInfo } from "react-icons/fi";
+import { X, Eye, Heart, MessageCircle, Share2, ExternalLink, Music, BarChart2, Info } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { VideoData } from "./VideoCard";
@@ -63,23 +63,23 @@ export default function VideoModal({
           animate={{ scale: 1, opacity: 1 }}
           exit={{ scale: 0.9, opacity: 0 }}
           onClick={(e) => e.stopPropagation()}
-          className="bg-surface rounded-2xl border border-border max-w-2xl w-full max-h-[90vh] overflow-y-auto"
+          className="bg-card rounded-xl border border-border max-w-2xl w-full max-h-[90vh] overflow-y-auto"
         >
           {/* Header */}
           <div className="flex items-center justify-between p-4 border-b border-border">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-full gradient-red flex items-center justify-center text-white font-bold">
+              <div className="w-10 h-10 rounded-full bg-primary flex items-center justify-center text-white font-bold">
                 {video.creator[0].toUpperCase()}
               </div>
               <div>
-                <p className="text-sm font-semibold text-text-primary">@{video.creator}</p>
-                <p className="text-xs text-text-muted">
+                <p className="text-sm font-semibold text-foreground">@{video.creator}</p>
+                <p className="text-xs text-muted-foreground">
                   {new Date(video.publishedAt).toLocaleDateString("tr-TR", { day: "numeric", month: "long", year: "numeric" })}
                 </p>
               </div>
             </div>
-            <button onClick={onClose} className="p-2 rounded-lg hover:bg-surface-light transition-colors">
-              <FiX className="w-5 h-5 text-text-secondary" />
+            <button onClick={onClose} className="p-2 rounded-lg hover:bg-card-light transition-colors">
+              <X className="w-5 h-5 text-muted-foreground" />
             </button>
           </div>
 
@@ -94,16 +94,16 @@ export default function VideoModal({
               <div className="absolute top-3 left-3">
                 <div
                   onClick={() => setShowViralInfo(!showViralInfo)}
-                  className="bg-neon-red text-white text-xs font-bold px-2 py-1 rounded cursor-help hover:bg-red-500 transition-colors flex items-center gap-1"
+                  className="bg-primary text-white text-xs font-bold px-2 py-1 rounded cursor-help hover:bg-red-500 transition-colors flex items-center gap-1"
                 >
-                  Viral Skor: {video.viralScore.toFixed(1)} <FiInfo className="w-3 h-3 opacity-70" />
+                  Viral Skor: {video.viralScore.toFixed(1)} <Info className="w-3 h-3 opacity-70" />
                 </div>
                 {showViralInfo && (
-                  <div className="absolute top-full left-0 mt-1 w-56 bg-surface border border-border rounded-lg p-3 shadow-xl z-10">
-                    <p className="text-[11px] text-text-primary font-semibold mb-1">
+                  <div className="absolute top-full left-0 mt-1 w-56 bg-card border border-border rounded-lg p-3 shadow-xl z-10">
+                    <p className="text-[11px] text-foreground font-semibold mb-1">
                       Viral Skor: {video.viralScore.toFixed(1)}/10 ({getViralLabel(video.viralScore)})
                     </p>
-                    <p className="text-[10px] text-text-secondary leading-relaxed">
+                    <p className="text-[10px] text-muted-foreground leading-relaxed">
                       Etkileşim oranı, görüntülenme sayısı ve içerik üretici puanına göre 0-10 arasında hesaplanır. Yüksek skor = daha viral potansiyel.
                     </p>
                   </div>
@@ -115,14 +115,14 @@ export default function VideoModal({
                     onClick={() => setShowFormatInfo(!showFormatInfo)}
                     className="bg-teal text-white text-xs px-2 py-1 rounded cursor-help hover:bg-teal/80 transition-colors flex items-center gap-1"
                   >
-                    {video.format} <FiInfo className="w-3 h-3 opacity-70" />
+                    {video.format} <Info className="w-3 h-3 opacity-70" />
                   </div>
                   {showFormatInfo && (
-                    <div className="absolute top-full right-0 mt-1 w-52 bg-surface border border-border rounded-lg p-3 shadow-xl z-10">
-                      <p className="text-[11px] text-text-primary font-semibold mb-1">
+                    <div className="absolute top-full right-0 mt-1 w-52 bg-card border border-border rounded-lg p-3 shadow-xl z-10">
+                      <p className="text-[11px] text-foreground font-semibold mb-1">
                         Video Formatı: {video.format}
                       </p>
-                      <p className="text-[10px] text-text-secondary leading-relaxed">
+                      <p className="text-[10px] text-muted-foreground leading-relaxed">
                         Videonun içerik türünü belirtir (Tutorial, POV, Challenge, GRWM vb.). Format, videonun yapısını ve sunum tarzını gösterir.
                       </p>
                     </div>
@@ -133,76 +133,76 @@ export default function VideoModal({
 
             {/* Details */}
             <div className="md:w-1/2 p-4 space-y-4">
-              <p className="text-sm text-text-primary leading-relaxed">{video.description}</p>
+              <p className="text-sm text-foreground leading-relaxed">{video.description}</p>
 
               {/* Stats grid */}
               <div className="grid grid-cols-2 gap-3">
-                <div className="bg-surface-light rounded-lg p-3 text-center">
-                  <FiEye className="w-4 h-4 text-text-muted mx-auto mb-1" />
-                  <p className="text-lg font-bold text-text-primary">{formatNumber(video.views)}</p>
-                  <p className="text-[10px] text-text-muted">Görüntülenme</p>
+                <div className="bg-card-light rounded-lg p-3 text-center">
+                  <Eye className="w-4 h-4 text-muted-foreground mx-auto mb-1" />
+                  <p className="text-lg font-bold text-foreground">{formatNumber(video.views)}</p>
+                  <p className="text-[10px] text-muted-foreground">Görüntülenme</p>
                 </div>
-                <div className="bg-surface-light rounded-lg p-3 text-center">
-                  <FiHeart className="w-4 h-4 text-neon-red mx-auto mb-1" />
-                  <p className="text-lg font-bold text-text-primary">{formatNumber(video.likes)}</p>
-                  <p className="text-[10px] text-text-muted">Beğeni</p>
+                <div className="bg-card-light rounded-lg p-3 text-center">
+                  <Heart className="w-4 h-4 text-primary mx-auto mb-1" />
+                  <p className="text-lg font-bold text-foreground">{formatNumber(video.likes)}</p>
+                  <p className="text-[10px] text-muted-foreground">Beğeni</p>
                 </div>
-                <div className="bg-surface-light rounded-lg p-3 text-center">
-                  <FiMessageCircle className="w-4 h-4 text-teal mx-auto mb-1" />
-                  <p className="text-lg font-bold text-text-primary">{formatNumber(video.comments)}</p>
-                  <p className="text-[10px] text-text-muted">Yorum</p>
+                <div className="bg-card-light rounded-lg p-3 text-center">
+                  <MessageCircle className="w-4 h-4 text-teal mx-auto mb-1" />
+                  <p className="text-lg font-bold text-foreground">{formatNumber(video.comments)}</p>
+                  <p className="text-[10px] text-muted-foreground">Yorum</p>
                 </div>
-                <div className="bg-surface-light rounded-lg p-3 text-center">
-                  <FiShare2 className="w-4 h-4 text-purple-400 mx-auto mb-1" />
-                  <p className="text-lg font-bold text-text-primary">{formatNumber(video.shares)}</p>
-                  <p className="text-[10px] text-text-muted">Paylaşım</p>
+                <div className="bg-card-light rounded-lg p-3 text-center">
+                  <Share2 className="w-4 h-4 text-purple-400 mx-auto mb-1" />
+                  <p className="text-lg font-bold text-foreground">{formatNumber(video.shares)}</p>
+                  <p className="text-[10px] text-muted-foreground">Paylaşım</p>
                 </div>
               </div>
 
               {/* Engagement, Duration & Creator Presence */}
               <div className="flex gap-3">
                 <div
-                  className="flex-1 bg-neon-red/10 rounded-lg p-2 text-center cursor-help relative"
+                  className="flex-1 bg-primary/10 rounded-lg p-2 text-center cursor-help relative"
                   onClick={() => setShowEngagementInfo(!showEngagementInfo)}
                 >
-                  <p className="text-sm font-bold text-neon-red flex items-center justify-center gap-1">
-                    %{video.engagementRate.toFixed(2)} <FiInfo className="w-3 h-3 opacity-50" />
+                  <p className="text-sm font-bold text-primary flex items-center justify-center gap-1">
+                    %{video.engagementRate.toFixed(2)} <Info className="w-3 h-3 opacity-50" />
                   </p>
-                  <p className="text-[10px] text-text-muted">Etkileşim Oranı</p>
+                  <p className="text-[10px] text-muted-foreground">Etkileşim Oranı</p>
                   {showEngagementInfo && (
-                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 bg-surface border border-border rounded-lg p-3 shadow-xl z-10 text-left">
-                      <p className="text-[11px] text-text-primary font-semibold mb-1">
+                    <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-52 bg-card border border-border rounded-lg p-3 shadow-xl z-10 text-left">
+                      <p className="text-[11px] text-foreground font-semibold mb-1">
                         Etkileşim Oranı: %{video.engagementRate.toFixed(2)}
                       </p>
-                      <p className="text-[10px] text-text-secondary leading-relaxed">
+                      <p className="text-[10px] text-muted-foreground leading-relaxed">
                         (Beğeni + Yorum + Paylaşım) / Görüntülenme oranıdır. Yüksek oran, izleyicilerin videoyla daha fazla etkileşime girdiğini gösterir.
                       </p>
                     </div>
                   )}
                 </div>
-                <div className="flex-1 bg-surface-light rounded-lg p-2 text-center">
-                  <p className="text-sm font-bold text-text-primary">{formatDuration(video.duration)}</p>
-                  <p className="text-[10px] text-text-muted">Süre</p>
+                <div className="flex-1 bg-card-light rounded-lg p-2 text-center">
+                  <p className="text-sm font-bold text-foreground">{formatDuration(video.duration)}</p>
+                  <p className="text-[10px] text-muted-foreground">Süre</p>
                 </div>
                 {video.creatorPresenceScore != null && (
                   <div
                     className={`flex-1 rounded-lg p-2 text-center cursor-help relative ${
-                      video.creatorPresenceScore >= 70 ? "bg-teal/10" : "bg-surface-light"
+                      video.creatorPresenceScore >= 70 ? "bg-teal/10" : "bg-card-light"
                     }`}
                     onClick={() => setShowPresenceInfo(!showPresenceInfo)}
                   >
                     <p className={`text-sm font-bold flex items-center justify-center gap-1 ${
-                      video.creatorPresenceScore >= 70 ? "text-teal" : "text-text-secondary"
+                      video.creatorPresenceScore >= 70 ? "text-teal" : "text-muted-foreground"
                     }`}>
-                      {video.creatorPresenceScore} <FiInfo className="w-3 h-3 opacity-50" />
+                      {video.creatorPresenceScore} <Info className="w-3 h-3 opacity-50" />
                     </p>
-                    <p className="text-[10px] text-text-muted">Oluşturucu Skoru</p>
+                    <p className="text-[10px] text-muted-foreground">Oluşturucu Skoru</p>
                     {showPresenceInfo && (
-                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 bg-surface border border-border rounded-lg p-3 shadow-xl z-10 text-left">
-                        <p className="text-[11px] text-text-primary font-semibold mb-1">
+                      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 w-56 bg-card border border-border rounded-lg p-3 shadow-xl z-10 text-left">
+                        <p className="text-[11px] text-foreground font-semibold mb-1">
                           İçerik Üretici Skoru: {video.creatorPresenceScore}/100 ({getPresenceLabel(video.creatorPresenceScore)})
                         </p>
-                        <p className="text-[10px] text-text-secondary leading-relaxed">
+                        <p className="text-[10px] text-muted-foreground leading-relaxed">
                           Videoda gerçek bir kişinin kamera karşısında görünme olasılığını tahmin eder. Yüksek skor = içerik üretici büyük ihtimalle videoda görünüyor.
                         </p>
                       </div>
@@ -215,31 +215,31 @@ export default function VideoModal({
               <div className="flex gap-3">
                 {video.likeRatio != null && (
                   <div className={`flex-1 rounded-lg p-2 text-center ${
-                    video.likeRatio >= 8 ? "bg-teal/10" : "bg-surface-light"
+                    video.likeRatio >= 8 ? "bg-teal/10" : "bg-card-light"
                   }`}>
                     <p className={`text-sm font-bold ${
-                      video.likeRatio >= 8 ? "text-teal" : video.likeRatio >= 4 ? "text-text-primary" : "text-text-secondary"
+                      video.likeRatio >= 8 ? "text-teal" : video.likeRatio >= 4 ? "text-foreground" : "text-muted-foreground"
                     }`}>
                       %{video.likeRatio.toFixed(2)}
                     </p>
-                    <p className="text-[10px] text-text-muted">Beğeni Oranı</p>
+                    <p className="text-[10px] text-muted-foreground">Beğeni Oranı</p>
                   </div>
                 )}
                 {video.adFormat && (
                   <div className="flex-1 bg-orange-400/10 rounded-lg p-2 text-center">
                     <p className="text-sm font-bold text-orange-400">{video.adFormat}</p>
-                    <p className="text-[10px] text-text-muted">Reklam Formatı</p>
+                    <p className="text-[10px] text-muted-foreground">Reklam Formatı</p>
                   </div>
                 )}
               </div>
 
               {/* Sound */}
               {video.soundName && (
-                <div className="flex items-center gap-2 bg-surface-light rounded-lg p-2">
-                  <FiMusic className="w-4 h-4 text-teal shrink-0" />
+                <div className="flex items-center gap-2 bg-card-light rounded-lg p-2">
+                  <Music className="w-4 h-4 text-teal shrink-0" />
                   <div className="min-w-0">
-                    <p className="text-xs text-text-primary truncate">{video.soundName}</p>
-                    <p className="text-[10px] text-text-muted">{video.soundCreator}</p>
+                    <p className="text-xs text-foreground truncate">{video.soundName}</p>
+                    <p className="text-[10px] text-muted-foreground">{video.soundCreator}</p>
                   </div>
                 </div>
               )}
@@ -271,16 +271,16 @@ export default function VideoModal({
                   }}
                   className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-teal/10 text-teal text-sm font-medium hover:bg-teal/20 transition-colors border border-teal/20"
                 >
-                  <FiBarChart2 className="w-4 h-4" />
+                  <BarChart2 className="w-4 h-4" />
                   Video Analitikleri
                 </button>
                 <a
                   href={video.tiktokUrl}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg gradient-red text-white text-sm font-medium hover:opacity-90 transition-opacity"
+                  className="flex items-center justify-center gap-2 w-full py-2.5 rounded-lg bg-primary text-white text-sm font-medium hover:bg-primary-dark transition-colors"
                 >
-                  <FiExternalLink className="w-4 h-4" />
+                  <ExternalLink className="w-4 h-4" />
                   TikTok&apos;ta Ac
                 </a>
               </div>

@@ -4,94 +4,143 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import {
-  FiTrendingUp,
-  FiHash,
-  FiPlay,
-  FiClock,
-  FiZap,
-  FiTarget,
-  FiBarChart2,
-  FiArrowRight,
-  FiCheck,
-  FiStar,
-  FiSearch,
-  FiMessageCircle,
-  FiMenu,
-  FiX,
-} from "react-icons/fi";
+  TrendingUp,
+  Hash,
+  Play,
+  Clock,
+  Zap,
+  Target,
+  BarChart2,
+  ArrowRight,
+  Check,
+  Star,
+  Search,
+  MessageCircle,
+  Menu,
+  X,
+  Music,
+  Sparkles,
+  Users,
+  ChevronRight,
+} from "lucide-react";
 import LogoLink from "@/components/LogoLink";
+import { ThemeToggle } from "@/components/ThemeToggle";
 
 /* ─── Data ─── */
 
+const stats = [
+  { value: "50K+", label: "Analiz Edilen Video" },
+  { value: "12K+", label: "Aktif Hashtag" },
+  { value: "3K+", label: "Üretici" },
+  { value: "99.9%", label: "Uptime" },
+];
+
 const features = [
   {
-    icon: FiTrendingUp,
+    icon: TrendingUp,
     title: "Viral Trend Tespiti",
-    desc: "Trendleri herkes fark etmeden tespit edin.",
-    color: "text-neon-red",
-    bg: "bg-neon-red/10",
+    desc: "Viral olma potansiyeli taşıyan videoları ve trendleri herkes fark etmeden tespit edin. AI destekli analiz ile içerik stratejinizi şekillendirin.",
+    color: "text-primary",
+    bg: "bg-primary/10",
   },
   {
-    icon: FiHash,
+    icon: Hash,
     title: "Hashtag Analizi",
-    desc: "Yüksek performanslı hashtag'leri keşfedin.",
+    desc: "Yüksek performanslı hashtag'leri keşfedin, büyüme hızlarını takip edin ve içeriğinize en uygun etiketleri bulun.",
     color: "text-teal",
     bg: "bg-teal/10",
   },
   {
-    icon: FiPlay,
-    title: "Viral Video Veritabanı",
-    desc: "En viral videoları inceleyin ve analiz edin.",
+    icon: Music,
+    title: "Ses Trend Analizi",
+    desc: "TikTok'ta trend olan sesleri ve müzikleri takip edin. Viral olan sesleri erken yakalayıp içeriğinizde kullanın.",
     color: "text-purple-400",
     bg: "bg-purple-400/10",
   },
   {
-    icon: FiClock,
+    icon: Clock,
     title: "Paylaşım Zamanı",
-    desc: "En iyi paylaşım zamanlarını bulun.",
+    desc: "Hedef kitlenizin en aktif olduğu saatleri analiz edin. En iyi paylaşım zamanlarını bularak etkileşiminizi artırın.",
     color: "text-blue-400",
     bg: "bg-blue-400/10",
   },
   {
-    icon: FiZap,
+    icon: Zap,
     title: "AI İçerik Fikirleri",
-    desc: "Trend konulara dayalı içerik önerileri.",
+    desc: "Yapay zeka destekli içerik önerileri ile trend konulara uygun video fikirleri alın. Hook'lardan açıklamalara kadar her şey hazır.",
     color: "text-orange-400",
     bg: "bg-orange-400/10",
   },
   {
-    icon: FiTarget,
+    icon: Target,
     title: "Rakip Analizi",
-    desc: "Rakiplerinizi analiz edip öne geçin.",
+    desc: "Rakiplerinizin performansını takip edin, hangi içeriklerinin viral olduğunu görün ve stratejinizi buna göre optimize edin.",
     color: "text-pink-400",
     bg: "bg-pink-400/10",
   },
 ];
 
+const featureDeepDives = [
+  {
+    badge: "Trend Analizi",
+    title: "Viral Videoları Herkesten Önce Keşfet",
+    desc: "Binlerce TikTok videosunu gerçek zamanlı analiz ederek viral olma potansiyeli taşıyan içerikleri erken tespit edin. Görüntülenme artış hızı, etkileşim oranı ve paylaşım metrikleri ile trendleri tahmin edin.",
+    features: ["Gerçek zamanlı trend takibi", "Viralite skoru hesaplama", "Kategori bazlı filtreleme", "Günlük trend raporları"],
+    mockup: "trends",
+  },
+  {
+    badge: "Hashtag Zekası",
+    title: "Doğru Hashtag'lerle Keşfet Sayfasına Çık",
+    desc: "Milyonlarca hashtag verisini analiz ederek sizin nişinize en uygun, yüksek performanslı etiketleri bulun. Büyüme trendlerini takip edin ve rakiplerinizin kullandığı hashtag'leri keşfedin.",
+    features: ["Hashtag büyüme grafiği", "Rekabet analizi", "Niş hashtag önerileri", "Performans karşılaştırma"],
+    mockup: "hashtags",
+  },
+  {
+    badge: "Ses Trendleri",
+    title: "Trend Sesleri Erken Yakala",
+    desc: "TikTok'ta viral olan sesleri ve müzikleri takip edin. Hangi seslerin yükselişte olduğunu görün ve içeriğinizde doğru zamanda kullanarak etkileşiminizi artırın.",
+    features: ["Ses popülerlik grafiği", "Yeni yükselen sesler", "Kategori bazlı sesler", "Kullanım istatistikleri"],
+    mockup: "sounds",
+  },
+  {
+    badge: "AI Destekli",
+    title: "Yapay Zeka ile İçerik Fikirleri Üret",
+    desc: "Trend analizlerine dayalı yapay zeka önerileri ile içerik üretim sürecinizi hızlandırın. Hook fikirleri, video açıklamaları ve hashtag önerileri tek tıkla hazır.",
+    features: ["AI hook önerileri", "Video açıklama şablonları", "Trend bazlı fikirler", "Reklam fikir üreteci"],
+    mockup: "ai",
+  },
+];
+
 const steps = [
-  { num: "1", title: "Keşfet", desc: "Trend video ve hashtag'leri keşfet", icon: FiSearch },
-  { num: "2", title: "Analiz Et", desc: "Neden viral olduğunu anla", icon: FiBarChart2 },
-  { num: "3", title: "Büyüt", desc: "Daha iyi içerik üret, hızlı büyü", icon: FiTrendingUp },
+  { num: "1", title: "Keşfet", desc: "Trend video, hashtag ve sesleri keşfet", icon: Search },
+  { num: "2", title: "Analiz Et", desc: "Neden viral olduğunu derinlemesine anla", icon: BarChart2 },
+  { num: "3", title: "Büyüt", desc: "Veriye dayalı içerik üret, hızlı büyü", icon: TrendingUp },
 ];
 
 const testimonials = [
   {
-    quote: "Hangi videoların viral olduğunu artık biliyorum. Çok faydalı!",
+    quote: "Hangi videoların viral olduğunu artık biliyorum. İçerik stratejim tamamen değişti!",
     author: "Elif K.",
-    role: "İçerik Üretici",
+    role: "İçerik Üretici · 250K Takipçi",
     avatar: "E",
   },
   {
-    quote: "Saatlerce araştırma yapmaktan kurtardılar. Neyin tutacağını biliyorum.",
+    quote: "Saatlerce araştırma yapmaktan kurtardılar. Neyin tutacağını önceden biliyorum.",
     author: "Ahmet D.",
-    role: "TikTok Kreatörü",
+    role: "TikTok Kreatörü · 180K Takipçi",
     avatar: "A",
   },
   {
-    quote: "Rakip analizi özelliği tek başına Pro'ya geçmeye değer.",
+    quote: "Rakip analizi özelliği tek başına Pro'ya geçmeye değer. Rakiplerimi artık takip ediyorum.",
     author: "Selin M.",
     role: "Dijital Pazarlamacı",
     avatar: "S",
+  },
+  {
+    quote: "AI içerik fikirleri harika. Her gün ne paylaşacağımı düşünmek zorunda kalmıyorum.",
+    author: "Can T.",
+    role: "E-ticaret Uzmanı",
+    avatar: "C",
   },
 ];
 
@@ -99,6 +148,7 @@ const freePlanFeatures = [
   "Sınırlı günlük analiz",
   "Temel trend paneli",
   "Sınırlı hashtag verisi",
+  "Ses trendleri (sınırlı)",
 ];
 
 const proPlanFeatures = [
@@ -107,9 +157,224 @@ const proPlanFeatures = [
   "Rakip analizi",
   "AI içerik fikirleri",
   "Hook analizi",
+  "Reklam fikir üreteci",
   "Günlük raporlar",
   "Öncelikli destek",
 ];
+
+const useCases = [
+  {
+    icon: Users,
+    title: "İçerik Üreticileri",
+    desc: "Viral trendleri erken yakalayıp takipçi kitlenizi hızla büyütün.",
+  },
+  {
+    icon: Target,
+    title: "Markalar & Ajanslar",
+    desc: "Rakip analizi ve trend verileriyle kampanya stratejinizi optimize edin.",
+  },
+  {
+    icon: Sparkles,
+    title: "E-ticaret",
+    desc: "Trend ürünleri ve viral pazarlama fırsatlarını erken keşfedin.",
+  },
+];
+
+/* ─── Mockup Components ─── */
+
+function DashboardMockup() {
+  return (
+    <div className="relative w-full max-w-lg mx-auto">
+      <div className="bg-card border border-border rounded-xl overflow-hidden shadow-2xl shadow-primary/5">
+        {/* Top bar */}
+        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-border bg-card">
+          <div className="flex gap-1.5">
+            <div className="w-2.5 h-2.5 rounded-full bg-red-400/60" />
+            <div className="w-2.5 h-2.5 rounded-full bg-yellow-400/60" />
+            <div className="w-2.5 h-2.5 rounded-full bg-green-400/60" />
+          </div>
+          <div className="flex-1 text-center text-[10px] text-muted-foreground">dashboard.valyze.app</div>
+        </div>
+        {/* Content */}
+        <div className="p-4 space-y-3">
+          {/* Metric cards */}
+          <div className="grid grid-cols-3 gap-2">
+            {[
+              { label: "Trend Skoru", value: "94", change: "+12%", color: "text-primary" },
+              { label: "Viral Index", value: "8.7", change: "+5%", color: "text-teal" },
+              { label: "Büyüme", value: "23%", change: "+3%", color: "text-purple-400" },
+            ].map((m) => (
+              <div key={m.label} className="bg-muted/50 rounded-lg p-2.5">
+                <p className="text-[9px] text-muted-foreground">{m.label}</p>
+                <p className={`text-lg font-bold ${m.color}`}>{m.value}</p>
+                <p className="text-[9px] text-teal">{m.change}</p>
+              </div>
+            ))}
+          </div>
+          {/* Chart mockup */}
+          <div className="bg-muted/50 rounded-lg p-3">
+            <p className="text-[9px] text-muted-foreground mb-2">Trend Büyüme</p>
+            <div className="flex items-end gap-1 h-16">
+              {[30, 45, 35, 60, 50, 75, 65, 90, 80, 95, 85, 100].map((h, i) => (
+                <div
+                  key={i}
+                  className="flex-1 rounded-sm bg-primary/20"
+                  style={{ height: `${h}%` }}
+                >
+                  <div
+                    className="w-full rounded-sm bg-primary transition-all"
+                    style={{ height: `${Math.min(h + 10, 100)}%` }}
+                  />
+                </div>
+              ))}
+            </div>
+          </div>
+          {/* Table mockup */}
+          <div className="space-y-1.5">
+            {[
+              { tag: "#tiktoktürkiye", views: "2.4M", trend: "+340%" },
+              { tag: "#viralvideo", views: "1.8M", trend: "+220%" },
+              { tag: "#trending", views: "956K", trend: "+180%" },
+            ].map((row) => (
+              <div key={row.tag} className="flex items-center justify-between bg-muted/30 rounded-md px-2.5 py-1.5">
+                <span className="text-[10px] font-medium text-foreground">{row.tag}</span>
+                <div className="flex items-center gap-3">
+                  <span className="text-[10px] text-muted-foreground">{row.views}</span>
+                  <span className="text-[9px] text-teal font-medium">{row.trend}</span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      {/* Glow effects */}
+      <div className="absolute -inset-4 bg-primary/5 rounded-2xl blur-2xl -z-10" />
+    </div>
+  );
+}
+
+function TrendsMockup() {
+  return (
+    <div className="bg-card border border-border rounded-xl overflow-hidden">
+      <div className="p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <h4 className="text-xs font-semibold text-foreground">Yükselen Trendler</h4>
+          <span className="text-[9px] text-primary font-medium">Canlı</span>
+        </div>
+        {[
+          { name: "Dans Challenge", score: 94, views: "2.4M", status: "🔥" },
+          { name: "Yemek Tarifi", score: 87, views: "1.2M", status: "📈" },
+          { name: "GRWM", score: 82, views: "980K", status: "📈" },
+          { name: "Komedi Skeç", score: 78, views: "750K", status: "⚡" },
+        ].map((t, i) => (
+          <div key={t.name} className="flex items-center gap-3">
+            <span className="text-[10px] text-muted-foreground w-4">{i + 1}</span>
+            <div className="flex-1">
+              <div className="flex items-center justify-between mb-1">
+                <span className="text-[11px] font-medium text-foreground">{t.name}</span>
+                <span className="text-[10px]">{t.status}</span>
+              </div>
+              <div className="w-full h-1.5 bg-muted rounded-full overflow-hidden">
+                <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${t.score}%` }} />
+              </div>
+            </div>
+            <div className="text-right">
+              <p className="text-[10px] font-medium text-foreground">{t.views}</p>
+              <p className="text-[9px] text-teal">+{t.score}%</p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function HashtagsMockup() {
+  return (
+    <div className="bg-card border border-border rounded-xl overflow-hidden">
+      <div className="p-4 space-y-3">
+        <div className="flex items-center justify-between">
+          <h4 className="text-xs font-semibold text-foreground">Hashtag Performansı</h4>
+          <span className="text-[9px] text-muted-foreground">Son 7 gün</span>
+        </div>
+        {/* Mini chart */}
+        <div className="flex items-end gap-0.5 h-20">
+          {[20, 35, 25, 50, 45, 65, 55, 80, 70, 95, 85, 100, 90, 75].map((h, i) => (
+            <div key={i} className="flex-1 bg-teal/30 rounded-t-sm" style={{ height: `${h}%` }}>
+              <div className="w-full h-full bg-teal rounded-t-sm opacity-80" />
+            </div>
+          ))}
+        </div>
+        {/* Tags */}
+        <div className="flex flex-wrap gap-1.5">
+          {["#viral", "#fyp", "#trending", "#tiktoktürkiye", "#keşfet"].map((tag) => (
+            <span key={tag} className="text-[9px] px-2 py-0.5 bg-teal/10 text-teal rounded-full border border-teal/20">
+              {tag}
+            </span>
+          ))}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SoundsMockup() {
+  return (
+    <div className="bg-card border border-border rounded-xl overflow-hidden">
+      <div className="p-4 space-y-2.5">
+        <h4 className="text-xs font-semibold text-foreground">Trend Sesler</h4>
+        {[
+          { name: "Original Sound - DJ Mix", uses: "45K", trend: "+890%" },
+          { name: "Trending Beat 2024", uses: "32K", trend: "+560%" },
+          { name: "Viral Dance Track", uses: "28K", trend: "+340%" },
+        ].map((s) => (
+          <div key={s.name} className="flex items-center gap-2.5 bg-muted/30 rounded-lg p-2">
+            <div className="w-8 h-8 rounded-lg bg-purple-400/10 flex items-center justify-center shrink-0">
+              <Music className="w-3.5 h-3.5 text-purple-400" />
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-[10px] font-medium text-foreground truncate">{s.name}</p>
+              <p className="text-[9px] text-muted-foreground">{s.uses} kullanım</p>
+            </div>
+            <span className="text-[9px] text-teal font-medium shrink-0">{s.trend}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function AIMockup() {
+  return (
+    <div className="bg-card border border-border rounded-xl overflow-hidden">
+      <div className="p-4 space-y-3">
+        <div className="flex items-center gap-2">
+          <div className="w-6 h-6 rounded-lg bg-orange-400/10 flex items-center justify-center">
+            <Sparkles className="w-3 h-3 text-orange-400" />
+          </div>
+          <h4 className="text-xs font-semibold text-foreground">AI İçerik Önerileri</h4>
+        </div>
+        {[
+          { hook: "Bu trendi kaçırma! İşte neden...", type: "Hook" },
+          { hook: "3 saniyede dikkat çek: Dans challenge ile başla", type: "Fikir" },
+          { hook: "Trend sesi kullan + yemek tarifi = viral", type: "Strateji" },
+        ].map((item) => (
+          <div key={item.hook} className="bg-muted/30 rounded-lg p-2.5">
+            <span className="text-[8px] text-orange-400 font-semibold uppercase">{item.type}</span>
+            <p className="text-[10px] text-foreground mt-0.5">{item.hook}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+const mockupComponents: Record<string, () => JSX.Element> = {
+  trends: TrendsMockup,
+  hashtags: HashtagsMockup,
+  sounds: SoundsMockup,
+  ai: AIMockup,
+};
 
 /* ─── Component ─── */
 
@@ -117,59 +382,39 @@ export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background text-text-primary">
+    <div className="min-h-screen bg-background text-foreground">
       {/* ── Navbar ── */}
       <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
-          {/* Logo */}
           <LogoLink />
-
-          {/* Desktop nav */}
           <div className="hidden md:flex items-center gap-6">
-            <a href="#features" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Özellikler</a>
-            <a href="#pricing" className="text-sm text-text-secondary hover:text-text-primary transition-colors">Fiyatlandırma</a>
-            <Link href="/login" className="text-sm text-text-secondary hover:text-text-primary transition-colors">
-              Giriş Yap
-            </Link>
-            <Link href="/register" className="text-sm bg-neon-red text-white px-4 py-2 rounded-lg hover:bg-neon-red-light transition-colors font-medium">
+            <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Özellikler</a>
+            <a href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Fiyatlandırma</a>
+            <Link href="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Giriş Yap</Link>
+            <ThemeToggle />
+            <Link href="/register" className="text-sm bg-primary text-primary-foreground px-4 py-2 rounded-lg font-medium hover:opacity-90 transition-opacity">
               Ücretsiz Başla
             </Link>
           </div>
-
-          {/* Mobile: CTA + Hamburger */}
           <div className="flex md:hidden items-center gap-2">
-            <Link href="/register" className="text-xs bg-neon-red text-white px-3 py-1.5 rounded-lg font-medium">
-              Başla
-            </Link>
-            <button
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-              className="p-2 rounded-lg hover:bg-surface-light transition-colors"
-              aria-label="Menu"
-            >
-              {mobileMenuOpen ? <FiX className="w-5 h-5" /> : <FiMenu className="w-5 h-5" />}
+            <Link href="/register" className="text-xs bg-primary text-primary-foreground px-3 py-1.5 rounded-lg font-medium">Başla</Link>
+            <button onClick={() => setMobileMenuOpen(!mobileMenuOpen)} className="p-2 rounded-lg hover:bg-muted transition-colors" aria-label="Menu">
+              {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
             </button>
           </div>
         </div>
-
-        {/* Mobile menu dropdown */}
         <AnimatePresence>
           {mobileMenuOpen && (
-            <motion.div
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: "auto" }}
-              exit={{ opacity: 0, height: 0 }}
-              className="md:hidden border-t border-border bg-background/95 backdrop-blur-xl overflow-hidden"
-            >
+            <motion.div initial={{ opacity: 0, height: 0 }} animate={{ opacity: 1, height: "auto" }} exit={{ opacity: 0, height: 0 }} className="md:hidden border-t border-border bg-background/95 backdrop-blur-xl overflow-hidden">
               <div className="px-4 py-4 space-y-1">
-                <a href="#features" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Özellikler</a>
-                <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Fiyatlandırma</a>
-                <Link href="/viral-tiktok-videos-turkey" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Viral Videolar</Link>
-                <Link href="/trending-hashtags-turkey" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Trend Hashtag&apos;ler</Link>
-                <Link href="/tiktok-trend-report" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Haftalık Rapor</Link>
-                <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Hakkımızda</Link>
+                <a href="#features" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">Özellikler</a>
+                <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">Fiyatlandırma</a>
+                <Link href="/viral-tiktok-videos-turkey" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">Viral Videolar</Link>
+                <Link href="/trending-hashtags-turkey" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">Trend Hashtag&apos;ler</Link>
+                <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">Hakkımızda</Link>
                 <div className="border-t border-border my-2" />
-                <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-text-secondary hover:text-text-primary hover:bg-surface-light rounded-lg transition-colors">Giriş Yap</Link>
-                <Link href="/register" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-neon-red hover:bg-neon-red/5 rounded-lg transition-colors">Ücretsiz Kayıt Ol</Link>
+                <Link href="/login" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-muted rounded-lg transition-colors">Giriş Yap</Link>
+                <Link href="/register" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm font-medium text-primary hover:bg-primary/5 rounded-lg transition-colors">Ücretsiz Kayıt Ol</Link>
               </div>
             </motion.div>
           )}
@@ -178,136 +423,174 @@ export default function LandingPage() {
 
       {/* ── Hero ── */}
       <section className="relative pt-24 pb-12 md:pt-32 md:pb-20 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute top-20 left-1/4 w-64 md:w-96 h-64 md:h-96 bg-neon-red/8 rounded-full blur-[100px]" />
-        <div className="absolute top-40 right-1/4 w-56 md:w-80 h-56 md:h-80 bg-teal/8 rounded-full blur-[100px]" />
-        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-72 md:w-[500px] h-40 bg-purple-400/5 rounded-full blur-[120px]" />
+        {/* Background effects */}
+        <div className="absolute top-20 left-1/4 w-64 md:w-96 h-64 md:h-96 bg-primary/5 rounded-full blur-[120px]" />
+        <div className="absolute top-40 right-1/4 w-56 md:w-80 h-56 md:h-80 bg-teal/5 rounded-full blur-[120px]" />
 
-        <div className="max-w-4xl mx-auto text-center relative z-10">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
-            className="inline-flex items-center gap-2 bg-neon-red/10 border border-neon-red/20 text-neon-red text-xs px-3 py-1.5 rounded-full mb-5"
-          >
-            <FiZap className="w-3 h-3" />
-            Türkiye&apos;nin #1 TikTok Analiz Platformu
-          </motion.div>
+        <div className="max-w-6xl mx-auto relative z-10">
+          <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
+            {/* Left: Text */}
+            <div>
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
+                className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary text-xs px-3 py-1.5 rounded-full mb-5">
+                <Zap className="w-3 h-3" />
+                Türkiye&apos;nin #1 TikTok Analiz Platformu
+              </motion.div>
 
-          <motion.h1
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.1, duration: 0.5 }}
-            className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-5"
-          >
-            Viral Trendleri{" "}
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-neon-red to-teal">
-              Herkesten Önce
-            </span>{" "}
-            Keşfet
-          </motion.h1>
+              <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.5 }}
+                className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] mb-5">
+                Viral Trendleri{" "}
+                <span className="text-primary">Herkesten Önce</span>{" "}
+                Keşfet
+              </motion.h1>
 
-          <motion.p
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-            className="text-sm sm:text-base text-text-secondary max-w-xl mx-auto mb-6 leading-relaxed"
-          >
-            Binlerce TikTok videosunu analiz edip viral fırsatları keşfetmenize ve daha hızlı büyümenize yardımcı olur.
-          </motion.p>
+              <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.5 }}
+                className="text-sm sm:text-base text-muted-foreground max-w-lg mb-6 leading-relaxed">
+                Binlerce TikTok videosunu analiz edip viral fırsatları keşfetmenize ve daha hızlı büyümenize yardımcı olur. AI destekli içerik önerileri ile her zaman bir adım önde olun.
+              </motion.p>
 
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-            className="flex flex-col sm:flex-row items-center justify-center gap-3 mb-6"
-          >
-            <Link
-              href="/register"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-neon-red text-white px-6 py-3 rounded-xl hover:bg-neon-red-light transition-all font-medium text-sm hover:shadow-lg hover:shadow-neon-red/20"
-            >
-              Ücretsiz Başla <FiArrowRight className="w-4 h-4" />
-            </Link>
-            <Link
-              href="/login"
-              className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-surface border border-border text-text-primary px-6 py-3 rounded-xl hover:border-neon-red/30 transition-all font-medium text-sm"
-            >
-              Giriş Yap
-            </Link>
-          </motion.div>
+              <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.5 }}
+                className="flex flex-col sm:flex-row items-start gap-3 mb-8">
+                <Link href="/register" className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-6 py-3 rounded-lg hover:opacity-90 transition-opacity font-medium text-sm">
+                  Ücretsiz Analiz Başlat <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link href="/login" className="inline-flex items-center gap-2 bg-card border border-border text-foreground px-6 py-3 rounded-lg hover:bg-muted transition-colors font-medium text-sm">
+                  <Play className="w-4 h-4" /> Dashboard Demo
+                </Link>
+              </motion.div>
+
+              {/* Social proof */}
+              <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.5 }}
+                className="flex items-center gap-3">
+                <div className="flex -space-x-2">
+                  {["E", "A", "S", "C"].map((letter) => (
+                    <div key={letter} className="w-7 h-7 rounded-full bg-primary/20 border-2 border-background flex items-center justify-center text-[10px] font-bold text-primary">
+                      {letter}
+                    </div>
+                  ))}
+                </div>
+                <div>
+                  <div className="flex items-center gap-0.5">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <Star key={i} className="w-3 h-3 text-primary fill-primary" />
+                    ))}
+                  </div>
+                  <p className="text-[10px] text-muted-foreground">3,000+ üretici tarafından kullanılıyor</p>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Right: Dashboard Mockup */}
+            <motion.div initial={{ opacity: 0, x: 30 }} animate={{ opacity: 1, x: 0 }} transition={{ delay: 0.3, duration: 0.6 }}>
+              <DashboardMockup />
+            </motion.div>
+          </div>
         </div>
       </section>
 
-      {/* ── Features ── */}
-      <section id="features" className="py-12 md:py-20 px-4 sm:px-6">
+      {/* ── Stats Bar ── */}
+      <section className="border-y border-border bg-card/50">
+        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 md:py-8">
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
+            {stats.map((s) => (
+              <div key={s.label} className="text-center">
+                <p className="text-2xl md:text-3xl font-bold text-foreground">{s.value}</p>
+                <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Features Grid ── */}
+      <section id="features" className="py-16 md:py-24 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-8 md:mb-12"
-          >
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10 md:mb-14">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">
-              İhtiyacın Olan{" "}
-              <span className="text-neon-red">Her Şey</span>
+              TikTok Büyümesi İçin{" "}
+              <span className="text-primary">Güçlü Araçlar</span>
             </h2>
-            <p className="text-sm text-text-secondary max-w-md mx-auto">
-              TikTok&apos;ta viral olmak için güçlü araçlar
+            <p className="text-sm text-muted-foreground max-w-lg mx-auto">
+              Viral olmak için ihtiyacınız olan her araç tek bir platformda. Veri odaklı kararlar alın, içerik stratejinizi güçlendirin.
             </p>
           </motion.div>
 
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-3 md:gap-5">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
             {features.map((f, i) => (
-              <motion.div
-                key={f.title}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.05 }}
-                className="bg-surface border border-border rounded-xl p-4 md:p-5 hover:border-neon-red/20 transition-all"
-              >
-                <div className={`w-10 h-10 md:w-12 md:h-12 rounded-xl ${f.bg} flex items-center justify-center mb-3`}>
-                  <f.icon className={`w-5 h-5 md:w-6 md:h-6 ${f.color}`} />
+              <motion.div key={f.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
+                className="group bg-card border border-border rounded-xl p-5 md:p-6 hover:border-primary/20 transition-all">
+                <div className={`w-11 h-11 rounded-xl ${f.bg} flex items-center justify-center mb-4`}>
+                  <f.icon className={`w-5 h-5 ${f.color}`} />
                 </div>
-                <h3 className="text-sm md:text-base font-semibold text-text-primary mb-1">{f.title}</h3>
-                <p className="text-xs md:text-sm text-text-secondary leading-relaxed">{f.desc}</p>
+                <h3 className="text-sm md:text-base font-semibold text-foreground mb-2">{f.title}</h3>
+                <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
       </section>
 
-      {/* ── How It Works ── */}
-      <section className="py-12 md:py-20 px-4 sm:px-6 bg-surface/50">
-        <div className="max-w-3xl mx-auto">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-2xl sm:text-3xl font-bold text-center mb-8 md:mb-12"
-          >
-            Nasıl <span className="text-neon-red">Çalışır?</span>
-          </motion.h2>
+      {/* ── Feature Deep Dives ── */}
+      <section className="py-8 md:py-16 px-4 sm:px-6">
+        <div className="max-w-5xl mx-auto space-y-16 md:space-y-24">
+          {featureDeepDives.map((fd, idx) => {
+            const MockupComp = mockupComponents[fd.mockup];
+            const isReversed = idx % 2 === 1;
+            return (
+              <motion.div key={fd.badge} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+                className={`grid md:grid-cols-2 gap-8 md:gap-12 items-center ${isReversed ? "md:direction-rtl" : ""}`}>
+                {/* Text */}
+                <div className={isReversed ? "md:order-2" : ""}>
+                  <span className="inline-block text-[10px] font-semibold text-primary uppercase tracking-wider mb-3 bg-primary/10 px-2.5 py-1 rounded-full">
+                    {fd.badge}
+                  </span>
+                  <h3 className="text-xl sm:text-2xl md:text-3xl font-bold text-foreground mb-3 leading-tight">{fd.title}</h3>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-5">{fd.desc}</p>
+                  <ul className="space-y-2.5">
+                    {fd.features.map((feat) => (
+                      <li key={feat} className="flex items-center gap-2.5 text-sm text-foreground">
+                        <div className="w-5 h-5 rounded-full bg-teal/10 flex items-center justify-center shrink-0">
+                          <Check className="w-3 h-3 text-teal" />
+                        </div>
+                        {feat}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+                {/* Mockup */}
+                <div className={isReversed ? "md:order-1" : ""}>
+                  {MockupComp && <MockupComp />}
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+      </section>
 
-          <div className="flex flex-col md:flex-row gap-4 md:gap-6">
+      {/* ── How It Works ── */}
+      <section className="py-16 md:py-24 px-4 sm:px-6 bg-card/50 border-y border-border">
+        <div className="max-w-4xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10 md:mb-14">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">
+              3 Adımda <span className="text-teal">Başla</span>
+            </h2>
+            <p className="text-sm text-muted-foreground max-w-md mx-auto">
+              Ücretsiz hesap oluşturun ve dakikalar içinde trendleri keşfetmeye başlayın.
+            </p>
+          </motion.div>
+
+          <div className="grid md:grid-cols-3 gap-6">
             {steps.map((step, i) => (
-              <motion.div
-                key={step.num}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="flex-1 flex md:flex-col items-center md:text-center gap-4 md:gap-0 bg-surface md:bg-transparent border border-border md:border-0 rounded-xl p-4 md:p-0"
-              >
-                <div className="w-12 h-12 md:w-14 md:h-14 rounded-2xl bg-neon-red/10 border border-neon-red/20 flex items-center justify-center shrink-0 md:mx-auto md:mb-3">
-                  <step.icon className="w-5 h-5 md:w-6 md:h-6 text-neon-red" />
+              <motion.div key={step.num} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                className="relative text-center">
+                <div className="w-14 h-14 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center mx-auto mb-4">
+                  <step.icon className="w-6 h-6 text-primary" />
                 </div>
-                <div className="flex-1 md:flex-auto">
-                  <div className="text-[10px] text-neon-red font-bold mb-1">ADIM {step.num}</div>
-                  <h3 className="text-base font-bold text-text-primary mb-0.5">{step.title}</h3>
-                  <p className="text-xs text-text-secondary">{step.desc}</p>
-                </div>
+                <div className="text-[10px] text-primary font-bold mb-1.5 uppercase tracking-wider">Adım {step.num}</div>
+                <h3 className="text-base font-bold text-foreground mb-1">{step.title}</h3>
+                <p className="text-xs text-muted-foreground">{step.desc}</p>
                 {i < steps.length - 1 && (
-                  <FiArrowRight className="hidden md:block w-4 h-4 text-text-muted absolute -right-3 top-7" />
+                  <ChevronRight className="hidden md:block absolute top-7 -right-3 w-5 h-5 text-muted-foreground/30" />
                 )}
               </motion.div>
             ))}
@@ -315,128 +598,53 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── Pricing ── */}
-      <section id="pricing" className="py-12 md:py-20 px-4 sm:px-6">
-        <div className="max-w-3xl mx-auto">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-center mb-8 md:mb-12"
-          >
-            <h2 className="text-2xl sm:text-3xl font-bold mb-2">
-              Basit{" "}
-              <span className="text-teal">Fiyatlandırma</span>
+      {/* ── Use Cases ── */}
+      <section className="py-16 md:py-24 px-4 sm:px-6">
+        <div className="max-w-4xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">
+              Kimler İçin?
             </h2>
-            <p className="text-sm text-text-secondary">
-              Ücretsiz başla, ihtiyacın olduğunda yükselt.
-            </p>
           </motion.div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-6">
-            {/* Free Plan */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              className="bg-surface border border-border rounded-2xl p-5 md:p-6"
-            >
-              <h3 className="text-base font-bold text-text-primary mb-1">Ücretsiz</h3>
-              <p className="text-xs text-text-secondary mb-3">Başlangıç için</p>
-              <div className="flex items-baseline gap-1 mb-5">
-                <span className="text-3xl md:text-4xl font-bold text-text-primary">{"\u20BA"}0</span>
-                <span className="text-sm text-text-muted">/ay</span>
-              </div>
-              <ul className="space-y-2.5 mb-5">
-                {freePlanFeatures.map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-sm text-text-secondary">
-                    <FiCheck className="w-4 h-4 text-text-muted shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/register"
-                className="block w-full text-center bg-surface-light border border-border text-text-primary py-2.5 rounded-xl text-sm font-medium hover:border-neon-red/30 transition-colors"
-              >
-                Ücretsiz Başla
-              </Link>
-            </motion.div>
-
-            {/* Pro Plan */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
-              transition={{ delay: 0.1 }}
-              className="bg-surface border-2 border-neon-red/30 rounded-2xl p-5 md:p-6 relative"
-            >
-              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-neon-red text-white text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1">
-                <FiStar className="w-2.5 h-2.5" /> EN POPÜLER
-              </div>
-              <h3 className="text-base font-bold text-text-primary mb-1">Pro</h3>
-              <p className="text-xs text-text-secondary mb-3">Ciddi üreticiler için</p>
-              <div className="flex items-baseline gap-1 mb-5">
-                <span className="text-3xl md:text-4xl font-bold text-neon-red">{"\u20BA"}299</span>
-                <span className="text-sm text-text-muted">/ay</span>
-              </div>
-              <ul className="space-y-2.5 mb-5">
-                {proPlanFeatures.map((f) => (
-                  <li key={f} className="flex items-center gap-2 text-sm text-text-secondary">
-                    <FiCheck className="w-4 h-4 text-teal shrink-0" />
-                    {f}
-                  </li>
-                ))}
-              </ul>
-              <Link
-                href="/pricing"
-                className="block w-full text-center bg-neon-red text-white py-2.5 rounded-xl text-sm font-medium hover:bg-neon-red-light transition-colors hover:shadow-lg hover:shadow-neon-red/20"
-              >
-                Pro&apos;ya Yükselt
-              </Link>
-            </motion.div>
+          <div className="grid md:grid-cols-3 gap-5">
+            {useCases.map((uc, i) => (
+              <motion.div key={uc.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                className="bg-card border border-border rounded-xl p-5 text-center hover:border-primary/20 transition-all">
+                <div className="w-12 h-12 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-4">
+                  <uc.icon className="w-5 h-5 text-primary" />
+                </div>
+                <h3 className="font-semibold text-foreground mb-2">{uc.title}</h3>
+                <p className="text-sm text-muted-foreground">{uc.desc}</p>
+              </motion.div>
+            ))}
           </div>
         </div>
       </section>
 
       {/* ── Testimonials ── */}
-      <section className="py-12 md:py-20 px-4 sm:px-6 bg-surface/50">
-        <div className="max-w-4xl mx-auto">
-          <motion.h2
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="text-2xl sm:text-3xl font-bold text-center mb-8"
-          >
-            Üreticiler Ne Diyor?
-          </motion.h2>
+      <section className="py-16 md:py-24 px-4 sm:px-6 bg-card/50 border-y border-border">
+        <div className="max-w-5xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">Üreticiler Ne Diyor?</h2>
+            <p className="text-sm text-muted-foreground">Binlerce içerik üreticisi Valyze TR ile büyüyor.</p>
+          </motion.div>
 
-          {/* Horizontal scroll on mobile, grid on desktop */}
-          <div className="flex md:grid md:grid-cols-3 gap-4 overflow-x-auto snap-x snap-mandatory pb-4 md:pb-0 -mx-4 px-4 md:mx-0 md:px-0 scrollbar-hide">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {testimonials.map((t, i) => (
-              <motion.div
-                key={t.author}
-                initial={{ opacity: 0, y: 20 }}
-                whileInView={{ opacity: 1, y: 0 }}
-                viewport={{ once: true }}
-                transition={{ delay: i * 0.1 }}
-                className="bg-surface border border-border rounded-xl p-4 md:p-5 min-w-[260px] md:min-w-0 snap-start"
-              >
-                <div className="flex items-center gap-0.5 mb-2">
+              <motion.div key={t.author} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                className="bg-card border border-border rounded-xl p-4 md:p-5">
+                <div className="flex items-center gap-0.5 mb-3">
                   {Array.from({ length: 5 }).map((_, j) => (
-                    <FiStar key={j} className="w-3 h-3 text-neon-red fill-neon-red" />
+                    <Star key={j} className="w-3 h-3 text-primary fill-primary" />
                   ))}
                 </div>
-                <p className="text-sm text-text-secondary leading-relaxed mb-3">
-                  &ldquo;{t.quote}&rdquo;
-                </p>
-                <div className="flex items-center gap-2">
-                  <div className="w-8 h-8 rounded-full gradient-red flex items-center justify-center text-white text-xs font-bold">
-                    {t.avatar}
-                  </div>
+                <p className="text-sm text-muted-foreground leading-relaxed mb-4">&ldquo;{t.quote}&rdquo;</p>
+                <div className="flex items-center gap-2.5">
+                  <div className="w-8 h-8 rounded-full bg-primary flex items-center justify-center text-primary-foreground text-xs font-bold">{t.avatar}</div>
                   <div>
-                    <p className="text-sm font-medium text-text-primary">{t.author}</p>
-                    <p className="text-[10px] text-text-muted">{t.role}</p>
+                    <p className="text-sm font-medium text-foreground">{t.author}</p>
+                    <p className="text-[10px] text-muted-foreground">{t.role}</p>
                   </div>
                 </div>
               </motion.div>
@@ -445,113 +653,143 @@ export default function LandingPage() {
         </div>
       </section>
 
-      {/* ── CTA ── */}
-      <section className="py-12 md:py-20 px-4 sm:px-6">
-        <div className="max-w-2xl mx-auto text-center">
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="bg-gradient-to-br from-neon-red/10 via-surface to-teal/10 border border-border rounded-2xl p-6 md:p-10"
-          >
-            <h2 className="text-2xl sm:text-3xl font-bold mb-3">
-              Bugünden{" "}
-              <span className="text-neon-red">Büyümeye</span>{" "}
-              Başla
+      {/* ── Pricing ── */}
+      <section id="pricing" className="py-16 md:py-24 px-4 sm:px-6">
+        <div className="max-w-3xl mx-auto">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10 md:mb-14">
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">
+              Basit <span className="text-teal">Fiyatlandırma</span>
             </h2>
-            <p className="text-sm text-text-secondary mb-6 max-w-md mx-auto">
-              Viral fırsatları keşfetmek için Valyze TR kullanan üreticilere katılın.
-            </p>
-            <Link
-              href="/register"
-              className="inline-flex items-center gap-2 bg-neon-red text-white px-6 py-3 rounded-xl hover:bg-neon-red-light transition-all font-medium text-sm hover:shadow-lg hover:shadow-neon-red/20"
-            >
-              Ücretsiz Hesap Oluştur <FiArrowRight className="w-4 h-4" />
-            </Link>
+            <p className="text-sm text-muted-foreground">Ücretsiz başla, ihtiyacın olduğunda yükselt. Gizli ücret yok.</p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-5 md:gap-6">
+            {/* Free */}
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+              className="bg-card border border-border rounded-xl p-5 md:p-7">
+              <h3 className="text-base font-bold text-foreground mb-1">Ücretsiz</h3>
+              <p className="text-xs text-muted-foreground mb-4">Başlangıç için ideal</p>
+              <div className="flex items-baseline gap-1 mb-6">
+                <span className="text-4xl font-bold text-foreground">{"\u20BA"}0</span>
+                <span className="text-sm text-muted-foreground">/ay</span>
+              </div>
+              <ul className="space-y-3 mb-6">
+                {freePlanFeatures.map((f) => (
+                  <li key={f} className="flex items-center gap-2.5 text-sm text-muted-foreground">
+                    <Check className="w-4 h-4 text-muted-foreground/60 shrink-0" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/register" className="block w-full text-center bg-muted border border-border text-foreground py-2.5 rounded-lg text-sm font-medium hover:bg-muted/80 transition-colors">
+                Ücretsiz Başla
+              </Link>
+            </motion.div>
+
+            {/* Pro */}
+            <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: 0.1 }}
+              className="bg-card border-2 border-primary/30 rounded-xl p-5 md:p-7 relative">
+              <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1">
+                <Star className="w-2.5 h-2.5" /> EN POPÜLER
+              </div>
+              <h3 className="text-base font-bold text-foreground mb-1 flex items-center gap-2">Pro <Zap className="w-4 h-4 text-primary" /></h3>
+              <p className="text-xs text-muted-foreground mb-4">Profesyonel içerik üreticileri için</p>
+              <div className="flex items-baseline gap-1 mb-6">
+                <span className="text-4xl font-bold text-primary">{"\u20BA"}299</span>
+                <span className="text-sm text-muted-foreground">/ay</span>
+              </div>
+              <ul className="space-y-3 mb-6">
+                {proPlanFeatures.map((f) => (
+                  <li key={f} className="flex items-center gap-2.5 text-sm text-muted-foreground">
+                    <Check className="w-4 h-4 text-teal shrink-0" />
+                    {f}
+                  </li>
+                ))}
+              </ul>
+              <Link href="/pricing" className="block w-full text-center bg-primary text-primary-foreground py-2.5 rounded-lg text-sm font-medium hover:opacity-90 transition-opacity">
+                Pro&apos;ya Yükselt
+              </Link>
+            </motion.div>
+          </div>
+        </div>
+      </section>
+
+      {/* ── CTA ── */}
+      <section className="py-16 md:py-24 px-4 sm:px-6">
+        <div className="max-w-3xl mx-auto text-center">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            className="relative bg-card border border-border rounded-2xl p-8 md:p-14 overflow-hidden">
+            <div className="absolute top-0 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-[100px]" />
+            <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-teal/5 rounded-full blur-[100px]" />
+            <div className="relative z-10">
+              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">
+                Bugünden <span className="text-primary">Büyümeye</span> Başla
+              </h2>
+              <p className="text-sm text-muted-foreground mb-8 max-w-md mx-auto">
+                Viral fırsatları keşfetmek için Valyze TR kullanan binlerce üreticiye katılın. Ücretsiz hesap oluşturun.
+              </p>
+              <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
+                <Link href="/register" className="inline-flex items-center gap-2 bg-primary text-primary-foreground px-8 py-3 rounded-lg hover:opacity-90 transition-opacity font-medium text-sm">
+                  Ücretsiz Hesap Oluştur <ArrowRight className="w-4 h-4" />
+                </Link>
+                <Link href="/contact" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm transition-colors">
+                  <MessageCircle className="w-4 h-4" /> Bize Ulaşın
+                </Link>
+              </div>
+            </div>
           </motion.div>
         </div>
       </section>
 
       {/* ── Footer ── */}
-      <footer className="border-t border-border py-8 md:py-12 px-4 sm:px-6">
+      <footer className="border-t border-border py-10 md:py-14 px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mb-6">
-            {/* Brand */}
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8 mb-8">
             <div className="col-span-2 md:col-span-1">
-              <div className="mb-2">
-                <LogoLink size="sm" />
-              </div>
-              <p className="text-xs text-text-muted leading-relaxed">
-                Türkiye&apos;nin TikTok trend analiz platformu.
-              </p>
+              <div className="mb-3"><LogoLink size="sm" /></div>
+              <p className="text-xs text-muted-foreground leading-relaxed">Türkiye&apos;nin TikTok trend analiz platformu. Veriye dayalı büyüme.</p>
             </div>
-
-            {/* Platform */}
             <div>
-              <h4 className="text-xs font-semibold text-text-primary uppercase mb-2">Platform</h4>
-              <ul className="space-y-1.5">
-                <li><a href="#features" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Özellikler</a></li>
-                <li><a href="#pricing" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Fiyatlandırma</a></li>
-                <li><Link href="/about" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Hakkımızda</Link></li>
-                <li><Link href="/contact" className="text-xs text-text-secondary hover:text-text-primary transition-colors flex items-center gap-1"><FiMessageCircle className="w-3 h-3" /> İletişim</Link></li>
+              <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">Platform</h4>
+              <ul className="space-y-2">
+                <li><a href="#features" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Özellikler</a></li>
+                <li><a href="#pricing" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Fiyatlandırma</a></li>
+                <li><Link href="/about" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Hakkımızda</Link></li>
+                <li><Link href="/contact" className="text-xs text-muted-foreground hover:text-foreground transition-colors">İletişim</Link></li>
               </ul>
             </div>
-
-            {/* Tools */}
             <div>
-              <h4 className="text-xs font-semibold text-text-primary uppercase mb-2">Araçlar</h4>
-              <ul className="space-y-1.5">
-                <li><Link href="/viral-tiktok-videos-turkey" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Viral Videolar</Link></li>
-                <li><Link href="/trending-hashtags-turkey" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Trend Hashtag&apos;ler</Link></li>
-                <li><Link href="/tiktok-trend-report" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Haftalık Rapor</Link></li>
+              <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">Araçlar</h4>
+              <ul className="space-y-2">
+                <li><Link href="/viral-tiktok-videos-turkey" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Viral Videolar</Link></li>
+                <li><Link href="/trending-hashtags-turkey" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Trend Hashtag&apos;ler</Link></li>
+                <li><Link href="/tiktok-trend-report" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Haftalık Rapor</Link></li>
               </ul>
             </div>
-
-            {/* Legal */}
             <div>
-              <h4 className="text-xs font-semibold text-text-primary uppercase mb-2">Yasal</h4>
-              <ul className="space-y-1.5">
-                <li><Link href="/privacy-policy" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Gizlilik Politikası</Link></li>
-                <li><Link href="/terms-of-service" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Kullanım Şartları</Link></li>
-                <li><Link href="/mesafeli-satis-sozlesmesi" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Mesafeli Satış Sözleşmesi</Link></li>
-                <li><Link href="/iptal-ve-iade" className="text-xs text-text-secondary hover:text-text-primary transition-colors">İptal ve İade</Link></li>
-                <li><Link href="/cookie-policy" className="text-xs text-text-secondary hover:text-text-primary transition-colors">Çerez Politikası</Link></li>
+              <h4 className="text-xs font-semibold text-foreground uppercase tracking-wider mb-3">Yasal</h4>
+              <ul className="space-y-2">
+                <li><Link href="/privacy-policy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Gizlilik Politikası</Link></li>
+                <li><Link href="/terms-of-service" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Kullanım Şartları</Link></li>
+                <li><Link href="/mesafeli-satis-sozlesmesi" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Mesafeli Satış</Link></li>
+                <li><Link href="/iptal-ve-iade" className="text-xs text-muted-foreground hover:text-foreground transition-colors">İptal ve İade</Link></li>
+                <li><Link href="/cookie-policy" className="text-xs text-muted-foreground hover:text-foreground transition-colors">Çerez Politikası</Link></li>
               </ul>
             </div>
           </div>
 
-          {/* İletişim ve Ödeme */}
-          <div className="border-t border-border pt-4 mb-4">
+          <div className="border-t border-border pt-5">
             <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
-              <div className="text-xs text-text-muted">
-                <span>İletişim: </span>
-                <a href="mailto:destek@valyze.app" className="text-text-secondary hover:text-text-primary transition-colors">destek@valyze.app</a>
+              <div className="flex items-center gap-4">
+                <p className="text-[10px] text-muted-foreground">&copy; 2026 Valyze TR. Tüm hakları saklıdır.</p>
+                <a href="mailto:destek@valyze.app" className="text-[10px] text-muted-foreground hover:text-foreground transition-colors">destek@valyze.app</a>
               </div>
               <div className="flex items-center gap-3">
-                {/* Visa */}
-                <svg className="h-6 w-auto" viewBox="0 0 48 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="48" height="16" rx="2" fill="#1A1F71" />
-                  <text x="24" y="11.5" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold" fontFamily="Arial, sans-serif">VISA</text>
-                </svg>
-                {/* Mastercard */}
-                <svg className="h-6 w-auto" viewBox="0 0 48 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="48" height="16" rx="2" fill="#252525" />
-                  <circle cx="19" cy="8" r="5" fill="#EB001B" />
-                  <circle cx="29" cy="8" r="5" fill="#F79E1B" />
-                  <path d="M24 4.27a5 5 0 010 7.46 5 5 0 000-7.46z" fill="#FF5F00" />
-                </svg>
-                {/* iyzico */}
-                <svg className="h-6 w-auto" viewBox="0 0 48 16" fill="none" xmlns="http://www.w3.org/2000/svg">
-                  <rect width="48" height="16" rx="2" fill="#1E64FF" />
-                  <text x="24" y="11" textAnchor="middle" fill="white" fontSize="7.5" fontWeight="bold" fontFamily="Arial, sans-serif">iyzico</text>
-                </svg>
+                <svg className="h-5 w-auto" viewBox="0 0 48 16" fill="none"><rect width="48" height="16" rx="2" fill="#1A1F71" /><text x="24" y="11.5" textAnchor="middle" fill="white" fontSize="9" fontWeight="bold" fontFamily="Arial, sans-serif">VISA</text></svg>
+                <svg className="h-5 w-auto" viewBox="0 0 48 16" fill="none"><rect width="48" height="16" rx="2" fill="#252525" /><circle cx="19" cy="8" r="5" fill="#EB001B" /><circle cx="29" cy="8" r="5" fill="#F79E1B" /><path d="M24 4.27a5 5 0 010 7.46 5 5 0 000-7.46z" fill="#FF5F00" /></svg>
+                <svg className="h-5 w-auto" viewBox="0 0 48 16" fill="none"><rect width="48" height="16" rx="2" fill="#1E64FF" /><text x="24" y="11" textAnchor="middle" fill="white" fontSize="7.5" fontWeight="bold" fontFamily="Arial, sans-serif">iyzico</text></svg>
               </div>
             </div>
-          </div>
-
-          <div className="flex items-center justify-between">
-            <p className="text-[10px] text-text-muted">&copy; 2026 Valyze TR. Tüm hakları saklıdır.</p>
-            <p className="text-[10px] text-text-muted">Türkiye&apos;de yapıldı</p>
           </div>
         </div>
       </footer>
