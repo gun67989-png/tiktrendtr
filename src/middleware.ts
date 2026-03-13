@@ -44,6 +44,8 @@ export async function middleware(request: NextRequest) {
     pathname === "/payment" ||
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/api/cron") ||
+    pathname.startsWith("/api/thumbnail") ||
+    pathname.startsWith("/api/contact") ||
     pathname.startsWith("/api/public") ||
     pathname.startsWith("/api/payment/callback") ||
     pathname.startsWith("/api/payment/subscription/callback") ||
