@@ -264,9 +264,16 @@ export default function LandingPage() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <div className="min-h-screen bg-background text-foreground">
+    <div className="min-h-screen bg-background text-foreground relative">
+      {/* Subtle blue-red gradient overlay */}
+      <div className="fixed inset-0 pointer-events-none z-0">
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/[0.15] via-transparent to-rose-900/[0.12]" />
+        <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-blue-500/[0.06] rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[700px] h-[700px] bg-rose-500/[0.05] rounded-full blur-[150px]" />
+        <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-indigo-500/[0.04] rounded-full blur-[120px]" />
+      </div>
       {/* ── Navbar ── */}
-      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/50">
+      <nav className="fixed top-0 left-0 right-0 z-50 bg-background/70 backdrop-blur-xl border-b border-border/50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 h-14 flex items-center justify-between">
           <LogoLink />
           <div className="hidden md:flex items-center gap-6">
