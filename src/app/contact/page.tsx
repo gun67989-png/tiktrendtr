@@ -22,6 +22,7 @@ export default function ContactPage() {
   const [message, setMessage] = useState("");
   const [submitted, setSubmitted] = useState(false);
   const [sending, setSending] = useState(false);
+  const [error, setError] = useState("");
 
   const categories: { value: Category; label: string; icon: React.ReactNode; desc: string }[] = [
     { value: "destek", label: "Destek", icon: <HelpCircle className="w-4 h-4" />, desc: "Hesap veya platform ile ilgili yardim" },
@@ -34,10 +35,24 @@ export default function ContactPage() {
     e.preventDefault();
     if (!name.trim() || !email.trim() || !message.trim()) return;
     setSending(true);
-    // Simulate sending
-    await new Promise((r) => setTimeout(r, 1200));
-    setSending(false);
-    setSubmitted(true);
+    setError("");
+    try {
+      const res = await fetch("/api/contact", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ name, email, category, message }),
+      });
+      if (!res.ok) {
+        const data = await res.json();
+        throw new Error(data.error || "Bir hata oluştu.");
+      }
+      setSubmitted(true);
+    } catch (err: unknown) {
+      const msg = err instanceof Error ? err.message : "Bir hata oluştu.";
+      setError(msg);
+    } finally {
+      setSending(false);
+    }
   };
 
   return (
@@ -173,6 +188,13 @@ export default function ContactPage() {
                     className="w-full px-4 py-3 bg-card border border-border rounded-xl text-sm text-foreground placeholder:text-muted-foreground focus:outline-none focus:border-primary/50 transition-colors resize-none"
                   />
                 </div>
+
+                {error && (
+                  <div className="bg-red-500/10 border border-red-500/20 text-red-400 text-sm px-4 py-3 rounded-xl flex items-center gap-2">
+                    <AlertCircle className="w-4 h-4 shrink-0" />
+                    {error}
+                  </div>
+                )}
 
                 {/* Submit */}
                 <button

@@ -34,6 +34,7 @@
     "react": "^18",
     "react-dom": "^18",
     "recharts": "^3.8.0",
+    "resend": "^6.9.3",
     "tailwind-merge": "^3.5.0"
   },
   "devDependencies": {
