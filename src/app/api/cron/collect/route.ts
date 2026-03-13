@@ -91,6 +91,81 @@ async function ensureTable(): Promise<boolean> {
   }
 }
 
+// Cache thumbnails to Supabase Storage — returns updated videos with permanent URLs
+async function cacheThumbnails(videos: ScrapedVideo[]): Promise<ScrapedVideo[]> {
+  if (!isSupabaseConfigured || !supabase) return videos;
+
+  const BUCKET = "thumbnails";
+  const BATCH_SIZE = 5; // 5 concurrent downloads
+  let cached = 0;
+
+  // Ensure bucket exists (ignore error if already exists)
+  try {
+    await supabase.storage.createBucket(BUCKET, {
+      public: true,
+      fileSizeLimit: 500000, // 500KB max per thumbnail
+    });
+  } catch {
+    // Bucket already exists, fine
+  }
+
+  const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
+
+  for (let i = 0; i < videos.length; i += BATCH_SIZE) {
+    const batch = videos.slice(i, i + BATCH_SIZE);
+
+    await Promise.allSettled(
+      batch.map(async (video) => {
+        const originalUrl = video.thumbnail_url;
+        if (!originalUrl || originalUrl.includes("supabase")) return; // Already cached
+
+        try {
+          const controller = new AbortController();
+          const timeout = setTimeout(() => controller.abort(), 8000);
+
+          const res = await fetch(originalUrl, {
+            headers: {
+              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+              "Referer": "https://www.tiktok.com/",
+            },
+            signal: controller.signal,
+          });
+          clearTimeout(timeout);
+
+          if (!res.ok) return;
+
+          const buffer = await res.arrayBuffer();
+          if (buffer.byteLength < 1000) return; // Too small, probably error
+
+          const filePath = `${video.video_id}.jpg`;
+
+          const { error: uploadError } = await supabase.storage
+            .from(BUCKET)
+            .upload(filePath, buffer, {
+              contentType: "image/jpeg",
+              upsert: true,
+            });
+
+          if (!uploadError && supabaseUrl) {
+            video.thumbnail_url = `${supabaseUrl}/storage/v1/object/public/${BUCKET}/${filePath}`;
+            cached++;
+          }
+        } catch {
+          // Keep original URL as fallback
+        }
+      })
+    );
+
+    // Small delay between batches
+    if (i + BATCH_SIZE < videos.length) {
+      await new Promise(r => setTimeout(r, 300));
+    }
+  }
+
+  console.log(`[CRON] Cached ${cached}/${videos.length} thumbnails to Supabase Storage`);
+  return videos;
+}
+
 // Store videos in Supabase
 async function storeVideos(videos: ScrapedVideo[]): Promise<number> {
   if (!isSupabaseConfigured || !supabase || videos.length === 0) return 0;
@@ -198,8 +273,12 @@ export async function GET(request: NextRequest) {
       : await scrapeTrendingVideos();
     console.log(`[CRON] Scraped ${scrapedVideos.length} videos`);
 
-    // Step 3: Store in database
-    const storedCount = await storeVideos(scrapedVideos);
+    // Step 3: Cache thumbnails to Supabase Storage (permanent URLs)
+    console.log("[CRON] Caching thumbnails...");
+    const videosWithCachedThumbs = await cacheThumbnails(scrapedVideos);
+
+    // Step 4: Store in database
+    const storedCount = await storeVideos(videosWithCachedThumbs);
     console.log(`[CRON] Stored ${storedCount} videos in database`);
 
     // Step 4: Sadece batch 2'de veya full scrape'de eski kayıtları temizle
