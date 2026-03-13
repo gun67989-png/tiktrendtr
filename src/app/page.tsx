@@ -23,6 +23,7 @@ import {
   Users,
   ChevronRight,
 } from "lucide-react";
+import Image from "next/image";
 import LogoLink from "@/components/LogoLink";
 import { ThemeToggle } from "@/components/ThemeToggle";
 
@@ -38,8 +39,8 @@ const stats = [
 const features = [
   {
     icon: TrendingUp,
-    title: "Viral Trend Tespiti",
-    desc: "Viral olma potansiyeli taşıyan videoları ve trendleri herkes fark etmeden tespit edin. AI destekli analiz ile içerik stratejinizi şekillendirin.",
+    title: "Viral Video Tespiti",
+    desc: "Viral olma potansiyeli taşıyan videoları herkes fark etmeden tespit edin. AI destekli video analizi ile içerik stratejinizi şekillendirin.",
     color: "text-primary",
     bg: "bg-primary/10",
   },
@@ -82,11 +83,12 @@ const features = [
 
 const featureDeepDives = [
   {
-    badge: "Trend Analizi",
+    badge: "Video Analizi",
     title: "Viral Videoları Herkesten Önce Keşfet",
-    desc: "Binlerce TikTok videosunu gerçek zamanlı analiz ederek viral olma potansiyeli taşıyan içerikleri erken tespit edin. Görüntülenme artış hızı, etkileşim oranı ve paylaşım metrikleri ile trendleri tahmin edin.",
-    features: ["Gerçek zamanlı trend takibi", "Viralite skoru hesaplama", "Kategori bazlı filtreleme", "Günlük trend raporları"],
+    desc: "Binlerce TikTok videosunu gerçek zamanlı analiz ederek viral olma potansiyeli taşıyan içerikleri erken tespit edin. Görüntülenme artış hızı, etkileşim oranı ve paylaşım metrikleri ile viral videoları tahmin edin.",
+    features: ["Gerçek zamanlı video takibi", "Viralite skoru hesaplama", "Kategori bazlı filtreleme", "Günlük video raporları"],
     mockup: "trends",
+    image: "/images/login-bg-3.jpg",
   },
   {
     badge: "Hashtag Zekası",
@@ -94,6 +96,7 @@ const featureDeepDives = [
     desc: "Milyonlarca hashtag verisini analiz ederek sizin nişinize en uygun, yüksek performanslı etiketleri bulun. Büyüme trendlerini takip edin ve rakiplerinizin kullandığı hashtag'leri keşfedin.",
     features: ["Hashtag büyüme grafiği", "Rekabet analizi", "Niş hashtag önerileri", "Performans karşılaştırma"],
     mockup: "hashtags",
+    image: "/images/feature-hashtags.jpg",
   },
   {
     badge: "Ses Trendleri",
@@ -101,6 +104,7 @@ const featureDeepDives = [
     desc: "TikTok'ta viral olan sesleri ve müzikleri takip edin. Hangi seslerin yükselişte olduğunu görün ve içeriğinizde doğru zamanda kullanarak etkileşiminizi artırın.",
     features: ["Ses popülerlik grafiği", "Yeni yükselen sesler", "Kategori bazlı sesler", "Kullanım istatistikleri"],
     mockup: "sounds",
+    image: "/images/feature-sounds.jpg",
   },
   {
     badge: "AI Destekli",
@@ -108,6 +112,7 @@ const featureDeepDives = [
     desc: "Trend analizlerine dayalı yapay zeka önerileri ile içerik üretim sürecinizi hızlandırın. Hook fikirleri, video açıklamaları ve hashtag önerileri tek tıkla hazır.",
     features: ["AI hook önerileri", "Video açıklama şablonları", "Trend bazlı fikirler", "Reklam fikir üreteci"],
     mockup: "ai",
+    image: "/images/feature-ai.jpg",
   },
 ];
 
@@ -146,13 +151,13 @@ const testimonials = [
 
 const freePlanFeatures = [
   "Sınırlı günlük analiz",
-  "Temel trend paneli",
+  "Temel video analiz paneli",
   "Sınırlı hashtag verisi",
   "Ses trendleri (sınırlı)",
 ];
 
 const proPlanFeatures = [
-  "Sınırsız trend analizi",
+  "Sınırsız video analizi",
   "Tam viral video veritabanı",
   "Rakip analizi",
   "AI içerik fikirleri",
@@ -423,9 +428,21 @@ export default function LandingPage() {
 
       {/* ── Hero ── */}
       <section className="relative pt-24 pb-12 md:pt-32 md:pb-20 px-4 sm:px-6 overflow-hidden">
+        {/* Background image */}
+        <div className="absolute inset-0">
+          <Image src="/images/hero-creator.jpg" alt="" fill className="object-cover opacity-10" unoptimized />
+          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />
+        </div>
         {/* Background effects */}
         <div className="absolute top-20 left-1/4 w-64 md:w-96 h-64 md:h-96 bg-primary/5 rounded-full blur-[120px]" />
         <div className="absolute top-40 right-1/4 w-56 md:w-80 h-56 md:h-80 bg-teal/5 rounded-full blur-[120px]" />
+        {/* Floating photo accents */}
+        <div className="hidden lg:block absolute top-32 right-8 w-20 h-20 rounded-xl overflow-hidden opacity-20 rotate-12">
+          <Image src="/images/feature-sounds.jpg" alt="" fill className="object-cover" unoptimized />
+        </div>
+        <div className="hidden lg:block absolute bottom-16 left-8 w-24 h-16 rounded-xl overflow-hidden opacity-15 -rotate-6">
+          <Image src="/images/feature-hashtags.jpg" alt="" fill className="object-cover" unoptimized />
+        </div>
 
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
@@ -434,19 +451,19 @@ export default function LandingPage() {
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}
                 className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary text-xs px-3 py-1.5 rounded-full mb-5">
                 <Zap className="w-3 h-3" />
-                Türkiye&apos;nin #1 TikTok Analiz Platformu
+                T{"\u00FC"}rkiye&apos;nin #1 TikTok Video Analiz Platformu
               </motion.div>
 
               <motion.h1 initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1, duration: 0.5 }}
                 className="text-3xl sm:text-4xl md:text-5xl lg:text-[3.5rem] font-bold leading-[1.1] mb-5">
-                Viral Trendleri{" "}
-                <span className="text-primary">Herkesten Önce</span>{" "}
-                Keşfet
+                Her Videonun{" "}
+                <span className="bg-gradient-to-r from-primary via-teal to-primary bg-clip-text text-transparent">Viral S{"\u0131"}rr{"\u0131"}n{"\u0131"}</span>{" "}
+                {"\u00C7\u00F6"}z
               </motion.h1>
 
               <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.5 }}
                 className="text-sm sm:text-base text-muted-foreground max-w-lg mb-6 leading-relaxed">
-                Binlerce TikTok videosunu analiz edip viral fırsatları keşfetmenize ve daha hızlı büyümenize yardımcı olur. AI destekli içerik önerileri ile her zaman bir adım önde olun.
+                TikTok videolar{"\u0131"}n{"\u0131"} derinlemesine analiz edin, hangi i{"\u00E7"}eriklerin neden viral oldu{"\u011F"}unu ke{"\u015F"}fedin. AI destekli video analizi ile rakiplerinizden bir ad{"\u0131"}m {"\u00F6"}nde olun.
               </motion.p>
 
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.5 }}
@@ -489,22 +506,30 @@ export default function LandingPage() {
       </section>
 
       {/* ── Stats Bar ── */}
-      <section className="border-y border-border bg-card/50">
-        <div className="max-w-5xl mx-auto px-4 sm:px-6 py-6 md:py-8">
+      <section className="relative border-y border-border overflow-hidden">
+        <Image src="/images/hero-creator.jpg" alt="" fill className="object-cover opacity-[0.04]" unoptimized />
+        <div className="absolute inset-0 bg-card/80 backdrop-blur-sm" />
+        <div className="relative max-w-5xl mx-auto px-4 sm:px-6 py-8 md:py-10">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-6 md:gap-8">
-            {stats.map((s) => (
-              <div key={s.label} className="text-center">
-                <p className="text-2xl md:text-3xl font-bold text-foreground">{s.value}</p>
-                <p className="text-xs text-muted-foreground mt-1">{s.label}</p>
-              </div>
+            {stats.map((s, i) => (
+              <motion.div key={s.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
+                className="text-center">
+                <p className="text-3xl md:text-4xl font-bold bg-gradient-to-r from-primary to-teal bg-clip-text text-transparent">{s.value}</p>
+                <p className="text-xs text-muted-foreground mt-1.5">{s.label}</p>
+              </motion.div>
             ))}
           </div>
         </div>
       </section>
 
       {/* ── Features Grid ── */}
-      <section id="features" className="py-16 md:py-24 px-4 sm:px-6">
-        <div className="max-w-5xl mx-auto">
+      <section id="features" className="relative py-16 md:py-24 px-4 sm:px-6 overflow-hidden">
+        <div className="absolute top-0 right-0 w-1/2 h-full opacity-[0.03]">
+          <Image src="/images/login-bg-2.jpg" alt="" fill className="object-cover" unoptimized />
+        </div>
+        <div className="absolute top-1/4 left-0 w-72 h-72 bg-primary/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/4 right-0 w-72 h-72 bg-teal/5 rounded-full blur-[120px]" />
+        <div className="max-w-5xl mx-auto relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10 md:mb-14">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">
               TikTok Büyümesi İçin{" "}
@@ -518,16 +543,35 @@ export default function LandingPage() {
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 md:gap-5">
             {features.map((f, i) => (
               <motion.div key={f.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.05 }}
-                className="group bg-card border border-border rounded-xl p-5 md:p-6 hover:border-primary/20 transition-all">
-                <div className={`w-11 h-11 rounded-xl ${f.bg} flex items-center justify-center mb-4`}>
-                  <f.icon className={`w-5 h-5 ${f.color}`} />
+                className="group relative bg-card border border-border rounded-xl p-5 md:p-6 hover:border-primary/30 hover:shadow-lg hover:shadow-primary/5 transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.02] to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="relative">
+                  <div className={`w-11 h-11 rounded-xl ${f.bg} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+                    <f.icon className={`w-5 h-5 ${f.color}`} />
+                  </div>
+                  <h3 className="text-sm md:text-base font-semibold text-foreground mb-2">{f.title}</h3>
+                  <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
                 </div>
-                <h3 className="text-sm md:text-base font-semibold text-foreground mb-2">{f.title}</h3>
-                <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
               </motion.div>
             ))}
           </div>
         </div>
+      </section>
+
+      {/* ── Photo Strip ── */}
+      <section className="py-6 md:py-10 overflow-hidden">
+        <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }}
+          className="flex gap-4 animate-[scroll_30s_linear_infinite]"
+          style={{ width: "max-content" }}>
+          {[...Array(2)].flatMap((_, setIdx) =>
+            ["/images/login-bg-3.jpg", "/images/feature-hashtags.jpg", "/images/feature-sounds.jpg", "/images/feature-ai.jpg", "/images/hero-creator.jpg", "/images/cta-bg.jpg"].map((src, i) => (
+              <div key={`${setIdx}-${i}`} className="relative w-48 h-28 md:w-64 md:h-36 rounded-xl overflow-hidden shrink-0 group">
+                <Image src={src} alt="" fill className="object-cover transition-transform duration-500 group-hover:scale-110" unoptimized />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/50 to-transparent" />
+              </div>
+            ))
+          )}
+        </motion.div>
       </section>
 
       {/* ── Feature Deep Dives ── */}
@@ -557,9 +601,24 @@ export default function LandingPage() {
                     ))}
                   </ul>
                 </div>
-                {/* Mockup */}
+                {/* Visual */}
                 <div className={isReversed ? "md:order-1" : ""}>
-                  {MockupComp && <MockupComp />}
+                  <div className="relative rounded-xl overflow-hidden group">
+                    <Image
+                      src={fd.image}
+                      alt={fd.badge}
+                      width={600}
+                      height={400}
+                      className="w-full h-72 sm:h-80 md:h-96 object-cover rounded-xl transition-transform duration-500 group-hover:scale-105"
+                      unoptimized
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent rounded-xl" />
+                    <div className="absolute bottom-4 left-4 right-4">
+                      <span className="inline-block text-[10px] font-semibold text-white uppercase tracking-wider bg-primary/80 backdrop-blur-sm px-2.5 py-1 rounded-full">
+                        {fd.badge}
+                      </span>
+                    </div>
+                  </div>
                 </div>
               </motion.div>
             );
@@ -568,8 +627,10 @@ export default function LandingPage() {
       </section>
 
       {/* ── How It Works ── */}
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-card/50 border-y border-border">
-        <div className="max-w-4xl mx-auto">
+      <section className="relative py-16 md:py-24 px-4 sm:px-6 border-y border-border overflow-hidden">
+        <Image src="/images/feature-hashtags.jpg" alt="" fill className="object-cover opacity-[0.04]" unoptimized />
+        <div className="absolute inset-0 bg-card/90 backdrop-blur-sm" />
+        <div className="max-w-4xl mx-auto relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10 md:mb-14">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">
               3 Adımda <span className="text-teal">Başla</span>
@@ -599,8 +660,12 @@ export default function LandingPage() {
       </section>
 
       {/* ── Use Cases ── */}
-      <section className="py-16 md:py-24 px-4 sm:px-6">
-        <div className="max-w-4xl mx-auto">
+      <section className="relative py-16 md:py-24 px-4 sm:px-6 overflow-hidden">
+        <div className="absolute top-0 left-0 w-1/3 h-full opacity-[0.03]">
+          <Image src="/images/feature-ai.jpg" alt="" fill className="object-cover" unoptimized />
+        </div>
+        <div className="absolute top-1/3 right-1/4 w-64 h-64 bg-primary/5 rounded-full blur-[100px]" />
+        <div className="max-w-4xl mx-auto relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">
               Kimler İçin?
@@ -623,8 +688,10 @@ export default function LandingPage() {
       </section>
 
       {/* ── Testimonials ── */}
-      <section className="py-16 md:py-24 px-4 sm:px-6 bg-card/50 border-y border-border">
-        <div className="max-w-5xl mx-auto">
+      <section className="relative py-16 md:py-24 px-4 sm:px-6 border-y border-border overflow-hidden">
+        <Image src="/images/feature-sounds.jpg" alt="" fill className="object-cover opacity-[0.04]" unoptimized />
+        <div className="absolute inset-0 bg-card/90 backdrop-blur-sm" />
+        <div className="max-w-5xl mx-auto relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">Üreticiler Ne Diyor?</h2>
             <p className="text-sm text-muted-foreground">Binlerce içerik üreticisi Valyze TR ile büyüyor.</p>
@@ -654,8 +721,12 @@ export default function LandingPage() {
       </section>
 
       {/* ── Pricing ── */}
-      <section id="pricing" className="py-16 md:py-24 px-4 sm:px-6">
-        <div className="max-w-3xl mx-auto">
+      <section id="pricing" className="relative py-16 md:py-24 px-4 sm:px-6 overflow-hidden">
+        <div className="absolute bottom-0 right-0 w-1/2 h-1/2 opacity-[0.03]">
+          <Image src="/images/login-bg-2.jpg" alt="" fill className="object-cover" unoptimized />
+        </div>
+        <div className="absolute top-1/4 left-1/4 w-72 h-72 bg-teal/5 rounded-full blur-[120px]" />
+        <div className="max-w-3xl mx-auto relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10 md:mb-14">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">
               Basit <span className="text-teal">Fiyatlandırma</span>
@@ -719,6 +790,8 @@ export default function LandingPage() {
         <div className="max-w-3xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             className="relative bg-card border border-border rounded-2xl p-8 md:p-14 overflow-hidden">
+            <Image src="/images/cta-bg.jpg" alt="" fill className="object-cover opacity-10" unoptimized />
+            <div className="absolute inset-0 bg-gradient-to-br from-card via-card/95 to-card/80" />
             <div className="absolute top-0 left-1/4 w-64 h-64 bg-primary/5 rounded-full blur-[100px]" />
             <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-teal/5 rounded-full blur-[100px]" />
             <div className="relative z-10">

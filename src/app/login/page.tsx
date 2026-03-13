@@ -21,53 +21,23 @@ import LogoLink from "@/components/LogoLink";
 import OAuthButtons from "@/components/OAuthButtons";
 
 const OAUTH_ERRORS: Record<string, string> = {
-  oauth_failed: "Sosyal giriş başarısız oldu. Lütfen tekrar deneyin.",
-  oauth_denied: "Giriş izni reddedildi.",
+  oauth_failed: "Sosyal giri\u015F ba\u015Far\u0131s\u0131z oldu. L\u00FCtfen tekrar deneyin.",
+  oauth_denied: "Giri\u015F izni reddedildi.",
   oauth_no_email:
-    "E-posta adresi alınamadı. Lütfen farklı bir yöntem deneyin.",
-  oauth_start_failed: "Sosyal giriş başlatılamadı.",
-  oauth_invalid_state: "Güvenlik doğrulaması başarısız. Lütfen tekrar deneyin.",
-  oauth_missing_params: "Eksik parametreler. Lütfen tekrar deneyin.",
-  account_disabled: "Bu hesap devre dışı bırakılmış.",
+    "E-posta adresi al\u0131namad\u0131. L\u00FCtfen farkl\u0131 bir y\u00F6ntem deneyin.",
+  oauth_start_failed: "Sosyal giri\u015F ba\u015Flat\u0131lamad\u0131.",
+  oauth_invalid_state: "G\u00FCvenlik do\u011Frulamas\u0131 ba\u015Far\u0131s\u0131z. L\u00FCtfen tekrar deneyin.",
+  oauth_missing_params: "Eksik parametreler. L\u00FCtfen tekrar deneyin.",
+  account_disabled: "Bu hesap devre d\u0131\u015F\u0131 b\u0131rak\u0131lm\u0131\u015F.",
 };
 
 const features = [
-  {
-    icon: TrendingUp,
-    title: "Trend Analizi",
-    desc: "Türkiye'deki güncel TikTok trendlerini takip edin",
-  },
-  {
-    icon: Hash,
-    title: "Hashtag Keşfi",
-    desc: "En popüler hashtag'leri ve büyüme oranlarını görün",
-  },
-  {
-    icon: Music,
-    title: "Ses Trendleri",
-    desc: "Viral olan sesleri ve kullanım istatistiklerini inceleyin",
-  },
-  {
-    icon: Zap,
-    title: "İçerik Fikirleri",
-    desc: "AI destekli içerik önerileriyle öne çıkın",
-  },
-  {
-    icon: BarChart2,
-    title: "Günlük Raporlar",
-    desc: "Detaylı analizlerle stratejinizi şekillendirin",
-  },
-  {
-    icon: Target,
-    title: "Rakip Analizi",
-    desc: "Rakiplerinizin stratejilerini analiz edin",
-  },
-];
-
-const floatingStats = [
-  { label: "Aktif Trend", value: "2.4K+", color: "text-primary" },
-  { label: "Hashtag", value: "15K+", color: "text-teal" },
-  { label: "Günlük Analiz", value: "500+", color: "text-amber-400" },
+  { icon: TrendingUp, text: "G\u00FCncel TikTok trendlerini takip edin" },
+  { icon: Hash, text: "Pop\u00FCler hashtag\u2019leri ke\u015Ffedin" },
+  { icon: Music, text: "Viral sesleri ve istatistikleri inceleyin" },
+  { icon: Zap, text: "AI destekli i\u00E7erik \u00F6nerileri al\u0131n" },
+  { icon: BarChart2, text: "Detayl\u0131 g\u00FCnl\u00FCk raporlar" },
+  { icon: Target, text: "Rakip analizleriyle \u00F6ne \u00E7\u0131k\u0131n" },
 ];
 
 function LoginContent() {
@@ -103,95 +73,89 @@ function LoginContent() {
         router.refresh();
       } else {
         const data = await res.json();
-        setError(data.error || "Giriş başarısız");
+        setError(data.error || "Giri\u015F ba\u015Far\u0131s\u0131z");
       }
     } catch {
-      setError("Bağlantı hatası");
+      setError("Ba\u011Flant\u0131 hatas\u0131");
     } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen bg-background flex relative overflow-hidden">
-      {/* ─────────── SOL PANEL — Marka & Özellikler (sadece desktop) ─────────── */}
-      <div className="hidden lg:flex lg:w-[55%] xl:w-[60%] relative flex-col justify-between p-10 xl:p-16 overflow-hidden">
-        {/* Arka plan efektleri */}
-        <div className="absolute inset-0">
-          <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-primary/8 rounded-full blur-[150px]" />
-          <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-teal/5 rounded-full blur-[120px]" />
-        </div>
-
-        {/* Grid pattern */}
-        <div
-          className="absolute inset-0 opacity-[0.04]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-            backgroundSize: "50px 50px",
-          }}
+    <div className="min-h-screen relative flex">
+      {/* ─── Full-screen background image ─── */}
+      <div className="absolute inset-0">
+        <Image
+          src="/images/login-bg-4.jpg"
+          alt=""
+          fill
+          className="object-cover"
+          priority
+          unoptimized
         />
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/60" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/50 to-black/70" />
+      </div>
 
-        {/* Köşe dekorasyon */}
-        <div className="absolute top-0 right-0 w-px h-40 bg-primary/20" />
-        <div className="absolute bottom-0 left-0 w-40 h-px bg-teal/20" />
-
-        {/* Üst — Logo & Navigasyon */}
-        <div className="relative z-10">
-          <Link href="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm mb-8">
+      {/* ─── SOL PANEL - Marka & Ozellikler (desktop) ─── */}
+      <div className="hidden lg:flex lg:w-1/2 relative z-10 flex-col justify-between p-12 xl:p-16">
+        {/* Ust - Logo */}
+        <div>
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm mb-10"
+          >
             <ArrowLeft className="w-4 h-4" />
             Ana Sayfa
           </Link>
 
-          <div className="flex items-center gap-4 mb-4">
+          <div className="flex items-center gap-4">
             <Image
               src="/logo.png"
               alt="Valyze TR"
-              width={96}
-              height={96}
+              width={64}
+              height={64}
               className="rounded-xl"
               unoptimized
             />
             <div>
-              <h1 className="text-3xl xl:text-4xl font-bold text-foreground">
+              <h1 className="text-3xl xl:text-4xl font-bold text-white">
                 Valyze <span className="text-primary">TR</span>
               </h1>
-              <p className="text-muted-foreground text-sm tracking-wide">
+              <p className="text-white/50 text-sm">
                 TikTok Trend Analiz Platformu
               </p>
             </div>
           </div>
         </div>
 
-        {/* Orta — Özellikler Grid */}
-        <div className="relative z-10 flex-1 flex items-center">
+        {/* Orta - Ozellikler */}
+        <div className="flex-1 flex items-center">
           <div>
-            <h2 className="text-xl xl:text-2xl font-semibold text-foreground mb-2">
-              Trendleri Yakala, Öne Çık
+            <h2 className="text-2xl xl:text-3xl font-bold text-white mb-3">
+              Trendleri Yakala,
+              <br />
+              <span className="text-primary">{"\u00D6ne \u00C7\u0131k"}</span>
             </h2>
-            <p className="text-muted-foreground text-sm mb-8 max-w-md">
-              Türkiye&apos;nin en kapsamlı TikTok analiz aracıyla içeriklerinizi
-              bir üst seviyeye taşıyın.
+            <p className="text-white/60 text-sm mb-8 max-w-md leading-relaxed">
+              T{"\u00FC"}rkiye&apos;nin en kapsaml{"\u0131"} TikTok analiz arac{"\u0131"}yla
+              i{"\u00E7"}eriklerinizi bir {"\u00FC"}st seviyeye ta{"\u015F\u0131"}y{"\u0131"}n.
             </p>
 
-            <div className="grid grid-cols-2 gap-3 max-w-lg">
-              {features.map((feature) => {
-                const Icon = feature.icon;
+            <div className="space-y-3">
+              {features.map((f) => {
+                const Icon = f.icon;
                 return (
                   <div
-                    key={feature.title}
-                    className="group flex items-start gap-3 p-3 rounded-xl bg-card/40 border border-border/50 hover:border-primary/20 hover:bg-muted/50 transition-all duration-300"
+                    key={f.text}
+                    className="flex items-center gap-3 text-white/70"
                   >
-                    <div className="w-9 h-9 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0 group-hover:bg-primary/20 transition-colors">
+                    <div className="w-8 h-8 rounded-lg bg-white/10 backdrop-blur-sm flex items-center justify-center flex-shrink-0">
                       <Icon className="w-4 h-4 text-primary" />
                     </div>
-                    <div className="min-w-0">
-                      <p className="text-sm font-medium text-foreground leading-tight">
-                        {feature.title}
-                      </p>
-                      <p className="text-[11px] text-muted-foreground mt-0.5 leading-snug">
-                        {feature.desc}
-                      </p>
-                    </div>
+                    <span className="text-sm">{f.text}</span>
                   </div>
                 );
               })}
@@ -199,124 +163,109 @@ function LoginContent() {
           </div>
         </div>
 
-        {/* Alt — İstatistik Kartları */}
-        <div className="relative z-10 flex gap-4">
-          {floatingStats.map((stat) => (
-            <div
-              key={stat.label}
-              className="flex-1 bg-card/50 backdrop-blur-sm border border-border/50 rounded-xl p-3 text-center"
-            >
-              <p className={`text-xl font-bold ${stat.color}`}>{stat.value}</p>
-              <p className="text-[10px] text-muted-foreground mt-0.5">{stat.label}</p>
-            </div>
-          ))}
+        {/* Alt - Istatistikler */}
+        <div className="flex gap-6">
+          <div>
+            <p className="text-2xl font-bold text-primary">2.4K+</p>
+            <p className="text-white/40 text-xs">Aktif Trend</p>
+          </div>
+          <div>
+            <p className="text-2xl font-bold text-teal">15K+</p>
+            <p className="text-white/40 text-xs">Hashtag</p>
+          </div>
+          <div>
+            <p className="text-2xl font-bold text-amber-400">500+</p>
+            <p className="text-white/40 text-xs">G{"\u00FC"}nl{"\u00FC"}k Analiz</p>
+          </div>
         </div>
       </div>
 
-      {/* ─────────── Dikey Ayırıcı (desktop) ─────────── */}
-      <div className="hidden lg:block w-px bg-border" />
-
-      {/* ─────────── SAĞ PANEL — Form ─────────── */}
-      <div className="flex-1 flex items-center justify-center relative">
-        {/* Mobile arka plan (desktop'ta sol panel karşılıyor) */}
-        <div className="lg:hidden absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -left-40 w-80 h-80 bg-primary/8 rounded-full blur-[100px]" />
-          <div className="absolute top-1/2 -right-40 w-96 h-96 bg-teal/5 rounded-full blur-[120px]" />
+      {/* ─── SAG PANEL - Glass Form ─── */}
+      <div className="flex-1 flex items-center justify-center relative z-10 p-4 sm:p-6">
+        {/* Mobile back + logo */}
+        <div className="lg:hidden fixed top-0 left-0 right-0 z-20 px-4 py-4 flex items-center justify-between">
+          <Link
+            href="/"
+            className="inline-flex items-center gap-2 text-white/60 hover:text-white transition-colors text-sm"
+          >
+            <ArrowLeft className="w-4 h-4" />
+            Geri
+          </Link>
+          <LogoLink size="sm" />
         </div>
 
-        {/* Mobile grid pattern */}
-        <div
-          className="lg:hidden absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-            backgroundSize: "60px 60px",
-          }}
-        />
-
-        {/* Mobile back button */}
-        <div className="lg:hidden fixed top-0 left-0 right-0 z-20 px-4 py-4">
-          <div className="max-w-md mx-auto">
-            <Link
-              href="/"
-              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm"
-            >
-              <ArrowLeft className="w-4 h-4" />
-              Ana Sayfa
-            </Link>
-          </div>
-        </div>
-
-        {/* Form kartı */}
-        <div className="relative z-10 w-full max-w-md px-6 py-8 lg:px-10 xl:px-14">
-          {/* Desktop sağ panel üst dekorasyon */}
-          <div className="hidden lg:block absolute top-0 right-0 w-20 h-px bg-primary/10" />
-
-          <div className="lg:bg-transparent lg:shadow-none glass lg:backdrop-blur-none rounded-xl p-8 lg:p-0 shadow-2xl">
-            {/* Logo */}
-            <div className="text-center lg:text-left mb-8">
-              <div className="inline-flex mb-4 lg:hidden">
-                <LogoLink size="lg" />
+        {/* Glass form card */}
+        <div className="w-full max-w-md">
+          <div className="bg-black/40 backdrop-blur-xl border border-white/10 rounded-2xl p-8 shadow-2xl">
+            {/* Header */}
+            <div className="text-center mb-8">
+              <div className="lg:hidden mb-4">
+                <Image
+                  src="/logo.png"
+                  alt="Valyze TR"
+                  width={48}
+                  height={48}
+                  className="rounded-xl mx-auto"
+                  unoptimized
+                />
               </div>
-              <h2 className="hidden lg:block text-2xl xl:text-3xl font-bold text-foreground mb-2">
-                Hoş Geldiniz
+              <h2 className="text-2xl font-bold text-white mb-1">
+                Ho{"\u015F"} Geldiniz
               </h2>
-              <p className="text-muted-foreground text-sm">
-                <span className="lg:hidden">TikTok Trend Analiz Platformu</span>
-                <span className="hidden lg:inline">
-                  Hesabınıza giriş yaparak trendleri keşfedin
-                </span>
+              <p className="text-white/50 text-sm">
+                Hesab{"\u0131"}n{"\u0131"}za giri{"\u015F"} yaparak trendleri ke{"\u015F"}fedin
               </p>
             </div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-5">
+            <form onSubmit={handleSubmit} className="space-y-4">
               <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-2">
-                  Kullanıcı Adı veya E-posta
+                <label className="block text-sm font-medium text-white/70 mb-1.5">
+                  Kullan{"\u0131"}c{"\u0131"} Ad{"\u0131"} veya E-posta
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 w-4 h-4" />
                   <input
                     type="text"
                     value={identifier}
                     onChange={(e) => setIdentifier(e.target.value)}
-                    placeholder="Kullanıcı adınız veya e-postanız"
-                    className="w-full bg-muted border border-border rounded-xl py-3 pl-10 pr-4 text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
+                    placeholder={"Kullan\u0131c\u0131 ad\u0131n\u0131z veya e-postan\u0131z"}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-4 text-white placeholder-white/30 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all text-sm"
                     required
                   />
                 </div>
               </div>
 
               <div>
-                <label className="block text-sm font-medium text-muted-foreground mb-2">
-                  Şifre
+                <label className="block text-sm font-medium text-white/70 mb-1.5">
+                  {"\u015E"}ifre
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-white/30 w-4 h-4" />
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    placeholder="Şifrenizi girin"
-                    className="w-full bg-muted border border-border rounded-xl py-3 pl-10 pr-12 text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
+                    placeholder={"\u015Eifrenizi girin"}
+                    className="w-full bg-white/5 border border-white/10 rounded-xl py-3 pl-10 pr-12 text-white placeholder-white/30 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all text-sm"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-white/30 hover:text-white/60 transition-colors"
                   >
                     {showPassword ? (
-                      <EyeOff className="w-5 h-5" />
+                      <EyeOff className="w-4 h-4" />
                     ) : (
-                      <Eye className="w-5 h-5" />
+                      <Eye className="w-4 h-4" />
                     )}
                   </button>
                 </div>
               </div>
 
               {error && (
-                <div className="bg-primary/10 border border-primary/20 rounded-lg p-3 text-primary text-sm text-center">
+                <div className="bg-red-500/10 border border-red-500/20 rounded-lg p-3 text-red-400 text-sm text-center">
                   {error}
                 </div>
               )}
@@ -324,42 +273,38 @@ function LoginContent() {
               <button
                 type="submit"
                 disabled={loading || !identifier || !password}
-                className="w-full bg-primary text-white font-semibold py-3 rounded-md hover:bg-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-primary text-white font-semibold py-3 rounded-xl hover:bg-primary/90 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 mt-2"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
                 ) : (
                   <>
                     <Lock className="w-4 h-4" />
-                    Giriş Yap
+                    Giri{"\u015F"} Yap
                   </>
                 )}
               </button>
             </form>
 
-            {/* OAuth Buttons */}
-            <div>
-              <OAuthButtons mode="login" />
-            </div>
+            {/* OAuth */}
+            <OAuthButtons mode="login" />
 
-            {/* Register Link */}
-            <div className="text-center mt-6">
-              <p className="text-muted-foreground text-sm">
-                Hesabınız yok mu?{" "}
-                <Link
-                  href="/register"
-                  className="text-primary hover:text-primary/80 font-medium transition-colors"
-                >
-                  Kayıt Ol
-                </Link>
-              </p>
-            </div>
-
-            {/* Footer */}
-            <p className="text-center text-muted-foreground text-xs mt-4">
-              Sadece yetkili kullanıcılar erişebilir
+            {/* Register link */}
+            <p className="text-center text-white/50 text-sm mt-6">
+              Hesab{"\u0131"}n{"\u0131"}z yok mu?{" "}
+              <Link
+                href="/register"
+                className="text-primary hover:text-primary/80 font-medium transition-colors"
+              >
+                Kay{"\u0131"}t Ol
+              </Link>
             </p>
           </div>
+
+          {/* Footer */}
+          <p className="text-center text-white/30 text-xs mt-4">
+            Sadece yetkili kullan{"\u0131"}c{"\u0131"}lar eri{"\u015F"}ebilir
+          </p>
         </div>
       </div>
     </div>
