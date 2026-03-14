@@ -91,6 +91,50 @@ async function ensureTable(): Promise<boolean> {
   }
 }
 
+// Download a thumbnail image from URL with retries and fallback
+async function downloadThumbnail(url: string): Promise<Uint8Array | null> {
+  const headers: Record<string, string> = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36",
+    "Referer": "https://www.tiktok.com/",
+    "Accept": "image/webp,image/apng,image/svg+xml,image/*,*/*;q=0.8",
+  };
+
+  // Try original URL first
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    const res = await fetch(url, { headers, signal: controller.signal });
+    clearTimeout(timeout);
+
+    if (res.ok) {
+      const buffer = await res.arrayBuffer();
+      if (buffer.byteLength >= 1000) return new Uint8Array(buffer);
+    }
+  } catch {
+    // First attempt failed, try fallback
+  }
+
+  // Fallback: try without Referer header (some CDN nodes block it)
+  try {
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 10000);
+    const res = await fetch(url, {
+      headers: { "User-Agent": headers["User-Agent"], "Accept": headers["Accept"] },
+      signal: controller.signal,
+    });
+    clearTimeout(timeout);
+
+    if (res.ok) {
+      const buffer = await res.arrayBuffer();
+      if (buffer.byteLength >= 1000) return new Uint8Array(buffer);
+    }
+  } catch {
+    // Both attempts failed
+  }
+
+  return null;
+}
+
 // Cache thumbnails to Supabase Storage — returns updated videos with permanent URLs
 async function cacheThumbnails(videos: ScrapedVideo[]): Promise<ScrapedVideo[]> {
   if (!isSupabaseConfigured || !supabase) return videos;
@@ -98,6 +142,7 @@ async function cacheThumbnails(videos: ScrapedVideo[]): Promise<ScrapedVideo[]> 
   const BUCKET = "thumbnails";
   const BATCH_SIZE = 5; // 5 concurrent downloads
   let cached = 0;
+  let failed = 0;
 
   // Ensure bucket exists (ignore error if already exists)
   try {
@@ -120,38 +165,36 @@ async function cacheThumbnails(videos: ScrapedVideo[]): Promise<ScrapedVideo[]> 
         if (!originalUrl || originalUrl.includes("supabase")) return; // Already cached
 
         try {
-          const controller = new AbortController();
-          const timeout = setTimeout(() => controller.abort(), 8000);
+          const imageData = await downloadThumbnail(originalUrl);
 
-          const res = await fetch(originalUrl, {
-            headers: {
-              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-              "Referer": "https://www.tiktok.com/",
-            },
-            signal: controller.signal,
-          });
-          clearTimeout(timeout);
-
-          if (!res.ok) return;
-
-          const buffer = await res.arrayBuffer();
-          if (buffer.byteLength < 1000) return; // Too small, probably error
+          if (!imageData) {
+            failed++;
+            if (failed <= 3) console.warn(`[CRON] Thumbnail download failed for ${video.video_id}: ${originalUrl.substring(0, 80)}...`);
+            return;
+          }
 
           const filePath = `${video.video_id}.jpg`;
 
-          const { error: uploadError } = await supabase.storage
+          const { error: uploadError } = await supabase!.storage
             .from(BUCKET)
-            .upload(filePath, buffer, {
+            .upload(filePath, imageData, {
               contentType: "image/jpeg",
               upsert: true,
             });
 
-          if (!uploadError && supabaseUrl) {
+          if (uploadError) {
+            failed++;
+            if (failed <= 3) console.warn(`[CRON] Thumbnail upload failed for ${video.video_id}:`, uploadError.message);
+            return;
+          }
+
+          if (supabaseUrl) {
             video.thumbnail_url = `${supabaseUrl}/storage/v1/object/public/${BUCKET}/${filePath}`;
             cached++;
           }
-        } catch {
-          // Keep original URL as fallback
+        } catch (e) {
+          failed++;
+          if (failed <= 3) console.warn(`[CRON] Thumbnail cache error for ${video.video_id}:`, e);
         }
       })
     );
@@ -162,7 +205,7 @@ async function cacheThumbnails(videos: ScrapedVideo[]): Promise<ScrapedVideo[]> 
     }
   }
 
-  console.log(`[CRON] Cached ${cached}/${videos.length} thumbnails to Supabase Storage`);
+  console.log(`[CRON] Cached ${cached}/${videos.length} thumbnails to Supabase Storage (${failed} failed)`);
   return videos;
 }
 
