@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { generatePostingTimes } from "@/lib/data";
+import { cached, cacheKey } from "@/lib/cache";
+import { apiLogger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -78,18 +80,25 @@ async function getRealPostingTimes() {
 
     return { heatmap, bestTimes };
   } catch (e) {
-    console.error("[API] Failed to compute posting times:", e);
+    apiLogger.error({ err: e }, "Failed to compute posting times");
     return null;
   }
 }
 
 export async function GET() {
-  const realData = await getRealPostingTimes();
+  const key = cacheKey("trends:posting-times", {});
 
-  if (realData) {
-    return NextResponse.json({ postingTimes: realData, source: "live" });
-  }
+  const result = await cached(
+    key,
+    async () => {
+      const realData = await getRealPostingTimes();
+      if (realData) {
+        return { postingTimes: realData, source: "live" as const };
+      }
+      return { postingTimes: generatePostingTimes(), source: "generated" as const };
+    },
+    1800 // 30 minutes
+  );
 
-  const postingTimes = generatePostingTimes();
-  return NextResponse.json({ postingTimes, source: "generated" });
+  return NextResponse.json(result);
 }

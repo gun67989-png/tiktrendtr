@@ -6,6 +6,7 @@ import {
   getSubscriptionByUserId,
   updateSubscription,
 } from "@/lib/db";
+import { paymentLogger } from "@/lib/logger";
 
 export async function POST() {
   try {
@@ -40,7 +41,7 @@ export async function POST() {
       subscription_status: "cancelled",
     });
 
-    console.log(`[Cancel] Abonelik iptal edildi: user=${session.userId}, dönem sonuna kadar aktif`);
+    paymentLogger.info({ userId: session.userId }, "Abonelik iptal edildi, donem sonuna kadar aktif");
 
     return NextResponse.json({
       success: true,
@@ -48,7 +49,7 @@ export async function POST() {
       subscription_end: user.subscription_end,
     });
   } catch (error) {
-    console.error("[Cancel] Hata:", error);
+    paymentLogger.error({ err: error }, "Cancel error");
     return NextResponse.json(
       { error: "Abonelik iptal edilemedi" },
       { status: 500 }

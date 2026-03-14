@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { generateSounds } from "@/lib/data";
+import { cached, cacheKey } from "@/lib/cache";
+import { apiLogger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -149,32 +151,33 @@ async function getRealSounds(typeFilter?: string) {
 
     return sounds;
   } catch (e) {
-    console.error("[API] Failed to fetch real sounds:", e);
+    apiLogger.error({ err: e }, "Failed to fetch real sounds");
     return null;
   }
 }
 
 export async function GET(request: NextRequest) {
   const { searchParams } = new URL(request.url);
-  const typeFilter = searchParams.get("type") || "all"; // "all" | "music" | "sound" | "original"
+  const typeFilter = searchParams.get("type") || "all";
 
-  // Try real data first
-  const realSounds = await getRealSounds(typeFilter);
+  const key = cacheKey("trends:sounds", { type: typeFilter });
 
-  if (realSounds && realSounds.length > 0) {
-    return NextResponse.json({ sounds: realSounds, source: "live" });
-  }
+  const result = await cached(
+    key,
+    async () => {
+      const realSounds = await getRealSounds(typeFilter);
+      if (realSounds && realSounds.length > 0) {
+        return { sounds: realSounds, source: "live" as const };
+      }
+      const sounds = generateSounds().map(s => ({
+        ...s,
+        soundType: s.genre === "Efekt" || s.genre === "Konuşma" ? "sound" : "music",
+      }));
+      const filtered = typeFilter === "all" ? sounds : sounds.filter(s => s.soundType === typeFilter);
+      return { sounds: filtered, source: "generated" as const };
+    },
+    600 // 10 minutes
+  );
 
-  // Fall back to generated data (add soundType to mock data)
-  const sounds = generateSounds().map(s => ({
-    ...s,
-    soundType: s.genre === "Efekt" || s.genre === "Konuşma" ? "sound" : "music",
-  }));
-
-  // Apply filter on mock data too
-  const filtered = typeFilter === "all"
-    ? sounds
-    : sounds.filter(s => s.soundType === typeFilter);
-
-  return NextResponse.json({ sounds: filtered, source: "generated" });
+  return NextResponse.json(result);
 }

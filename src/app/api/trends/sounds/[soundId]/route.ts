@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { generateSoundDetail, calcViralScore } from "@/lib/data";
 import { buildTiktokUrl } from "@/lib/tiktok-scraper";
+import { apiLogger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -152,7 +153,7 @@ export async function GET(
 
     return NextResponse.json(detail);
   } catch (e) {
-    console.error("[SOUND DETAIL] Error:", e);
+    apiLogger.error({ err: e }, "Sound detail error");
     return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
   }
 }

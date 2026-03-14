@@ -10,6 +10,7 @@ import {
   isPaymentSuccessful,
   calculatePeriodEnd,
 } from "@/lib/iyzico";
+import { paymentLogger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -26,7 +27,7 @@ export async function POST(request: NextRequest) {
 
     const payment = await findPaymentByToken(token);
     if (!payment) {
-      console.error("[Subscription Callback] Token bulunamadı:", token);
+      paymentLogger.error({ token }, "Subscription callback token not found");
       return NextResponse.redirect(
         new URL("/pricing?error=payment_not_found", request.url)
       );
@@ -71,9 +72,7 @@ export async function POST(request: NextRequest) {
         current_period_end: periodEnd.toISOString(),
       });
 
-      console.log(
-        `[Subscription Callback] Başarılı: user=${payment.user_id}, paymentId=${paymentResult.paymentId}`
-      );
+      paymentLogger.info({ userId: payment.user_id, paymentId: paymentResult.paymentId }, "Subscription callback successful");
 
       return NextResponse.redirect(
         new URL("/dashboard?payment=success&type=subscription", request.url)
@@ -84,9 +83,7 @@ export async function POST(request: NextRequest) {
         error_message: paymentResult.errorMessage || "Abonelik ödemesi başarısız",
       });
 
-      console.warn(
-        `[Subscription Callback] Başarısız: user=${payment.user_id}, error=${paymentResult.errorMessage}`
-      );
+      paymentLogger.warn({ userId: payment.user_id, error: paymentResult.errorMessage }, "Subscription callback failed");
 
       return NextResponse.redirect(
         new URL(
@@ -98,7 +95,7 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (error) {
-    console.error("[Subscription Callback] Kritik hata:", error);
+    paymentLogger.error({ err: error }, "Subscription callback critical error");
     return NextResponse.redirect(
       new URL("/pricing?error=system_error", request.url)
     );

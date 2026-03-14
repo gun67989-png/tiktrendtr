@@ -6,6 +6,7 @@ import {
   setCodeVerifierCookie,
   getTikTokAuthUrl,
 } from "@/lib/oauth";
+import { authLogger } from "@/lib/logger";
 
 export async function GET() {
   try {
@@ -18,7 +19,7 @@ export async function GET() {
     const authUrl = getTikTokAuthUrl(state, codeVerifier);
     return NextResponse.redirect(authUrl);
   } catch (error) {
-    console.error("TikTok OAuth start error:", error);
+    authLogger.error({ err: error }, "TikTok OAuth start error");
     return NextResponse.redirect(
       new URL("/login?error=oauth_start_failed", process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000")
     );

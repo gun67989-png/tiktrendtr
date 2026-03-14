@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { generateHashtags } from "@/lib/data";
+import { cached, cacheKey } from "@/lib/cache";
+import { apiLogger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -118,20 +120,25 @@ async function getRealHashtags() {
 
     return hashtags;
   } catch (e) {
-    console.error("[API] Failed to fetch real hashtags:", e);
+    apiLogger.error({ err: e }, "Failed to fetch real hashtags");
     return null;
   }
 }
 
 export async function GET() {
-  // Try real data first
-  const realHashtags = await getRealHashtags();
+  const key = cacheKey("trends:hashtags", {});
 
-  if (realHashtags && realHashtags.length > 0) {
-    return NextResponse.json({ hashtags: realHashtags, source: "live" });
-  }
+  const result = await cached(
+    key,
+    async () => {
+      const realHashtags = await getRealHashtags();
+      if (realHashtags && realHashtags.length > 0) {
+        return { hashtags: realHashtags, source: "live" as const };
+      }
+      return { hashtags: generateHashtags(), source: "generated" as const };
+    },
+    600 // 10 minutes
+  );
 
-  // Fall back to generated data
-  const hashtags = generateHashtags();
-  return NextResponse.json({ hashtags, source: "generated" });
+  return NextResponse.json(result);
 }

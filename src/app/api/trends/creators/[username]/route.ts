@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { calcViralScore } from "@/lib/data";
 import { buildTiktokUrl } from "@/lib/tiktok-scraper";
+import { apiLogger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -155,7 +156,7 @@ export async function GET(
       topHashtags,
     });
   } catch (e) {
-    console.error("[CREATOR DETAIL] Error:", e);
+    apiLogger.error({ err: e }, "Creator detail error");
     return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
   }
 }

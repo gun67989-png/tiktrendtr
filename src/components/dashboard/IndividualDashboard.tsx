@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
@@ -16,8 +17,8 @@ import {
   Calendar,
   BookOpen,
   Zap,
-  Heart,
-  Star,
+  // Heart,
+  // Star,
   Rocket,
   Eye,
 } from "lucide-react";
@@ -166,6 +167,7 @@ export default function IndividualDashboard({ user }: Props) {
         if (data.overview) setOverview(data.overview);
         if (data.emergingTrends) {
           // Normalize API format (tag/growth) to component format (name/growthRate)
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const normalized = data.emergingTrends.map((t: any, i: number) => ({
             id: t.id || `et-${i}`,
             type: t.type || "hashtag",

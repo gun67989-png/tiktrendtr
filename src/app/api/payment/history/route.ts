@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { getPaymentsByUserId } from "@/lib/db";
+import { paymentLogger } from "@/lib/logger";
 
 export async function GET() {
   try {
@@ -27,7 +28,7 @@ export async function GET() {
 
     return NextResponse.json({ payments: safePayments });
   } catch (error) {
-    console.error("[Payment History] Hata:", error);
+    paymentLogger.error({ err: error }, "Payment history error");
     return NextResponse.json(
       { error: "Ödeme geçmişi alınamadı" },
       { status: 500 }

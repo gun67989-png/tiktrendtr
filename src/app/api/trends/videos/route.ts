@@ -2,6 +2,8 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { generateVideos, calcViralScore } from "@/lib/data";
 import { buildTiktokUrl } from "@/lib/tiktok-scraper";
+import { cached, cacheKey } from "@/lib/cache";
+import { apiLogger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -140,7 +142,7 @@ async function getRealVideos(options: {
 
     return { videos, total: count };
   } catch (e) {
-    console.error("[API] Failed to fetch real videos:", e);
+    apiLogger.error({ err: e }, "Failed to fetch real videos");
     return null;
   }
 }
@@ -154,27 +156,28 @@ export async function GET(request: NextRequest) {
   const order = (searchParams.get("order") || "desc") as string;
   const adOnly = searchParams.get("adOnly") === "true";
 
-  // Try real data first
-  const realData = await getRealVideos({ limit, offset, category, sortBy, order, adOnly });
+  const key = cacheKey("trends:videos", { limit, offset, category, sortBy, order, adOnly: adOnly ? "1" : undefined });
 
-  if (realData && realData.videos.length > 0) {
-    return NextResponse.json({
-      videos: realData.videos,
-      total: realData.total,
-      limit,
-      offset,
-      source: "live",
-    });
-  }
+  const result = await cached(
+    key,
+    async () => {
+      // Try real data first
+      const realData = await getRealVideos({ limit, offset, category, sortBy, order, adOnly });
+      if (realData && realData.videos.length > 0) {
+        return { videos: realData.videos, total: realData.total, limit, offset, source: "live" as const };
+      }
+      // Fall back to generated data
+      const gen = generateVideos({
+        limit,
+        offset,
+        category,
+        sortBy: sortBy as "viralScore" | "views" | "engagementRate" | "publishedAt",
+        order: order as "asc" | "desc",
+      });
+      return { videos: gen.videos, total: gen.total, limit, offset, source: "generated" as const };
+    },
+    300 // 5 minutes
+  );
 
-  // Fall back to generated data
-  const { videos, total } = generateVideos({
-    limit,
-    offset,
-    category,
-    sortBy: sortBy as "viralScore" | "views" | "engagementRate" | "publishedAt",
-    order: order as "asc" | "desc",
-  });
-
-  return NextResponse.json({ videos, total, limit, offset, source: "generated" });
+  return NextResponse.json(result);
 }

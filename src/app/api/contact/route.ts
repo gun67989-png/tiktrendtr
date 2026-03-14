@@ -1,5 +1,6 @@
 import { NextResponse } from "next/server";
 import { Resend } from "resend";
+import { apiLogger } from "@/lib/logger";
 
 const CATEGORY_LABELS: Record<string, string> = {
   destek: "Destek",
@@ -56,7 +57,7 @@ export async function POST(req: Request) {
 
     return NextResponse.json({ success: true });
   } catch (error) {
-    console.error("Contact email error:", error);
+    apiLogger.error({ err: error }, "Contact email error");
     return NextResponse.json({ error: "Mail gönderilemedi." }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { buildTiktokUrl } from "@/lib/tiktok-scraper";
+import { apiLogger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -237,7 +238,7 @@ export async function GET(request: NextRequest) {
       ),
     });
   } catch (e) {
-    console.error("[HOOKS] Error:", e);
+    apiLogger.error({ err: e }, "Hooks API error");
     return NextResponse.json({ error: "Sunucu hatasi" }, { status: 500 });
   }
 }

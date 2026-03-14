@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifySession } from "@/lib/auth";
 import { generateHooks, isAIConfigured } from "@/lib/ai";
+import { aiLogger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -27,7 +28,7 @@ export async function POST(request: NextRequest) {
 
     return NextResponse.json({ result });
   } catch (e) {
-    console.error("[AI/Hook] Error:", e);
+    aiLogger.error({ err: e }, "Hook generation error");
     return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
   }
 }

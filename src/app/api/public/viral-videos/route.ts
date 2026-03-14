@@ -7,6 +7,7 @@ import {
   type ViralTier,
 } from "@/lib/data";
 import { buildTiktokUrl } from "@/lib/tiktok-scraper";
+import { cached, cacheKey } from "@/lib/cache";
 
 export const dynamic = "force-dynamic";
 
@@ -101,6 +102,18 @@ async function fetchViralFromDB(minViews: number, minLikes: number): Promise<Pub
 }
 
 export async function GET() {
+  const key = cacheKey("public:viral-videos", {});
+
+  const result = await cached(
+    key,
+    async () => { return await fetchViralVideos(); },
+    900 // 15 minutes
+  );
+
+  return NextResponse.json(result);
+}
+
+async function fetchViralVideos() {
   // Step 1: Try strict thresholds (500K views, 50K likes)
   let videos = await fetchViralFromDB(
     VIRAL_THRESHOLDS.MIN_VIEWS,
@@ -108,7 +121,7 @@ export async function GET() {
   );
 
   if (videos && videos.length >= 10) {
-    return NextResponse.json({ videos, source: "live" });
+    return { videos, source: "live" as const };
   }
 
   // Step 2: Relaxed thresholds if strict produced <10 results
@@ -118,9 +131,8 @@ export async function GET() {
       VIRAL_THRESHOLDS.RELAXED_MIN_LIKES
     );
     if (relaxed && relaxed.length >= 10) {
-      return NextResponse.json({ videos: relaxed, source: "live" });
+      return { videos: relaxed, source: "live" as const };
     }
-    // Use whatever we got (relaxed or original)
     if (relaxed && relaxed.length > (videos?.length ?? 0)) {
       videos = relaxed;
     }
@@ -128,7 +140,6 @@ export async function GET() {
 
   // Step 3: If we have some DB data but not enough, supplement with high-surprise fallback
   if (videos && videos.length > 0) {
-    // Try fetching high-surprise videos (small accounts, big engagement)
     if (videos.length < 10) {
       const risingVideos = await fetchViralFromDB(100_000, 10_000);
       if (risingVideos) {
@@ -138,10 +149,10 @@ export async function GET() {
         videos = [...videos, ...risingFiltered];
       }
     }
-    return NextResponse.json({ videos, source: "live" });
+    return { videos, source: "live" as const };
   }
 
-  // Step 4: Fallback to generated mock data (already produces 500K+ views)
+  // Step 4: Fallback to generated mock data
   const { videos: mockVideos } = generateVideos({
     limit: 60,
     sortBy: "viralScore",
@@ -152,7 +163,7 @@ export async function GET() {
     .filter((v) => v.views >= VIRAL_THRESHOLDS.MIN_VIEWS && v.likes >= VIRAL_THRESHOLDS.MIN_LIKES)
     .slice(0, 30);
 
-  return NextResponse.json({
+  return {
     videos: filteredMock.map((v) => ({
       id: v.id,
       creator: v.creator,
@@ -175,6 +186,6 @@ export async function GET() {
       hashtags: v.hashtags,
       publishedAt: v.publishedAt,
     })),
-    source: "generated",
-  });
+    source: "generated" as const,
+  };
 }

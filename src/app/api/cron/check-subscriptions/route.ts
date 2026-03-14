@@ -5,6 +5,7 @@ import {
   getSubscriptionByUserId,
   updateSubscription,
 } from "@/lib/db";
+import { cronLogger } from "@/lib/logger";
 
 /**
  * Cron Job: Süresi dolan premium kullanıcıları free'ye düşür
@@ -22,7 +23,7 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Yetkisiz" }, { status: 401 });
     }
 
-    console.log("[Cron] Abonelik kontrolü başlatılıyor...");
+    cronLogger.info("Abonelik kontrolu baslatiliyor");
 
     // Süresi dolmuş premium kullanıcıları bul
     const expiredUsers = await getExpiredPaidUsers();
@@ -55,12 +56,10 @@ export async function GET(request: NextRequest) {
       }
 
       downgraded++;
-      console.log(`[Cron] Kullanıcı free'ye düşürüldü: ${user.username} (${user.id})`);
+      cronLogger.info({ username: user.username, userId: user.id }, "Kullanici free'ye dusuruldu");
     }
 
-    console.log(
-      `[Cron] Tamamlandı: ${expiredUsers.length} kontrol, ${downgraded} düşürüldü`
-    );
+    cronLogger.info({ checked: expiredUsers.length, downgraded }, "Tamamlandi");
 
     return NextResponse.json({
       success: true,
@@ -69,7 +68,7 @@ export async function GET(request: NextRequest) {
       timestamp: new Date().toISOString(),
     });
   } catch (error) {
-    console.error("[Cron] Hata:", error);
+    cronLogger.error({ err: error }, "Cron error");
     return NextResponse.json(
       { error: "Cron hatası" },
       { status: 500 }

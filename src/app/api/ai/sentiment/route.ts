@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifySession } from "@/lib/auth";
 import { analyzeSentiment, analyzeCommentStats, isAIConfigured } from "@/lib/ai";
+import { aiLogger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -41,7 +42,7 @@ export async function POST(request: NextRequest) {
     const result = await analyzeSentiment(comments);
     return NextResponse.json({ result });
   } catch (e) {
-    console.error("[AI/Sentiment] Error:", e);
+    aiLogger.error({ err: e }, "Sentiment analysis error");
     return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
   }
 }

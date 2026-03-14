@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { scrapeTrendingVideos, scrapeTrendingVideosBatch, buildTiktokUrl, type ScrapedVideo } from "@/lib/tiktok-scraper";
+import { invalidateCache } from "@/lib/cache";
+import { cronLogger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60; // Allow up to 60s for scraping
@@ -47,7 +49,7 @@ async function ensureTable(): Promise<boolean> {
       });
 
       if (createError) {
-        console.warn("[CRON] Could not create table via RPC, trying direct insert:", createError.message);
+        cronLogger.warn({ err: createError.message }, "Could not create table via RPC, trying direct insert");
       }
     }
 
@@ -86,7 +88,7 @@ async function ensureTable(): Promise<boolean> {
 
     return true;
   } catch (e) {
-    console.warn("[CRON] Table check failed:", e);
+    cronLogger.warn({ err: e }, "Table check failed");
     return false;
   }
 }
@@ -169,7 +171,7 @@ async function cacheThumbnails(videos: ScrapedVideo[]): Promise<ScrapedVideo[]> 
 
           if (!imageData) {
             failed++;
-            if (failed <= 3) console.warn(`[CRON] Thumbnail download failed for ${video.video_id}: ${originalUrl.substring(0, 80)}...`);
+            if (failed <= 3) cronLogger.warn({ videoId: video.video_id, url: originalUrl.substring(0, 80) }, "Thumbnail download failed");
             return;
           }
 
@@ -184,7 +186,7 @@ async function cacheThumbnails(videos: ScrapedVideo[]): Promise<ScrapedVideo[]> 
 
           if (uploadError) {
             failed++;
-            if (failed <= 3) console.warn(`[CRON] Thumbnail upload failed for ${video.video_id}:`, uploadError.message);
+            if (failed <= 3) cronLogger.warn({ videoId: video.video_id, err: uploadError.message }, "Thumbnail upload failed");
             return;
           }
 
@@ -194,7 +196,7 @@ async function cacheThumbnails(videos: ScrapedVideo[]): Promise<ScrapedVideo[]> 
           }
         } catch (e) {
           failed++;
-          if (failed <= 3) console.warn(`[CRON] Thumbnail cache error for ${video.video_id}:`, e);
+          if (failed <= 3) cronLogger.warn({ videoId: video.video_id, err: e }, "Thumbnail cache error");
         }
       })
     );
@@ -205,7 +207,7 @@ async function cacheThumbnails(videos: ScrapedVideo[]): Promise<ScrapedVideo[]> 
     }
   }
 
-  console.log(`[CRON] Cached ${cached}/${videos.length} thumbnails to Supabase Storage (${failed} failed)`);
+  cronLogger.info({ cached, total: videos.length, failed }, "Cached thumbnails to Supabase Storage");
   return videos;
 }
 
@@ -247,7 +249,7 @@ async function storeVideos(videos: ScrapedVideo[]): Promise<number> {
         .select("video_id");
 
       if (error) {
-        console.warn(`[CRON] Batch insert failed:`, error.message);
+        cronLogger.warn({ err: error.message }, "Batch insert failed");
       } else {
         stored += data?.length ?? 0;
       }
@@ -255,7 +257,7 @@ async function storeVideos(videos: ScrapedVideo[]): Promise<number> {
 
     return stored;
   } catch (e) {
-    console.error("[CRON] Store failed:", e);
+    cronLogger.error({ err: e }, "Store failed");
     return 0;
   }
 }
@@ -275,7 +277,7 @@ async function cleanOldVideos(): Promise<number> {
       .select("video_id");
 
     if (error) {
-      console.warn("[CRON] Cleanup failed:", error.message);
+      cronLogger.warn({ err: error.message }, "Cleanup failed");
       return 0;
     }
 
@@ -304,25 +306,25 @@ export async function GET(request: NextRequest) {
     const parsedBatch = batchParam ? parseInt(batchParam, 10) : null;
     const validBatch = parsedBatch && parsedBatch >= 1 && parsedBatch <= 6 ? parsedBatch : null;
 
-    console.log(`[CRON] Data collection started at ${timestamp} (batch: ${validBatch ?? "full"})`);
+    cronLogger.info({ timestamp, batch: validBatch ?? "full" }, "Data collection started");
 
     // Step 1: Ensure database table exists
     await ensureTable();
 
     // Step 2: Scrape real TikTok data
-    console.log("[CRON] Starting TikTok scraping...");
+    cronLogger.info("Starting TikTok scraping");
     const scrapedVideos = validBatch
       ? await scrapeTrendingVideosBatch(validBatch)
       : await scrapeTrendingVideos();
-    console.log(`[CRON] Scraped ${scrapedVideos.length} videos`);
+    cronLogger.info({ count: scrapedVideos.length }, "Scraped videos");
 
     // Step 3: Cache thumbnails to Supabase Storage (permanent URLs)
-    console.log("[CRON] Caching thumbnails...");
+    cronLogger.info("Caching thumbnails");
     const videosWithCachedThumbs = await cacheThumbnails(scrapedVideos);
 
     // Step 4: Store in database
     const storedCount = await storeVideos(videosWithCachedThumbs);
-    console.log(`[CRON] Stored ${storedCount} videos in database`);
+    cronLogger.info({ storedCount }, "Stored videos in database");
 
     // Step 4: Sadece batch 2'de veya full scrape'de eski kayıtları temizle
     const cleanedCount = (!validBatch || validBatch === 6) ? await cleanOldVideos() : 0;
@@ -339,11 +341,16 @@ export async function GET(request: NextRequest) {
         : "Veri çekilemedi. Sonraki döngüde tekrar denenecek.",
     };
 
-    console.log(`[CRON] Collection completed:`, results);
+    cronLogger.info({ results }, "Collection completed");
+
+    // Invalidate all trend caches so fresh data is served
+    if (storedCount > 0) {
+      await invalidateCache("trends:");
+    }
 
     return NextResponse.json(results);
   } catch (error) {
-    console.error("[CRON] Data collection failed:", error);
+    cronLogger.error({ err: error }, "Data collection failed");
     return NextResponse.json(
       { error: "Collection failed", status: "error" },
       { status: 500 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { buildTiktokUrl } from "@/lib/tiktok-scraper";
+import { apiLogger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -187,7 +188,7 @@ export async function GET() {
       categoryDistribution,
     });
   } catch (e) {
-    console.error("[DAILY-REPORT] Error:", e);
+    apiLogger.error({ err: e }, "Daily report error");
     return NextResponse.json({ error: "Sunucu hatasi" }, { status: 500 });
   }
 }

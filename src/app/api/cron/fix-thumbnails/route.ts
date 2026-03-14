@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { cronLogger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60;
@@ -187,7 +188,7 @@ export async function GET(request: NextRequest) {
       remaining: videos.length === BATCH_SIZE ? "more batches needed" : "done",
     });
   } catch (e) {
-    console.error("[FIX-THUMBNAILS] Error:", e);
+    cronLogger.error({ err: e }, "Fix thumbnails error");
     return NextResponse.json({ error: "Fix failed" }, { status: 500 });
   }
 }

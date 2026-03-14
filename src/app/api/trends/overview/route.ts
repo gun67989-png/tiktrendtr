@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { generateOverview, generateEmergingTrends } from "@/lib/data";
+import { cached, cacheKey } from "@/lib/cache";
+import { apiLogger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -138,35 +140,44 @@ async function getLiveStats() {
       emergingTrends,
     };
   } catch (e) {
-    console.error("[API/Overview] Live stats error:", e);
+    apiLogger.error({ err: e }, "Live stats error");
     return null;
   }
 }
 
 export async function GET() {
-  const liveStats = await getLiveStats();
+  const key = cacheKey("trends:overview", {});
 
-  if (liveStats && liveStats.totalVideosAnalyzed > 0) {
-    const baseOverview = generateOverview();
-    const overview = {
-      ...baseOverview,
-      totalVideosAnalyzed: liveStats.totalVideosAnalyzed,
-      activeTrends: liveStats.activeTrends,
-      avgEngagement: liveStats.avgEngagement,
-      bestPostingTime: liveStats.bestPostingTime,
-      trendingNiches: liveStats.trendingNiches,
-    };
+  const result = await cached(
+    key,
+    async () => {
+      const liveStats = await getLiveStats();
 
-    return NextResponse.json({
-      overview,
-      emergingTrends: liveStats.emergingTrends.length > 0 ? liveStats.emergingTrends : generateEmergingTrends(),
-      source: "live",
-    });
-  }
+      if (liveStats && liveStats.totalVideosAnalyzed > 0) {
+        const baseOverview = generateOverview();
+        const overview = {
+          ...baseOverview,
+          totalVideosAnalyzed: liveStats.totalVideosAnalyzed,
+          activeTrends: liveStats.activeTrends,
+          avgEngagement: liveStats.avgEngagement,
+          bestPostingTime: liveStats.bestPostingTime,
+          trendingNiches: liveStats.trendingNiches,
+        };
+        return {
+          overview,
+          emergingTrends: liveStats.emergingTrends.length > 0 ? liveStats.emergingTrends : generateEmergingTrends(),
+          source: "live" as const,
+        };
+      }
 
-  return NextResponse.json({
-    overview: generateOverview(),
-    emergingTrends: generateEmergingTrends(),
-    source: "generated",
-  });
+      return {
+        overview: generateOverview(),
+        emergingTrends: generateEmergingTrends(),
+        source: "generated" as const,
+      };
+    },
+    600 // 10 minutes
+  );
+
+  return NextResponse.json(result);
 }

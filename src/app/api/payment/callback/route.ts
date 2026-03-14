@@ -10,6 +10,7 @@ import {
   isPaymentSuccessful,
   calculatePeriodEnd,
 } from "@/lib/iyzico";
+import { paymentLogger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
     // Veritabanındaki ödeme kaydını bul
     const payment = await findPaymentByToken(token);
     if (!payment) {
-      console.error("[Payment Callback] Token bulunamadı:", token);
+      paymentLogger.error({ token }, "Payment callback token not found");
       return NextResponse.redirect(
         new URL("/pricing?error=payment_not_found", request.url)
       );
@@ -65,9 +66,7 @@ export async function POST(request: NextRequest) {
         current_period_end: periodEnd.toISOString(),
       });
 
-      console.log(
-        `[Payment Callback] Başarılı ödeme: user=${payment.user_id}, paymentId=${paymentResult.paymentId}`
-      );
+      paymentLogger.info({ userId: payment.user_id, paymentId: paymentResult.paymentId }, "Payment callback successful");
 
       // Dashboard'a yönlendir
       return NextResponse.redirect(
@@ -81,9 +80,7 @@ export async function POST(request: NextRequest) {
           paymentResult.errorMessage || "Ödeme başarısız oldu",
       });
 
-      console.warn(
-        `[Payment Callback] Başarısız ödeme: user=${payment.user_id}, error=${paymentResult.errorMessage}`
-      );
+      paymentLogger.warn({ userId: payment.user_id, error: paymentResult.errorMessage }, "Payment callback failed");
 
       return NextResponse.redirect(
         new URL(
@@ -95,7 +92,7 @@ export async function POST(request: NextRequest) {
       );
     }
   } catch (error) {
-    console.error("[Payment Callback] Kritik hata:", error);
+    paymentLogger.error({ err: error }, "Payment callback critical error");
     return NextResponse.redirect(
       new URL("/pricing?error=system_error", request.url)
     );

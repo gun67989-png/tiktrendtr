@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifySession, createSession } from "@/lib/auth";
 import { updateUser, findUserById } from "@/lib/db";
+import { apiLogger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -15,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { role, niche, plan } = body;
+    const { role, niche } = body;
 
     // Update user with onboarding data
     const updateData: Record<string, unknown> = {
@@ -29,7 +30,7 @@ export async function POST(request: NextRequest) {
 
     const updated = await updateUser(session.userId, updateData);
     if (!updated) {
-      console.error("[ONBOARDING] Failed to update user:", session.userId);
+      apiLogger.error({ userId: session.userId }, "Failed to update user");
       return NextResponse.json({ error: "Update failed" }, { status: 500 });
     }
 
@@ -62,7 +63,7 @@ export async function POST(request: NextRequest) {
 
     return response;
   } catch (e) {
-    console.error("[ONBOARDING] Error:", e);
+    apiLogger.error({ err: e }, "Onboarding error");
     return NextResponse.json({ error: "Server error" }, { status: 500 });
   }
 }

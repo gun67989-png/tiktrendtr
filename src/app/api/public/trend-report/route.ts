@@ -1,9 +1,13 @@
 import { NextResponse } from "next/server";
 import { generateOverview, generatePostingTimes, generateHashtags } from "@/lib/data";
+import { cached, cacheKey } from "@/lib/cache";
 
 export const dynamic = "force-dynamic";
 
 export async function GET() {
+  const key = cacheKey("public:trend-report", {});
+
+  const result = await cached(key, async () => {
   const overview = generateOverview();
   const postingTimes = generatePostingTimes();
   const hashtags = generateHashtags();
@@ -40,7 +44,7 @@ export async function GET() {
     end: now.toISOString().split("T")[0],
   };
 
-  return NextResponse.json({
+  return {
     dateRange,
     stats: {
       totalVideosAnalyzed: overview.totalVideosAnalyzed,
@@ -57,5 +61,8 @@ export async function GET() {
     })),
     fastestGrowingHashtags: fastestGrowing,
     dailyStats: overview.dailyStats.slice(-7),
-  });
+  };
+  }, 900); // 15 minutes
+
+  return NextResponse.json(result);
 }

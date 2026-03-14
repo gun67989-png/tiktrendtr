@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { verifyStateCookie, exchangeGoogleCode, getGoogleProfile } from "@/lib/oauth";
 import { findUserByEmail, findUserByOAuth, createOAuthUser, updateUser } from "@/lib/db";
 import { createSession } from "@/lib/auth";
+import { authLogger } from "@/lib/logger";
 
 const BASE_URL = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
 
@@ -83,7 +84,7 @@ export async function GET(request: NextRequest) {
 
     return response;
   } catch (error) {
-    console.error("Google OAuth callback error:", error);
+    authLogger.error({ err: error }, "Google OAuth callback error");
     return NextResponse.redirect(new URL("/login?error=oauth_failed", BASE_URL));
   }
 }

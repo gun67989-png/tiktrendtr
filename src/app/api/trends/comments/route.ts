@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { analyzeComments, analyzeCreatorCommentPatterns } from "@/lib/comment-analysis";
+import { apiLogger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -142,7 +143,7 @@ export async function GET(request: NextRequest) {
       topCommented,
     });
   } catch (e) {
-    console.error("[COMMENTS API] Error:", e);
+    apiLogger.error({ err: e }, "Comments API error");
     return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
   }
 }

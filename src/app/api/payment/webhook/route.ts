@@ -5,6 +5,7 @@ import {
   updateSubscription,
   getSubscriptionByUserId,
 } from "@/lib/db";
+import { paymentLogger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,14 +14,14 @@ export async function POST(request: NextRequest) {
 
     // HMAC imza doğrulaması
     if (!verifyWebhookSignature(body, signature)) {
-      console.warn("[Webhook] Geçersiz imza, istek reddedildi");
+      paymentLogger.warn("Invalid webhook signature, request rejected");
       return NextResponse.json({ error: "Geçersiz imza" }, { status: 401 });
     }
 
     const payload = JSON.parse(body);
     const { iyziEventType, paymentId } = payload;
 
-    console.log(`[Webhook] Event: ${iyziEventType}, paymentId: ${paymentId}`);
+    paymentLogger.info({ iyziEventType, paymentId }, "Webhook event received");
 
     switch (iyziEventType) {
       case "PAYMENT_SUCCESS": {
@@ -46,7 +47,7 @@ export async function POST(request: NextRequest) {
             });
           }
 
-          console.log(`[Webhook] Abonelik yenilendi: user=${payload.userId}`);
+          paymentLogger.info({ userId: payload.userId }, "Subscription renewed");
         }
         break;
       }
@@ -59,7 +60,7 @@ export async function POST(request: NextRequest) {
               status: "past_due",
             });
           }
-          console.warn(`[Webhook] Ödeme başarısız: user=${payload.userId}`);
+          paymentLogger.warn({ userId: payload.userId }, "Payment failed");
         }
         break;
       }
@@ -73,18 +74,18 @@ export async function POST(request: NextRequest) {
               cancel_at_period_end: true,
             });
           }
-          console.log(`[Webhook] Abonelik iptal: user=${payload.userId}`);
+          paymentLogger.info({ userId: payload.userId }, "Subscription cancelled");
         }
         break;
       }
 
       default:
-        console.log(`[Webhook] Bilinmeyen event: ${iyziEventType}`);
+        paymentLogger.info({ iyziEventType }, "Unknown webhook event");
     }
 
     return NextResponse.json({ received: true });
   } catch (error) {
-    console.error("[Webhook] Hata:", error);
+    paymentLogger.error({ err: error }, "Webhook error");
     return NextResponse.json({ error: "Webhook hatası" }, { status: 500 });
   }
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useRef } from "react";
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 import { motion, useInView, AnimatePresence } from "framer-motion";
 import { useRouter } from "next/navigation";
 import {
@@ -38,8 +39,8 @@ import {
   Tooltip,
   ResponsiveContainer,
   Cell,
-  PieChart,
-  Pie,
+  // PieChart,
+  // Pie,
   RadialBarChart,
   RadialBar,
 } from "recharts";
@@ -76,7 +77,7 @@ const glowPulse = {
   show: {
     opacity: 1,
     scale: 1,
-    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] },
+    transition: { duration: 0.6, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] },
   },
 };
 
@@ -248,6 +249,7 @@ export default function EnterpriseDashboard({ user }: Props) {
       .then((data) => {
         if (data.overview) setOverview(data.overview);
         if (data.emergingTrends) {
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
           const normalized = data.emergingTrends.map((t: any, i: number) => ({
             id: t.id || `et-${i}`,
             type: t.type || "hashtag",
@@ -447,7 +449,7 @@ export default function EnterpriseDashboard({ user }: Props) {
 
       {/* ===== STAT CARDS ===== */}
       <motion.div variants={item} className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
-        {stats.map((stat, i) => (
+        {stats.map((stat) => (
           <motion.div
             key={stat.label}
             variants={scaleIn}

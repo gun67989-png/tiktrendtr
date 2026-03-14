@@ -1,5 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
+import { cached, cacheKey } from "@/lib/cache";
+import { apiLogger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -23,17 +25,11 @@ interface CreatorAgg {
   latestVideoAt: string;
 }
 
-export async function GET(request: NextRequest) {
+async function fetchCreators(limit: number, sortBy: string, category?: string, search?: string) {
   try {
     if (!isSupabaseConfigured || !supabase) {
-      return NextResponse.json({ error: "Veritabanı yapılandırılmamış" }, { status: 500 });
+      return null;
     }
-
-    const { searchParams } = new URL(request.url);
-    const limit = Math.min(parseInt(searchParams.get("limit") || "50"), 200);
-    const sortBy = searchParams.get("sortBy") || "totalViews";
-    const category = searchParams.get("category") || undefined;
-    const search = searchParams.get("search") || undefined;
 
     // Fetch all videos for aggregation
     const { data, error } = await supabase
@@ -189,9 +185,31 @@ export async function GET(request: NextRequest) {
     const total = creators.length;
     creators = creators.slice(0, limit);
 
-    return NextResponse.json({ creators, total, source: "live" });
+    return { creators, total, source: "live" as const };
   } catch (e) {
-    console.error("[CREATORS API] Error:", e);
-    return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });
+    apiLogger.error({ err: e }, "Creators API error");
+    return null;
   }
+}
+
+export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const limit = Math.min(parseInt(searchParams.get("limit") || "50"), 200);
+  const sortBy = searchParams.get("sortBy") || "totalViews";
+  const category = searchParams.get("category") || undefined;
+  const search = searchParams.get("search") || undefined;
+
+  const key = cacheKey("trends:creators", { limit, sortBy, category, search });
+
+  const result = await cached(
+    key,
+    async () => {
+      const data = await fetchCreators(limit, sortBy, category, search);
+      if (data) return data;
+      return { creators: [], total: 0, source: "live" as const };
+    },
+    900 // 15 minutes
+  );
+
+  return NextResponse.json(result);
 }

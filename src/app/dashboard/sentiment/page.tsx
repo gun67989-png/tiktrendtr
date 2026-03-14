@@ -20,7 +20,7 @@ import {
   Heart,
   Share2,
   Loader2,
-  ArrowRight,
+  // ArrowRight,
   AlertCircle,
 } from "lucide-react";
 import {
@@ -175,7 +175,7 @@ async function fetchSentimentData(): Promise<SentimentData | null> {
     }
 
     // Default values before AI analysis
-    let result: SentimentData = {
+    const result: SentimentData = {
       positive: 60,
       negative: 15,
       neutral: 25,
@@ -222,6 +222,7 @@ async function fetchSentimentData(): Promise<SentimentData | null> {
           result.aiSummary = parsed.summary || result.aiSummary;
 
           if (parsed.top_themes && Array.isArray(parsed.top_themes)) {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
             result.topTopics = parsed.top_themes.map((t: any) => ({
               topic: t.topic || t,
               count: t.count || 0,
@@ -708,6 +709,7 @@ function CompetitorTab() {
           engagementDepth: commentData?.patterns?.overallEngagementDepth || "orta",
           topCategories: commentData?.patterns?.categoryPerformance?.slice(0, 4) || [],
         },
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         topVideos: (data.videos || []).slice(0, 6).map((v: any) => ({
           description: v.description || v.title || "",
           views: v.views || v.play || 0,

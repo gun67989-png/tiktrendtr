@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { findUserById, getSubscriptionByUserId } from "@/lib/db";
+import { paymentLogger } from "@/lib/logger";
 
 export async function GET() {
   try {
@@ -39,7 +40,7 @@ export async function GET() {
         : 0,
     });
   } catch (error) {
-    console.error("[Payment Status] Hata:", error);
+    paymentLogger.error({ err: error }, "Payment status error");
     return NextResponse.json(
       { error: "Abonelik durumu alınamadı" },
       { status: 500 }

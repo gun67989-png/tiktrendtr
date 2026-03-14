@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { buildTiktokUrl } from "@/lib/tiktok-scraper";
+import { apiLogger } from "@/lib/logger";
 
 export const dynamic = "force-dynamic";
 
@@ -168,7 +169,7 @@ export async function GET(request: NextRequest) {
 
     return NextResponse.json(analysis);
   } catch (e) {
-    console.error("[COMPETITOR] Error:", e);
+    apiLogger.error({ err: e }, "Competitor analysis error");
     return NextResponse.json({ error: "Sunucu hatasi" }, { status: 500 });
   }
 }

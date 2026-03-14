@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { findUserById, createPayment } from "@/lib/db";
 import { createSinglePaymentCheckout, createSubscriptionCheckout } from "@/lib/iyzico";
+import { paymentLogger } from "@/lib/logger";
 
 export async function POST(request: NextRequest) {
   try {
@@ -77,7 +78,7 @@ export async function POST(request: NextRequest) {
       paymentPageUrl: result.paymentPageUrl,
     });
   } catch (error) {
-    console.error("[Payment Checkout] Hata:", error);
+    paymentLogger.error({ err: error }, "Checkout error");
     const message = error instanceof Error ? error.message : "Bilinmeyen hata";
     return NextResponse.json(
       { error: `Ödeme başlatılamadı: ${message}` },

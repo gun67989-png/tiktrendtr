@@ -24,7 +24,7 @@ import {
   ChevronRight,
   Swords,
   Brain,
-  Crown,
+  // Crown,
   Building2,
   Heart,
   BookOpen,

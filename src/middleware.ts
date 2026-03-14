@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { jwtVerify } from "jose";
+import { checkRateLimit, getRateLimitType } from "@/lib/rate-limit";
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || "default-secret-change-me"
@@ -25,11 +26,17 @@ async function getSessionFromRequest(
   }
 }
 
+// Simple request ID generator (no crypto needed)
+function generateRequestId(): string {
+  return `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+}
+
 export async function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
+  const requestId = generateRequestId();
 
-  // Public routes
-  if (
+  // Public routes — skip auth but still apply rate limiting on API routes
+  const isPublicRoute =
     pathname === "/" ||
     pathname === "/login" ||
     pathname === "/register" ||
@@ -38,10 +45,18 @@ export async function middleware(request: NextRequest) {
     pathname === "/trending-hashtags-turkey" ||
     pathname === "/tiktok-trend-report" ||
     pathname === "/contact" ||
+    pathname === "/about" ||
     pathname === "/privacy-policy" ||
     pathname === "/terms-of-service" ||
+    pathname === "/mesafeli-satis-sozlesmesi" ||
+    pathname === "/iptal-ve-iade" ||
     pathname === "/cookie-policy" ||
     pathname === "/payment" ||
+    pathname.startsWith("/_next") ||
+    pathname.startsWith("/favicon") ||
+    pathname.startsWith("/images");
+
+  const isPublicApi =
     pathname.startsWith("/api/auth") ||
     pathname.startsWith("/api/cron") ||
     pathname.startsWith("/api/thumbnail") ||
@@ -50,10 +65,42 @@ export async function middleware(request: NextRequest) {
     pathname.startsWith("/api/payment/callback") ||
     pathname.startsWith("/api/payment/subscription/callback") ||
     pathname.startsWith("/api/payment/webhook") ||
-    pathname.startsWith("/_next") ||
-    pathname.startsWith("/favicon")
-  ) {
-    return NextResponse.next();
+    pathname.startsWith("/api/health");
+
+  // Rate limiting for API routes
+  if (pathname.startsWith("/api/")) {
+    const ip = request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() || "unknown";
+    const type = getRateLimitType(pathname);
+    const result = await checkRateLimit(ip, type);
+
+    if (!result.success) {
+      return NextResponse.json(
+        { error: "Too many requests. Please try again later." },
+        {
+          status: 429,
+          headers: {
+            "Retry-After": String(Math.ceil((result.reset - Date.now()) / 1000)),
+            "X-RateLimit-Limit": String(result.limit),
+            "X-RateLimit-Remaining": "0",
+            "x-request-id": requestId,
+          },
+        }
+      );
+    }
+  }
+
+  // Public pages — just pass through with request ID
+  if (isPublicRoute) {
+    const response = NextResponse.next();
+    response.headers.set("x-request-id", requestId);
+    return response;
+  }
+
+  // Public API routes — pass through with request ID
+  if (isPublicApi) {
+    const response = NextResponse.next();
+    response.headers.set("x-request-id", requestId);
+    return response;
   }
 
   // Check auth for dashboard routes
@@ -71,10 +118,14 @@ export async function middleware(request: NextRequest) {
 
     // Pass user info via headers for server components
     const response = NextResponse.next();
+    response.headers.set("x-request-id", requestId);
     response.headers.set("x-user-id", session.userId);
     response.headers.set("x-user-role", session.role);
     response.headers.set("x-user-name", session.username);
-    response.headers.set("x-subscription-type", (session as unknown as Record<string, string>).subscriptionType || "free");
+    response.headers.set(
+      "x-subscription-type",
+      (session as unknown as Record<string, string>).subscriptionType || "free"
+    );
     return response;
   }
 
@@ -87,7 +138,9 @@ export async function middleware(request: NextRequest) {
     if (session.role !== "admin") {
       return NextResponse.json({ error: "Forbidden" }, { status: 403 });
     }
-    return NextResponse.next();
+    const response = NextResponse.next();
+    response.headers.set("x-request-id", requestId);
+    return response;
   }
 
   // API routes - check auth
@@ -96,10 +149,14 @@ export async function middleware(request: NextRequest) {
     if (!session) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
-    return NextResponse.next();
+    const response = NextResponse.next();
+    response.headers.set("x-request-id", requestId);
+    return response;
   }
 
-  return NextResponse.next();
+  const response = NextResponse.next();
+  response.headers.set("x-request-id", requestId);
+  return response;
 }
 
 export const config = {

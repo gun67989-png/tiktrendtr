@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { getSession } from "@/lib/auth";
 import { findUserById, createPayment } from "@/lib/db";
 import { createSubscriptionCheckout } from "@/lib/iyzico";
+import { paymentLogger } from "@/lib/logger";
 
 const PLAN_PRICES: Record<string, number> = {
   lite: 280,
@@ -71,7 +72,7 @@ export async function POST(request: NextRequest) {
       paymentPageUrl: result.paymentPageUrl,
     });
   } catch (error) {
-    console.error("[Subscription] Hata:", error);
+    paymentLogger.error({ err: error }, "Subscription error");
     const message = error instanceof Error ? error.message : "Bilinmeyen hata";
     return NextResponse.json(
       { error: `Abonelik başlatılamadı: ${message}` },
