@@ -6,6 +6,14 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import type { VideoData } from "./VideoCard";
 
+function getThumbnailUrl(url: string): string {
+  if (!url) return "/images/placeholder-video.jpg";
+  if (url.includes("tiktokcdn") || url.includes("tikwm") || url.includes("muscdn")) {
+    return `/api/thumbnail?url=${encodeURIComponent(url)}`;
+  }
+  return url;
+}
+
 function formatNumber(n: number): string {
   if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
   if (n >= 1_000) return (n / 1_000).toFixed(1) + "K";
@@ -87,7 +95,7 @@ export default function VideoModal({
             {/* Thumbnail */}
             <div className="md:w-1/2 relative">
               <img
-                src={video.thumbnailUrl}
+                src={getThumbnailUrl(video.thumbnailUrl)}
                 alt={video.description}
                 className="w-full aspect-[9/16] max-h-[400px] object-cover"
               />

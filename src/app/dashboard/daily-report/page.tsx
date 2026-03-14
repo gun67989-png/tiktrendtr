@@ -32,6 +32,14 @@ import {
   Cell,
 } from "recharts";
 
+function getThumbnailUrl(url: string): string {
+  if (!url) return "/images/placeholder-video.jpg";
+  if (url.includes("tiktokcdn") || url.includes("tikwm") || url.includes("muscdn")) {
+    return `/api/thumbnail?url=${encodeURIComponent(url)}`;
+  }
+  return url;
+}
+
 function formatNumber(n: number): string {
   if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
   if (n >= 1_000) return (n / 1_000).toFixed(1) + "K";
@@ -278,7 +286,7 @@ function DailyReportContent() {
             >
               <span className="text-lg font-bold text-muted-foreground w-6 text-right shrink-0">{i + 1}</span>
               <div className="w-10 h-14 rounded-lg overflow-hidden bg-muted shrink-0">
-                <img src={video.thumbnailUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
+                <img src={getThumbnailUrl(video.thumbnailUrl)} alt="" className="w-full h-full object-cover" loading="lazy" />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-foreground font-medium truncate">@{video.creator}</p>

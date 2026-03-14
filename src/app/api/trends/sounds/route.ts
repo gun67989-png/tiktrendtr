@@ -91,7 +91,7 @@ async function getRealSounds(typeFilter?: string) {
       .filter((s) => s.count >= 2)
       .sort((a, b) => b.totalViews - a.totalViews)
       .slice(0, 60)
-      .map((s, i) => {
+      .map((s) => {
         let growth = 0;
         if (s.olderCount > 0) {
           growth = Math.round(((s.recentCount - s.olderCount) / s.olderCount) * 100);
@@ -120,8 +120,16 @@ async function getRealSounds(typeFilter?: string) {
           "Vlog": "Lo-Fi",
         };
 
+        // Calculate viral score: usage * avg engagement
+        const avgEngagement = s.totalViews > 0
+          ? (s.totalLikes + s.totalComments + s.totalShares) / s.totalViews
+          : 0;
+        const usageScore = Math.min(s.count / 10, 1); // normalize usage to 0-1
+        const viewScore = Math.min(Math.log10(s.totalViews + 1) / 8, 1); // normalize views
+        const viralScore = Math.round((usageScore * 0.3 + viewScore * 0.4 + avgEngagement * 3) * 100) / 100;
+
         return {
-          id: i + 1,
+          id: s.name, // Use sound name as ID for navigation
           name: s.name,
           creator: s.creator,
           usageCount: s.count,
@@ -132,6 +140,7 @@ async function getRealSounds(typeFilter?: string) {
           genre: genreMap[topCategory] || "Pop",
           duration: avgDuration,
           bpm: null,
+          viralScore,
           isRising: growth > 30,
           trend: growth >= 0 ? "up" as const : "down" as const,
           soundType: s.soundType,

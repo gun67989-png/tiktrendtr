@@ -51,6 +51,14 @@ const TIER_CONFIG: Record<string, { label: string; color: string; bg: string }> 
   rising: { label: "Yükselen", color: "text-white", bg: "bg-purple-500" },
 };
 
+function getThumbnailUrl(url: string): string {
+  if (!url) return "/images/placeholder-video.jpg";
+  if (url.includes("tiktokcdn") || url.includes("tikwm") || url.includes("muscdn")) {
+    return `/api/thumbnail?url=${encodeURIComponent(url)}`;
+  }
+  return url;
+}
+
 function formatNumber(num: number): string {
   if (num >= 1_000_000) return (num / 1_000_000).toFixed(1) + "M";
   if (num >= 1_000) return (num / 1_000).toFixed(1) + "K";
@@ -183,7 +191,7 @@ export default function ViralVideosPage() {
                   {/* Thumbnail */}
                   <div className="relative aspect-[9/16] bg-muted overflow-hidden">
                     <img
-                      src={video.thumbnailUrl}
+                      src={getThumbnailUrl(video.thumbnailUrl)}
                       alt={`${video.creator} viral TikTok video`}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       loading="lazy"
@@ -267,7 +275,7 @@ export default function ViralVideosPage() {
                   <div key={video.id} className="bg-card border border-border rounded-xl overflow-hidden">
                     <div className="aspect-[9/16] bg-muted">
                       <img
-                        src={video.thumbnailUrl}
+                        src={getThumbnailUrl(video.thumbnailUrl)}
                         alt=""
                         className="w-full h-full object-cover"
                         loading="lazy"

@@ -28,6 +28,14 @@ import {
   Cell,
 } from "recharts";
 
+function getThumbnailUrl(url: string): string {
+  if (!url) return "/images/placeholder-video.jpg";
+  if (url.includes("tiktokcdn") || url.includes("tikwm") || url.includes("muscdn")) {
+    return `/api/thumbnail?url=${encodeURIComponent(url)}`;
+  }
+  return url;
+}
+
 function formatNumber(n: number): string {
   if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
   if (n >= 1_000) return (n / 1_000).toFixed(1) + "K";
@@ -329,7 +337,7 @@ function CompetitorContent() {
                 >
                   <div className="relative aspect-[9/16] max-h-[220px] overflow-hidden bg-muted">
                     <img
-                      src={video.thumbnailUrl}
+                      src={getThumbnailUrl(video.thumbnailUrl)}
                       alt={video.description}
                       className="w-full h-full object-cover transition-transform duration-500"
                       loading="lazy"
