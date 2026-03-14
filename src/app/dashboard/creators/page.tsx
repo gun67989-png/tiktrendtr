@@ -13,6 +13,7 @@ import {
   Play,
 } from "lucide-react";
 import { useRouter } from "next/navigation";
+import PremiumGate from "@/components/PremiumGate";
 
 function formatNumber(n: number): string {
   if (n >= 1_000_000) return (n / 1_000_000).toFixed(1) + "M";
@@ -41,6 +42,14 @@ interface Creator {
 }
 
 export default function CreatorsPage() {
+  return (
+    <PremiumGate featureName="İçerik Üreticileri" requiredPlan="lite">
+      <CreatorsPageContent />
+    </PremiumGate>
+  );
+}
+
+function CreatorsPageContent() {
   const [creators, setCreators] = useState<Creator[]>([]);
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");

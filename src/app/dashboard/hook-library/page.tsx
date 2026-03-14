@@ -5,6 +5,7 @@ import { motion } from "framer-motion";
 import { Zap, Copy, Check, Search, Sparkles, TrendingUp } from "lucide-react";
 import OnboardingTour from "@/components/OnboardingTour";
 import { hookLibraryTourSteps } from "@/lib/onboarding";
+import PremiumGate from "@/components/PremiumGate";
 
 interface Hook {
   id: number;
@@ -34,6 +35,14 @@ const HOOKS: Hook[] = [
 const NICHES = ["Tümü", "Kozmetik", "Teknoloji", "Moda", "Yemek", "Fitness", "Eğitim", "Finans", "Seyahat", "Oyun"];
 
 export default function HookLibraryPage() {
+  return (
+    <PremiumGate featureName="Hook Kütüphanesi" requiredPlan="lite">
+      <HookLibraryPageContent />
+    </PremiumGate>
+  );
+}
+
+function HookLibraryPageContent() {
   const [search, setSearch] = useState("");
   const [selectedNiche, setSelectedNiche] = useState("Tümü");
   const [copiedId, setCopiedId] = useState<number | null>(null);

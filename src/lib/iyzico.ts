@@ -55,6 +55,7 @@ export interface CreateCheckoutParams {
   surname: string;
   ip: string;
   conversationId?: string;
+  price?: number;
 }
 
 export async function createSinglePaymentCheckout(
@@ -114,11 +115,12 @@ export async function createSinglePaymentCheckout(
 export async function createSubscriptionCheckout(
   params: CreateCheckoutParams
 ): Promise<Iyzipay.CheckoutFormInitializeResponse> {
+  const priceStr = String(params.price || 350);
   const request: Iyzipay.CheckoutFormInitializeRequest = {
     locale: Iyzipay.LOCALE.TR,
     conversationId: params.conversationId || `sub_${params.userId}_${Date.now()}`,
-    price: "299",
-    paidPrice: "299",
+    price: priceStr,
+    paidPrice: priceStr,
     currency: Iyzipay.CURRENCY.TRY,
     basketId: `basket_sub_${params.userId}_${Date.now()}`,
     paymentGroup: Iyzipay.PAYMENT_GROUP.SUBSCRIPTION,
@@ -149,11 +151,11 @@ export async function createSubscriptionCheckout(
     },
     basketItems: [
       {
-        id: "VALYZE_PRO_SUBSCRIPTION",
-        name: "Valyze Pro Aylık Abonelik",
+        id: `VALYZE_${priceStr}_SUBSCRIPTION`,
+        name: `Valyze Aylık Abonelik (₺${priceStr})`,
         category1: "Abonelik",
         itemType: Iyzipay.BASKET_ITEM_TYPE.VIRTUAL,
-        price: "299",
+        price: priceStr,
       },
     ],
   };

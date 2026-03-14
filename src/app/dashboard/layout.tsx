@@ -42,6 +42,11 @@ import WelcomeOverlay from "@/components/WelcomeOverlay";
 import LogoutOverlay from "@/components/LogoutOverlay";
 import OnboardingFlow from "@/components/OnboardingFlow";
 
+const LITE_PATHS = [
+  "/dashboard/creators",
+  "/dashboard/hook-library",
+];
+
 const PREMIUM_PATHS = [
   "/dashboard/sentiment",
   "/dashboard/ideas",
@@ -125,6 +130,7 @@ function SidebarNav({
         </p>
         {navItems.map((item) => {
           const active = isActive(item.href);
+          const isLiteLocked = !isPremium && LITE_PATHS.includes(item.href);
           return (
             <Button
               key={item.href}
@@ -140,7 +146,8 @@ function SidebarNav({
                 <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-primary rounded-r" />
               )}
               <item.icon className={`w-4 h-4 flex-shrink-0 ${active ? "text-primary" : ""}`} />
-              <span className="truncate">{item.label}</span>
+              <span className="flex-1 text-left truncate">{item.label}</span>
+              {isLiteLocked && <Lock className="w-3 h-3 text-muted-foreground" />}
             </Button>
           );
         })}

@@ -3,6 +3,12 @@ import { getSession } from "@/lib/auth";
 import { findUserById, createPayment } from "@/lib/db";
 import { createSubscriptionCheckout } from "@/lib/iyzico";
 
+const PLAN_PRICES: Record<string, number> = {
+  lite: 280,
+  standard: 350,
+  enterprise: 1250,
+};
+
 export async function POST(request: NextRequest) {
   try {
     const session = await getSession();
@@ -21,10 +27,14 @@ export async function POST(request: NextRequest) {
       new Date(user.subscription_end) > new Date()
     ) {
       return NextResponse.json(
-        { error: "Zaten aktif bir Pro aboneliğiniz var" },
+        { error: "Zaten aktif bir aboneliğiniz var" },
         { status: 400 }
       );
     }
+
+    const body = await request.json().catch(() => ({}));
+    const plan = (body.plan as string) || "standard";
+    const price = PLAN_PRICES[plan] || 350;
 
     const ip =
       request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ||
@@ -32,7 +42,8 @@ export async function POST(request: NextRequest) {
       "127.0.0.1";
 
     const nameParts = (user.username || "Kullanici").split(" ");
-    const conversationId = `sub_${user.id}_${Date.now()}`;
+    // Encode plan type in conversation_id so callback knows which plan
+    const conversationId = `sub_${plan}_${user.id}_${Date.now()}`;
 
     const result = await createSubscriptionCheckout({
       userId: user.id,
@@ -41,6 +52,7 @@ export async function POST(request: NextRequest) {
       surname: nameParts.slice(1).join(" ") || "Valyze",
       ip,
       conversationId,
+      price,
     });
 
     await createPayment({
@@ -48,7 +60,7 @@ export async function POST(request: NextRequest) {
       payment_type: "subscription",
       iyzico_token: result.token,
       conversation_id: conversationId,
-      amount: 299,
+      amount: price,
       currency: "TRY",
     });
 

@@ -36,6 +36,15 @@ export async function POST(request: NextRequest) {
       const now = new Date();
       const periodEnd = calculatePeriodEnd(now);
 
+      // Extract plan type from conversation_id: "sub_{plan}_{userId}_{timestamp}"
+      let planType: "lite" | "standard" | "enterprise" = "standard";
+      if (payment.conversation_id) {
+        const parts = payment.conversation_id.split("_");
+        if (parts.length >= 2 && ["lite", "standard", "enterprise"].includes(parts[1])) {
+          planType = parts[1] as "lite" | "standard" | "enterprise";
+        }
+      }
+
       // Ödeme kaydını güncelle
       await updatePayment(payment.id, {
         status: "success",
@@ -46,9 +55,9 @@ export async function POST(request: NextRequest) {
         card_type: paymentResult.cardType || null,
       });
 
-      // Kullanıcıyı premium yap
+      // Kullanıcıyı seçtiği plana yükselt
       await updateUser(payment.user_id, {
-        subscription_type: "standard",
+        subscription_type: planType,
         subscription_status: "active",
         subscription_start: now.toISOString(),
         subscription_end: periodEnd.toISOString(),

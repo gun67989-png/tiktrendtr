@@ -17,10 +17,16 @@ export default function PaymentPage() {
 function PaymentPageContent() {
   const searchParams = useSearchParams();
   const paymentType = searchParams.get("type") || "single";
+  const planParam = searchParams.get("plan") || "standard";
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [checkoutHtml, setCheckoutHtml] = useState<string | null>(null);
   const formRef = useRef<HTMLDivElement>(null);
+
+  const planPrices: Record<string, number> = { lite: 280, standard: 350, enterprise: 1250 };
+  const planNames: Record<string, string> = { lite: "Bireysel Lite", standard: "Bireysel Standart", enterprise: "Kurumsal" };
+  const selectedPrice = planPrices[planParam] || 350;
+  const selectedName = planNames[planParam] || "Pro Plan";
 
   const initCheckout = useCallback(async () => {
     try {
@@ -35,7 +41,7 @@ function PaymentPageContent() {
       const res = await fetch(endpoint, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ type: paymentType }),
+        body: JSON.stringify({ type: paymentType, plan: planParam }),
       });
 
       const data = await res.json();
@@ -58,7 +64,7 @@ function PaymentPageContent() {
     } finally {
       setLoading(false);
     }
-  }, [paymentType]);
+  }, [paymentType, planParam]);
 
   useEffect(() => {
     initCheckout();
@@ -108,12 +114,12 @@ function PaymentPageContent() {
           className="text-center mb-8"
         >
           <h1 className="text-2xl font-bold text-foreground mb-2">
-            {paymentType === "subscription" ? "Pro Abonelik" : "Pro Plan (30 Gün)"}
+            {selectedName}
           </h1>
           <p className="text-muted-foreground text-sm">
             {paymentType === "subscription"
-              ? "Aylık otomatik yenilenen abonelik - ₺299/ay"
-              : "Tek seferlik ödeme ile 30 gün Pro erişimi - ₺299"}
+              ? `Aylık otomatik yenilenen abonelik - ₺${selectedPrice}/ay`
+              : `Tek seferlik ödeme ile 30 gün erişimi - ₺${selectedPrice}`}
           </p>
         </motion.div>
 
@@ -125,12 +131,12 @@ function PaymentPageContent() {
           className="bg-card rounded-xl border border-border p-6 mb-8"
         >
           <div className="flex justify-between items-center mb-4">
-            <span className="text-sm text-muted-foreground">Valyze Pro Plan</span>
-            <span className="text-sm font-semibold text-foreground">₺299,00</span>
+            <span className="text-sm text-muted-foreground">Valyze {selectedName}</span>
+            <span className="text-sm font-semibold text-foreground">₺{selectedPrice},00</span>
           </div>
           <div className="border-t border-border pt-4 flex justify-between items-center">
             <span className="text-sm font-semibold text-foreground">Toplam</span>
-            <span className="text-lg font-bold text-primary">₺299,00</span>
+            <span className="text-lg font-bold text-primary">₺{selectedPrice},00</span>
           </div>
           {paymentType === "subscription" && (
             <p className="text-[11px] text-muted-foreground mt-3">
