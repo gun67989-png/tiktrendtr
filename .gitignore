@@ -51,3 +51,6 @@ next-env.d.ts
 .claude/
 
 .vercel
+python-scraper/.env
+python-scraper/__pycache__/
+python-scraper/**/__pycache__/
