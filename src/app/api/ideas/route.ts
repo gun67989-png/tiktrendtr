@@ -110,7 +110,7 @@ async function generateIdeasFromData(niche: string): Promise<GeneratedIdea[]> {
   const categories = NICHE_CATEGORY_MAP[niche] || [];
 
   // Fetch trending videos — prefer niche-matching but also get general trends
-  let query = supabase
+  const query = supabase
     .from("trending_videos")
     .select("hashtags, caption, sound_name, category, format, view_count, like_count, comment_count, share_count, duration")
     .order("view_count", { ascending: false })
