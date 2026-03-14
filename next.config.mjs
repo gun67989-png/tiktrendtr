@@ -9,7 +9,7 @@ const nextConfig = {
   typescript: {
     ignoreBuildErrors: true,
   },
-  output: "standalone",
+  // output: "standalone", // Only for Docker; Vercel uses its own build
   compress: true,
   images: {
     remotePatterns: [
