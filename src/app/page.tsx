@@ -22,6 +22,10 @@ import {
   Sparkles,
   Users,
   ChevronRight,
+  Swords,
+  Brain,
+  Crown,
+  Building2,
 } from "lucide-react";
 import Image from "next/image";
 import LogoLink from "@/components/LogoLink";
@@ -182,6 +186,37 @@ const useCases = [
     icon: Sparkles,
     title: "E-ticaret",
     desc: "Trend ürünleri ve viral pazarlama fırsatlarını erken keşfedin.",
+  },
+];
+
+const brandFeatures = [
+  {
+    title: "Rakip Savaş Odası",
+    desc: "Rakiplerinizin TikTok stratejilerini derinlemesine analiz edin. Hangi içerikleri paylaştıklarını, etkileşim oranlarını ve büyüme trendlerini takip edin.",
+    icon: Swords,
+    color: "text-primary",
+    bg: "bg-primary/10",
+  },
+  {
+    title: "Marka Sağlık Skoru",
+    desc: "AI destekli marka sağlık skoruyla markanızın TikTok performansını tek bir metrikle ölçün. Güçlü ve zayıf yönlerinizi keşfedin.",
+    icon: BarChart2,
+    color: "text-amber-400",
+    bg: "bg-amber-400/10",
+  },
+  {
+    title: "Kampanya Analizi",
+    desc: "Kampanya performansınızı gerçek zamanlı takip edin. ROI hesaplama, hedef karşılaştırma ve AI strateji önerileriyle kampanyalarınızı optimize edin.",
+    icon: Target,
+    color: "text-teal",
+    bg: "bg-teal/10",
+  },
+  {
+    title: "AI Strateji Danışmanı",
+    desc: "Yapay zeka destekli strateji önerileriyle markanızı büyütün. Rakip analizleri, trend tahminleri ve içerik önerileri tek panelde.",
+    icon: Brain,
+    color: "text-purple-400",
+    bg: "bg-purple-400/10",
   },
 ];
 
@@ -567,6 +602,66 @@ export default function LandingPage() {
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── Brand Section ── */}
+      <section className="relative py-16 md:py-24 px-4 sm:px-6 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-amber-500/[0.03] via-transparent to-purple-500/[0.03]" />
+        <div className="absolute top-1/4 left-0 w-72 h-72 bg-amber-500/5 rounded-full blur-[120px]" />
+        <div className="absolute bottom-1/4 right-0 w-72 h-72 bg-purple-500/5 rounded-full blur-[120px]" />
+        <div className="max-w-5xl mx-auto relative z-10">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10 md:mb-14">
+            <div className="inline-flex items-center gap-2 bg-amber-500/10 border border-amber-500/20 text-amber-400 text-xs px-3 py-1.5 rounded-full mb-4">
+              <Crown className="w-3 h-3" />
+              Kurumsal Çözümler
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">
+              Markalar İçin{" "}
+              <span className="bg-gradient-to-r from-amber-400 to-amber-300 bg-clip-text text-transparent">Güçlü Araçlar</span>
+            </h2>
+            <p className="text-sm text-muted-foreground max-w-lg mx-auto">
+              TikTok&apos;ta marka bilinirliğinizi artırın, rakiplerinizi analiz edin ve AI destekli strateji önerileriyle kampanyalarınızı optimize edin.
+            </p>
+          </motion.div>
+
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 md:gap-5 mb-10">
+            {brandFeatures.map((f, i) => (
+              <motion.div key={f.title} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
+                className="group relative bg-card border border-border rounded-xl p-5 md:p-6 hover:border-amber-500/30 hover:shadow-lg hover:shadow-amber-500/5 transition-all duration-300">
+                <div className="absolute inset-0 bg-gradient-to-br from-amber-500/[0.02] to-transparent rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-300" />
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+                <div className="relative flex gap-4">
+                  <div className={`w-11 h-11 rounded-xl ${f.bg} flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform duration-300`}>
+                    <f.icon className={`w-5 h-5 ${f.color}`} />
+                  </div>
+                  <div>
+                    <h3 className="text-sm md:text-base font-semibold text-foreground mb-1.5">{f.title}</h3>
+                    <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+                  </div>
+                </div>
+              </motion.div>
+            ))}
+          </div>
+
+          {/* Brand CTA */}
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
+            className="relative overflow-hidden rounded-xl border border-amber-500/20 bg-gradient-to-r from-amber-500/5 via-card to-purple-500/5 p-6 md:p-8">
+            <div className="absolute -top-10 -right-10 w-40 h-40 bg-amber-500/10 rounded-full blur-3xl" />
+            <div className="relative z-10 flex flex-col sm:flex-row items-center gap-6">
+              <div className="bg-amber-500/10 p-4 rounded-2xl">
+                <Building2 className="w-8 h-8 text-amber-400" />
+              </div>
+              <div className="flex-1 text-center sm:text-left">
+                <h3 className="text-lg font-bold text-foreground mb-1">Markanız İçin Özel Çözüm</h3>
+                <p className="text-sm text-muted-foreground">Kurumsal plana geçerek tüm marka araçlarına erişin. Rakip analizi, AI strateji ve detaylı raporlar dahil.</p>
+              </div>
+              <Link href="/pricing" className="inline-flex items-center gap-2 bg-amber-500 text-white px-6 py-3 rounded-xl hover:bg-amber-600 transition-colors font-medium text-sm whitespace-nowrap">
+                <Crown className="w-4 h-4" />
+                Kurumsal Plan
+              </Link>
+            </div>
+          </motion.div>
         </div>
       </section>
 

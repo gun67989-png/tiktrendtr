@@ -64,7 +64,7 @@ const navItems = [
 ];
 
 const premiumNavItems = [
-  { href: "/dashboard/sentiment", label: "Duygu Analizi", icon: Heart },
+  { href: "/dashboard/sentiment", label: "Yorum Analizi", icon: Heart },
   { href: "/dashboard/ideas", label: "İçerik Fikirleri", icon: Zap },
   { href: "/dashboard/growth", label: "Büyüme Stratejisi", icon: TrendingUp },
   { href: "/dashboard/predictions", label: "Trend Tahminleri", icon: Target },

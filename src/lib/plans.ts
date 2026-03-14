@@ -101,6 +101,7 @@ export const PLANS: Record<PlanType, PlanConfig> = {
       "/dashboard/hooks",
       "/dashboard/reports",
       "/dashboard/daily-report",
+      "/dashboard/competitor",
     ],
     badge: "Standart",
     badgeColor: "text-teal",
