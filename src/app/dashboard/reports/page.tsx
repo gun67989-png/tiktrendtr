@@ -196,6 +196,10 @@ function ReportsContent() {
                   alt=""
                   className="w-full h-full object-cover"
                   loading="lazy"
+                  onError={(e) => {
+                    const t = e.target as HTMLImageElement;
+                    if (!t.dataset.retried) { t.dataset.retried = "1"; t.src = `https://picsum.photos/seed/${"def"}/400/700`; }
+                  }}
                 />
               </div>
               <div className="flex-1 min-w-0">

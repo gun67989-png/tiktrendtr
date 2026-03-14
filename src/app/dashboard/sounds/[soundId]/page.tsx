@@ -192,6 +192,10 @@ export default function SoundDetailPage() {
                   alt={video.description}
                   className="w-full h-full object-cover transition-transform duration-500"
                   loading="lazy"
+                  onError={(e) => {
+                    const t = e.target as HTMLImageElement;
+                    if (!t.dataset.retried) { t.dataset.retried = "1"; t.src = `https://picsum.photos/seed/${video.id?.slice(-6) || "def"}/400/700`; }
+                  }}
                 />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-transparent to-transparent" />
                 <div className="absolute top-2 left-2 bg-primary/90 text-white text-[9px] font-bold px-1.5 py-0.5 rounded">

@@ -862,7 +862,8 @@ export interface SoundDetail {
 
 export function generateSoundDetail(soundId: string): SoundDetail | null {
   const sounds = generateSounds();
-  const sound = sounds.find((s) => s.id === soundId);
+  const decoded = decodeURIComponent(soundId);
+  const sound = sounds.find((s) => s.id === soundId || s.name === decoded);
   if (!sound) return null;
 
   const usageHistory = Array.from({ length: 30 }, (_, i) => {

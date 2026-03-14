@@ -98,6 +98,13 @@ export default function VideoModal({
                 src={getThumbnailUrl(video.thumbnailUrl)}
                 alt={video.description}
                 className="w-full aspect-[9/16] max-h-[400px] object-cover"
+                onError={(e) => {
+                  const target = e.target as HTMLImageElement;
+                  if (!target.dataset.retried) {
+                    target.dataset.retried = "1";
+                    target.src = `https://picsum.photos/seed/${video.id?.slice(-6) || "default"}/400/700`;
+                  }
+                }}
               />
               <div className="absolute top-3 left-3">
                 <div

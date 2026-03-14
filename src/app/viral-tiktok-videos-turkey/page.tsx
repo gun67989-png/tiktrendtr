@@ -195,6 +195,10 @@ export default function ViralVideosPage() {
                       alt={`${video.creator} viral TikTok video`}
                       className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
                       loading="lazy"
+                      onError={(e) => {
+                        const t = e.target as HTMLImageElement;
+                        if (!t.dataset.retried) { t.dataset.retried = "1"; t.src = `https://picsum.photos/seed/${video.id?.slice(-6) || "def"}/400/700`; }
+                      }}
                     />
                     <div className="absolute top-2 left-2 bg-black/70 text-white text-[10px] px-2 py-0.5 rounded-full flex items-center gap-1">
                       <Eye className="w-2.5 h-2.5" />

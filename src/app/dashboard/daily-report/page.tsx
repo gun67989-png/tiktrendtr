@@ -286,7 +286,7 @@ function DailyReportContent() {
             >
               <span className="text-lg font-bold text-muted-foreground w-6 text-right shrink-0">{i + 1}</span>
               <div className="w-10 h-14 rounded-lg overflow-hidden bg-muted shrink-0">
-                <img src={getThumbnailUrl(video.thumbnailUrl)} alt="" className="w-full h-full object-cover" loading="lazy" />
+                <img src={getThumbnailUrl(video.thumbnailUrl)} alt="" className="w-full h-full object-cover" loading="lazy" onError={(e) => { const t = e.target as HTMLImageElement; if (!t.dataset.retried) { t.dataset.retried = "1"; t.src = `https://picsum.photos/seed/${video.id?.slice(-6) || "def"}/400/700`; } }} />
               </div>
               <div className="flex-1 min-w-0">
                 <p className="text-xs text-foreground font-medium truncate">@{video.creator}</p>
