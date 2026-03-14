@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { calcViralScore, VIRAL_THRESHOLDS } from "@/lib/data";
+import { calcViralScore } from "@/lib/data";
 import { buildTiktokUrl } from "@/lib/tiktok-scraper";
 import { cached, cacheKey } from "@/lib/cache";
 import { apiLogger } from "@/lib/logger";

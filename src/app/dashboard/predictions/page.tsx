@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Target, TrendingUp, Clock, Hash, Music, Play } from "lucide-react";
 import PremiumGate from "@/components/PremiumGate";
