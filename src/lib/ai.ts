@@ -122,4 +122,55 @@ Sadece JSON döndür.`;
   return askAI(prompt);
 }
 
+/**
+ * Analyze comment statistics and generate AI insights
+ */
+export async function analyzeCommentStats(stats: {
+  totalComments: number;
+  totalViews: number;
+  avgCommentRate: number;
+  videoCount: number;
+  categoryStats: { category: string; totalComments: number; avgCommentRate: number; videoCount: number }[];
+  topCommented: { comments: number; views: number; rate: number; category: string }[];
+}): Promise<string> {
+  const catSummary = stats.categoryStats
+    .slice(0, 8)
+    .map((c) => `${c.category}: ${c.totalComments} yorum, %${c.avgCommentRate} oran, ${c.videoCount} video`)
+    .join("\n");
+
+  const topVideos = stats.topCommented
+    .slice(0, 5)
+    .map((v, i) => `${i + 1}. ${v.category || "Genel"}: ${v.comments} yorum, ${v.views} görüntülenme, %${v.rate} oran`)
+    .join("\n");
+
+  const prompt = `Sen bir TikTok yorum analizi uzmanısın. Aşağıdaki Türkiye TikTok trend verilerini analiz et ve Türkçe içgörüler üret.
+
+Genel İstatistikler:
+- Toplam yorum: ${stats.totalComments.toLocaleString()}
+- Toplam görüntülenme: ${stats.totalViews.toLocaleString()}
+- Ortalama yorum oranı: %${stats.avgCommentRate}
+- Analiz edilen video: ${stats.videoCount}
+
+Kategori Bazlı Dağılım:
+${catSummary}
+
+En Çok Yorum Alan Videolar:
+${topVideos}
+
+JSON formatında döndür:
+{
+  "positive_percent": number (yorum oranı ve etkileşime göre tahmin),
+  "negative_percent": number,
+  "neutral_percent": number,
+  "summary": "Genel yorum trendi analizi (2-3 cümle, Türkçe)",
+  "top_themes": [{"topic": "konu adı", "count": tahmini_yorum_sayısı, "sentiment": "positive"|"negative"|"neutral"}],
+  "category_sentiments": [{"name": "kategori", "positive": number, "negative": number, "neutral": number}],
+  "positive_examples": ["Olası pozitif yorum örneği 1", "örnek 2", "örnek 3"],
+  "negative_examples": ["Olası negatif yorum örneği 1", "örnek 2"]
+}
+Sadece JSON döndür.`;
+
+  return askAI(prompt);
+}
+
 export const isAIConfigured = !!(geminiKey || anthropicKey);

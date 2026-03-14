@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { verifySession } from "@/lib/auth";
-import { analyzeSentiment, isAIConfigured } from "@/lib/ai";
+import { analyzeSentiment, analyzeCommentStats, isAIConfigured } from "@/lib/ai";
 
 export async function POST(request: NextRequest) {
   try {
@@ -24,9 +24,18 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "AI servisi yapılandırılmamış" }, { status: 503 });
     }
 
-    const { comments } = await request.json();
+    const body = await request.json();
+
+    // Stats-based analysis mode
+    if (body.stats) {
+      const result = await analyzeCommentStats(body.stats);
+      return NextResponse.json({ result });
+    }
+
+    // Comment text analysis mode
+    const { comments } = body;
     if (!comments || !Array.isArray(comments)) {
-      return NextResponse.json({ error: "Yorumlar gerekli" }, { status: 400 });
+      return NextResponse.json({ error: "Yorumlar veya istatistikler gerekli" }, { status: 400 });
     }
 
     const result = await analyzeSentiment(comments);
