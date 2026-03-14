@@ -11,10 +11,13 @@ export interface User {
   password: string;
   role: "admin" | "user";
   disabled: boolean;
-  subscription_type: "free" | "premium";
+  subscription_type: "free" | "lite" | "standard" | "enterprise";
   subscription_status: "active" | "expired" | "cancelled" | null;
   subscription_start: string | null;
   subscription_end: string | null;
+  subscription_niche: string | null;
+  subscription_role: "brand" | "individual" | null;
+  onboarding_completed: boolean;
   oauth_provider: "google" | "facebook" | "tiktok" | null;
   oauth_provider_id: string | null;
   created_at: string;
@@ -78,10 +81,13 @@ export async function seedDefaultAdmin(): Promise<void> {
         password: hashedPassword,
         role: "admin",
         disabled: false,
-        subscription_type: "premium",
+        subscription_type: "enterprise",
         subscription_status: "active",
         subscription_start: new Date().toISOString(),
         subscription_end: null,
+        subscription_niche: null,
+        subscription_role: null,
+        onboarding_completed: true,
         oauth_provider: null,
         oauth_provider_id: null,
         created_at: new Date().toISOString(),
@@ -212,6 +218,9 @@ export async function createUser(data: {
     subscription_status: null,
     subscription_start: null,
     subscription_end: null,
+    subscription_niche: null,
+    subscription_role: null,
+    onboarding_completed: false,
     oauth_provider: null,
     oauth_provider_id: null,
     created_at: new Date().toISOString(),
@@ -223,7 +232,7 @@ export async function createUser(data: {
 
 export async function updateUser(
   id: string,
-  data: Partial<Pick<User, "role" | "disabled" | "username" | "email" | "subscription_type" | "subscription_status" | "subscription_start" | "subscription_end" | "oauth_provider" | "oauth_provider_id">>
+  data: Partial<Pick<User, "role" | "disabled" | "username" | "email" | "subscription_type" | "subscription_status" | "subscription_start" | "subscription_end" | "subscription_niche" | "subscription_role" | "onboarding_completed" | "oauth_provider" | "oauth_provider_id">>
 ): Promise<User | null> {
   if (isSupabaseConfigured && supabase) {
     if (data.email) {
@@ -401,6 +410,9 @@ export async function createOAuthUser(data: {
     subscription_status: null,
     subscription_start: null,
     subscription_end: null,
+    subscription_niche: null,
+    subscription_role: null,
+    onboarding_completed: false,
     oauth_provider: data.oauth_provider,
     oauth_provider_id: data.oauth_provider_id,
     created_at: new Date().toISOString(),
@@ -687,14 +699,14 @@ export async function updateSubscription(
   return subs[index];
 }
 
-export async function getExpiredPremiumUsers(): Promise<User[]> {
+export async function getExpiredPaidUsers(): Promise<User[]> {
   const now = new Date().toISOString();
 
   if (isSupabaseConfigured && supabase) {
     const { data } = await supabase
       .from("users")
       .select("*")
-      .eq("subscription_type", "premium")
+      .neq("subscription_type", "free")
       .lt("subscription_end", now)
       .not("subscription_end", "is", null);
     return (data || []) as User[];
@@ -702,7 +714,7 @@ export async function getExpiredPremiumUsers(): Promise<User[]> {
 
   return getLocalUsers().filter(
     (u) =>
-      u.subscription_type === "premium" &&
+      u.subscription_type !== "free" &&
       u.subscription_end !== null &&
       new Date(u.subscription_end) < new Date()
   );

@@ -12,7 +12,10 @@ export interface SessionPayload {
   username: string;
   email: string;
   role: "admin" | "user";
-  subscriptionType: "free" | "premium";
+  subscriptionType: "free" | "lite" | "standard" | "enterprise";
+  subscriptionNiche: string | null;
+  subscriptionRole: "brand" | "individual" | null;
+  onboardingCompleted: boolean;
   iat: number;
   [key: string]: unknown;
 }
@@ -34,7 +37,10 @@ export async function createSession(user: {
   username: string;
   email: string;
   role: "admin" | "user";
-  subscription_type?: "free" | "premium";
+  subscription_type?: "free" | "lite" | "standard" | "enterprise";
+  subscription_niche?: string | null;
+  subscription_role?: "brand" | "individual" | null;
+  onboarding_completed?: boolean;
 }): Promise<string> {
   const token = await new SignJWT({
     userId: user.id,
@@ -42,6 +48,9 @@ export async function createSession(user: {
     email: user.email,
     role: user.role,
     subscriptionType: user.subscription_type || "free",
+    subscriptionNiche: user.subscription_niche || null,
+    subscriptionRole: user.subscription_role || null,
+    onboardingCompleted: user.onboarding_completed ?? false,
     iat: Date.now(),
   } as SessionPayload)
     .setProtectedHeader({ alg: "HS256" })
@@ -81,6 +90,9 @@ export async function refreshSession(userId: string): Promise<string | null> {
     email: user.email,
     role: user.role,
     subscription_type: user.subscription_type,
+    subscription_niche: user.subscription_niche,
+    subscription_role: user.subscription_role,
+    onboarding_completed: user.onboarding_completed,
   });
 
   // Cookie'yi güncelle

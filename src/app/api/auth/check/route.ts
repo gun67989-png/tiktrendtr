@@ -21,6 +21,9 @@ export async function GET(request: NextRequest) {
       email: session.email,
       role: session.role,
       subscriptionType: session.subscriptionType || "free",
+      subscriptionNiche: session.subscriptionNiche || null,
+      subscriptionRole: session.subscriptionRole || null,
+      onboardingCompleted: session.onboardingCompleted ?? false,
     },
   });
 }

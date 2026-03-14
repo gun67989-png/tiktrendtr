@@ -17,7 +17,7 @@ export async function GET() {
     const subscription = await getSubscriptionByUserId(session.userId);
 
     const isActive =
-      user.subscription_type === "premium" &&
+      user.subscription_type !== "free" &&
       user.subscription_status === "active" &&
       (!user.subscription_end || new Date(user.subscription_end) > new Date());
 

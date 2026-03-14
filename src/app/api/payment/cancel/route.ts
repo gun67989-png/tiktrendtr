@@ -19,7 +19,7 @@ export async function POST() {
       return NextResponse.json({ error: "Kullanıcı bulunamadı" }, { status: 404 });
     }
 
-    if (user.subscription_type !== "premium") {
+    if (user.subscription_type === "free") {
       return NextResponse.json(
         { error: "Aktif bir aboneliğiniz yok" },
         { status: 400 }

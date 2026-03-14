@@ -53,7 +53,7 @@ export default function PrivacyPolicyPage() {
                 <p><strong className="text-foreground">Web Sitesi:</strong> valyze.vercel.app</p>
               </div>
               <p className="mt-3">
-                ValyzeTR, TikTok trend analizi hizmeti sunan dijital bir SaaS (Hizmet Olarak Yazılım) platformudur.
+                ValyzeTR, TikTok trend analizi hizmeti sunan dijital bir SaaS hizmeti (dijital SaaS hizmeti — Hizmet Olarak Yazılım) platformudur.
                 Platformumuz üzerinden herhangi bir fiziksel ürün satışı veya kargo/nakliye hizmeti sunulmamaktadır.
               </p>
             </section>
@@ -65,7 +65,7 @@ export default function PrivacyPolicyPage() {
               <ul className="list-disc list-inside space-y-1 ml-2">
                 <li>Üyelik hesabınızın oluşturulması, doğrulanması ve yönetimi</li>
                 <li>Platform hizmetlerinin sunulması ve işlevselliğinin sağlanması</li>
-                <li>Abonelik planlarının (Ücretsiz Plan / Pro Plan — 299 TL/ay, KDV dahil) yönetimi</li>
+                <li>Abonelik planlarının (Ücretsiz Plan / Bireysel Lite ₺280/ay / Bireysel Standart ₺350/ay / Kurumsal ₺1.250/ay, KDV dahil) yönetimi</li>
                 <li>iyzico altyapısı üzerinden ödeme işlemlerinin güvenli şekilde gerçekleştirilmesi</li>
                 <li>Müşteri destek taleplerinin karşılanması ve iletişim faaliyetlerinin yürütülmesi</li>
                 <li>Platform kullanım istatistiklerinin oluşturulması ve hizmet kalitesinin iyileştirilmesi</li>
@@ -260,7 +260,7 @@ export default function PrivacyPolicyPage() {
 
               <h3 className="font-semibold text-foreground mb-2">8.2 Ödeme Bilgileri</h3>
               <p className="mb-3">
-                Pro Plan aboneliği (299 TL/ay, KDV dahil) için ödeme işlemleri tamamen <strong className="text-foreground">iyzico Ödeme Hizmetleri A.Ş.</strong> altyapısı
+                Ücretli plan abonelikleri (Bireysel Lite ₺280/ay, Bireysel Standart ₺350/ay, Kurumsal ₺1.250/ay — KDV dahil) için ödeme işlemleri tamamen <strong className="text-foreground">iyzico Ödeme Hizmetleri A.Ş.</strong> altyapısı
                 üzerinden gerçekleştirilmektedir. Kredi kartı numarası, son kullanma tarihi ve CVV gibi hassas
                 ödeme bilgileri ValyzeTR sunucularında saklanmaz. Bu bilgiler doğrudan PCI DSS uyumlu iyzico
                 sisteminde işlenir. ValyzeTR yalnızca abonelik durumu, plan türü ve ödeme başarı/başarısızlık
@@ -456,6 +456,13 @@ export default function PrivacyPolicyPage() {
                   </ul>
                 </div>
               </div>
+              <div className="bg-card border border-border rounded-lg p-4">
+                  <h3 className="font-semibold text-foreground mb-1">Plana Göre Veri Saklama</h3>
+                  <p>Dijital SaaS hizmeti kapsamında, kullanıcı verileri abonelik planına göre farklı sürelerde saklanabilir.
+                    Ücretsiz Plan kullanıcılarının verileri, 6 ay hareketsizlik sonrasında anonim hale getirilebilir.
+                    Ücretli plan (Bireysel Lite, Bireysel Standart, Kurumsal) kullanıcılarının verileri, abonelik süresince
+                    ve abonelik sonlandırıldıktan sonra 30 gün boyunca tam olarak saklanır.</p>
+                </div>
               <p className="mt-3">
                 Saklama süresi dolan veriler, periyodik imha süreçleri kapsamında silinir, yok edilir veya
                 anonim hale getirilir.

@@ -32,10 +32,10 @@ export default function IptalVeIadePage() {
             <section>
               <h2 className="text-lg font-semibold text-foreground mb-3">1. Genel Bilgi</h2>
               <p className="mb-3">
-                ValyzeTR (bundan sonra &quot;Platform&quot; olarak anılacaktır), dijital bir SaaS (Software as a Service — Hizmet Olarak Yazılım) platformu olarak Türkiye pazarına yönelik TikTok trend analizi hizmeti sunmaktadır. Platform üzerinden sunulan tüm hizmetler, tamamen dijital ortamda ve elektronik olarak anında ifa edilen hizmetlerdir; fiziksel bir ürün teslimatı veya kargo söz konusu değildir.
+                ValyzeTR (bundan sonra &quot;Platform&quot; olarak anılacaktır), dijital bir SaaS hizmeti (dijital SaaS hizmeti — Software as a Service, Hizmet Olarak Yazılım) olarak Türkiye pazarına yönelik TikTok trend analizi hizmeti sunmaktadır. Platform üzerinden sunulan tüm hizmetler, tamamen dijital ortamda ve elektronik olarak anında ifa edilen hizmetlerdir; fiziksel bir ürün teslimatı veya kargo söz konusu değildir. Dijital SaaS hizmetlerinde cayma hakkı ve iade koşulları, fiziksel ürünlerden farklı yasal düzenlemelere tabidir.
               </p>
               <p className="mb-3">
-                İşbu İptal ve İade Koşulları, Platform&apos;a üye olan kullanıcıların Pro Plan aboneliği kapsamında gerçekleştirdikleri ödemeler için geçerli olan iptal, cayma hakkı ve iade prosedürlerini düzenlemektedir. Ücretsiz (Free) Plan kullanıcıları herhangi bir ödeme yapmadığından, bu koşullar Ücretsiz Plan kullanıcıları için geçerli değildir.
+                İşbu İptal ve İade Koşulları, Platform&apos;a üye olan kullanıcıların ücretli abonelik planları (Bireysel Lite, Bireysel Standart, Kurumsal) kapsamında gerçekleştirdikleri ödemeler için geçerli olan iptal, cayma hakkı ve iade prosedürlerini düzenlemektedir. Ücretsiz (Free) Plan kullanıcıları herhangi bir ödeme yapmadığından, bu koşullar Ücretsiz Plan kullanıcıları için geçerli değildir.
               </p>
               <p className="mb-3">
                 Platform üzerindeki tüm ödemeler, iyzico güvenli ödeme altyapısı aracılığıyla işlenmektedir. Kullanıcıların kredi kartı ve banka kartı bilgileri iyzico tarafından PCI DSS standartlarına uygun olarak korunmakta olup, ValyzeTR tarafından saklanmamaktadır.
@@ -43,8 +43,10 @@ export default function IptalVeIadePage() {
               <div className="bg-muted border border-border rounded-xl p-4">
                 <h3 className="text-sm font-semibold text-foreground mb-2">Mevcut Abonelik Planları:</h3>
                 <ul className="list-disc list-inside space-y-1 ml-2">
-                  <li><strong className="text-foreground">Ücretsiz Plan:</strong> Temel özellikler, ücret yok.</li>
-                  <li><strong className="text-foreground">Pro Plan:</strong> Tüm premium özellikler dahil, aylık 299 TL (KDV dahil).</li>
+                  <li><strong className="text-foreground">Ücretsiz (Free) Plan:</strong> Temel özellikler, ücret yok (₺0).</li>
+                  <li><strong className="text-foreground">Bireysel Lite Plan:</strong> Genişletilmiş özellikler, aylık ₺280 (KDV dahil).</li>
+                  <li><strong className="text-foreground">Bireysel Standart Plan:</strong> Tüm bireysel özellikler dahil, aylık ₺350 (KDV dahil).</li>
+                  <li><strong className="text-foreground">Kurumsal Plan:</strong> Ekip yönetimi ve öncelikli destek dahil, aylık ₺1.250 (KDV dahil).</li>
                 </ul>
               </div>
             </section>
@@ -70,7 +72,7 @@ export default function IptalVeIadePage() {
                 ValyzeTR&apos;nin sunduğu dijital analiz hizmeti, abonelik ödemesinin tamamlanmasının ardından derhal ve otomatik olarak kullanıcının erişimine açılmaktadır. Bu nedenle Platform hizmetleri, yukarıda belirtilen kanun ve yönetmelik maddeleri kapsamında &quot;anında ifa edilen hizmetler&quot; ve &quot;anında teslim edilen gayri maddi mallar&quot; kategorisine girmekte olup, yasal cayma hakkı istisnası kapsamındadır.
               </p>
               <p>
-                Kullanıcılar, Pro Plan aboneliğini başlatırken bu durumu kabul etmiş sayılır. Ancak ValyzeTR, müşteri memnuniyetini ön planda tutarak aşağıda detaylandırılan iyi niyet iade politikasını uygulamaktadır.
+                Kullanıcılar, ücretli plan aboneliğini başlatırken bu durumu kabul etmiş sayılır. Ancak ValyzeTR, müşteri memnuniyetini ön planda tutarak aşağıda detaylandırılan iyi niyet iade politikasını uygulamaktadır.
               </p>
             </section>
 
@@ -78,7 +80,7 @@ export default function IptalVeIadePage() {
             <section>
               <h2 className="text-lg font-semibold text-foreground mb-3">3. Abonelik İptali</h2>
               <p className="mb-3">
-                Kullanıcılar, Pro Plan aboneliklerini istedikleri zaman, herhangi bir gerekçe belirtmeksizin ve cezai şart ödenmeksizin iptal edebilirler. Abonelik iptali aşağıdaki yöntemlerle gerçekleştirilebilir:
+                Kullanıcılar, ücretli plan aboneliklerini (Bireysel Lite, Bireysel Standart, Kurumsal) istedikleri zaman, herhangi bir gerekçe belirtmeksizin ve cezai şart ödenmeksizin iptal edebilirler. Abonelik iptali aşağıdaki yöntemlerle gerçekleştirilebilir:
               </p>
               <div className="bg-muted border border-border rounded-xl p-4 mb-3">
                 <h3 className="text-sm font-semibold text-foreground mb-2">İptal Yöntemleri:</h3>
@@ -89,14 +91,14 @@ export default function IptalVeIadePage() {
               </div>
               <h3 className="text-sm font-semibold text-foreground mb-2">İptal Sonrası Geçerlilik:</h3>
               <ul className="list-disc list-inside space-y-1 ml-2 mb-3">
-                <li>İptal işlemi, mevcut fatura döneminin sonunda geçerli olur. Dönem ortasında yapılan iptallerde, dönem sonuna kadar Pro Plan özellikleri aktif kalır.</li>
+                <li>İptal işlemi, mevcut fatura döneminin sonunda geçerli olur. Dönem ortasında yapılan iptallerde, dönem sonuna kadar ücretli plan özellikleri aktif kalır.</li>
                 <li>Mevcut fatura dönemi sona erdikten sonra bir sonraki dönem için otomatik yenileme yapılmaz ve herhangi bir ücret tahsil edilmez.</li>
                 <li>İptal edilen abonelikler, fatura döneminin sona ermesiyle birlikte otomatik olarak Ücretsiz Plan&apos;a düşürülür.</li>
-                <li>Ücretsiz Plan&apos;a geçişle birlikte, Pro Plan&apos;a özel premium özellikler (gelişmiş analitik, detaylı raporlar, içerik önerileri vb.) devre dışı kalır.</li>
-                <li>Ücretsiz Plan&apos;daki verileriniz ve hesabınız korunmaya devam eder. Dilediğiniz zaman tekrar Pro Plan&apos;a yükseltme yapabilirsiniz.</li>
+                <li>Ücretsiz Plan&apos;a geçişle birlikte, ücretli planlara özel özellikler (gelişmiş analitik, detaylı raporlar, içerik önerileri vb.) devre dışı kalır.</li>
+                <li>Ücretsiz Plan&apos;daki verileriniz ve hesabınız korunmaya devam eder. Dilediğiniz zaman tekrar ücretli bir plana yükseltme yapabilirsiniz.</li>
               </ul>
               <p>
-                İptal işlemi geri alınamaz; ancak kullanıcılar istedikleri zaman yeniden Pro Plan aboneliği başlatabilirler.
+                İptal işlemi geri alınamaz; ancak kullanıcılar istedikleri zaman yeniden ücretli bir plan aboneliği başlatabilirler.
               </p>
             </section>
 
@@ -109,13 +111,13 @@ export default function IptalVeIadePage() {
               <div className="bg-muted border border-border rounded-xl p-4 mb-3">
                 <h3 className="text-sm font-semibold text-foreground mb-2">4.1. İlk Abonelik İadesi (7 Günlük İyi Niyet İadesi)</h3>
                 <p className="mb-2">
-                  İlk kez Pro Plan aboneliği başlatan kullanıcılar, abonelik başlangıç tarihinden itibaren 7 (yedi) takvim günü içinde tam iade talep edebilirler. Bu hak, yalnızca ilk abonelik dönemi için geçerlidir ve her kullanıcı tarafından yalnızca bir kez kullanılabilir.
+                  İlk kez ücretli plan aboneliği (Bireysel Lite, Bireysel Standart veya Kurumsal) başlatan kullanıcılar, abonelik başlangıç tarihinden itibaren 7 (yedi) takvim günü içinde tam iade talep edebilirler. Bu hak, yalnızca ilk abonelik dönemi için geçerlidir ve her kullanıcı tarafından yalnızca bir kez kullanılabilir.
                 </p>
                 <ul className="list-disc list-inside space-y-1 ml-2">
                   <li>İade talebi, abonelik başlangıcından itibaren 7 takvim günü içinde yapılmalıdır.</li>
-                  <li>Daha önce Pro Plan aboneliği başlatıp iptal etmiş ve tekrar abone olan kullanıcılar bu haktan yararlanamaz.</li>
+                  <li>Daha önce ücretli plan aboneliği başlatıp iptal etmiş ve tekrar abone olan kullanıcılar bu haktan yararlanamaz.</li>
                   <li>İade onaylandığında abonelik derhal iptal edilir ve hesap Ücretsiz Plan&apos;a düşürülür.</li>
-                  <li>İade tutarı, ödenen abonelik ücretinin tamamıdır (299 TL).</li>
+                  <li>İade tutarı, ödenen abonelik ücretinin tamamıdır (Bireysel Lite: ₺280, Bireysel Standart: ₺350, Kurumsal: ₺1.250).</li>
                 </ul>
               </div>
               <div className="bg-muted border border-border rounded-xl p-4 mb-3">
@@ -208,7 +210,7 @@ export default function IptalVeIadePage() {
                 </ol>
               </div>
               <p>
-                İade onaylandığında, kullanıcının Pro Plan aboneliği derhal sonlandırılır ve hesap Ücretsiz Plan&apos;a düşürülür.
+                İade onaylandığında, kullanıcının ücretli plan aboneliği derhal sonlandırılır ve hesap Ücretsiz Plan&apos;a düşürülür.
               </p>
             </section>
 
@@ -216,14 +218,14 @@ export default function IptalVeIadePage() {
             <section>
               <h2 className="text-lg font-semibold text-foreground mb-3">7. Fiyat Değişiklikleri</h2>
               <p className="mb-3">
-                ValyzeTR, abonelik ücretlerinde değişiklik yapma hakkını saklı tutar. Fiyat değişikliklerinde aşağıdaki kurallar uygulanır:
+                ValyzeTR, tüm ücretli planların (Bireysel Lite, Bireysel Standart, Kurumsal) abonelik ücretlerinde değişiklik yapma hakkını saklı tutar. Fiyat değişikliklerinde aşağıdaki kurallar uygulanır:
               </p>
               <ul className="list-disc list-inside space-y-2 ml-2">
                 <li>
                   <strong className="text-foreground">Önceden Bildirim:</strong> Abonelik ücretlerindeki herhangi bir değişiklik, yürürlüğe girmesinden en az 30 (otuz) takvim günü önce kullanıcılara kayıtlı e-posta adresleri üzerinden ve/veya Platform içi bildirim yoluyla duyurulur.
                 </li>
                 <li>
-                  <strong className="text-foreground">Mevcut Abone Koruması:</strong> Fiyat artışı durumunda, aktif Pro Plan aboneleri mevcut fatura dönemlerinin sonuna kadar eski (mevcut) fiyattan yararlanmaya devam eder. Yeni fiyat, bir sonraki yenileme döneminden itibaren uygulanır.
+                  <strong className="text-foreground">Mevcut Abone Koruması:</strong> Fiyat artışı durumunda, aktif ücretli plan aboneleri mevcut fatura dönemlerinin sonuna kadar eski (mevcut) fiyattan yararlanmaya devam eder. Yeni fiyat, bir sonraki yenileme döneminden itibaren uygulanır.
                 </li>
                 <li>
                   <strong className="text-foreground">İptal Hakkı:</strong> Fiyat değişikliğini kabul etmeyen kullanıcılar, yeni fiyatın yürürlüğe gireceği tarihten önce aboneliklerini herhangi bir cezai şart ödemeksizin ücretsiz olarak iptal edebilirler.
@@ -238,7 +240,7 @@ export default function IptalVeIadePage() {
             <section>
               <h2 className="text-lg font-semibold text-foreground mb-3">8. Abonelik Yenileme</h2>
               <p className="mb-3">
-                Pro Plan abonelikleri, kullanıcı tarafından iptal edilmediği sürece her fatura döneminin sonunda otomatik olarak yenilenir.
+                Ücretli plan abonelikleri (Bireysel Lite, Bireysel Standart, Kurumsal), kullanıcı tarafından iptal edilmediği sürece her fatura döneminin sonunda otomatik olarak yenilenir.
               </p>
               <ul className="list-disc list-inside space-y-2 ml-2">
                 <li>

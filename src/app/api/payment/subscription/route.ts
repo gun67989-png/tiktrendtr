@@ -16,7 +16,7 @@ export async function POST(request: NextRequest) {
     }
 
     if (
-      user.subscription_type === "premium" &&
+      user.subscription_type !== "free" &&
       user.subscription_end &&
       new Date(user.subscription_end) > new Date()
     ) {

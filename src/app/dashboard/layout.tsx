@@ -16,13 +16,14 @@ import {
   Play,
   Shield,
   Users,
-  ShoppingBag,
   BarChart2,
   Lock,
   Star,
   CreditCard,
   Search,
   FileText,
+  BookOpen,
+  Heart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -39,8 +40,10 @@ import {
 import { ThemeToggle } from "@/components/ThemeToggle";
 import WelcomeOverlay from "@/components/WelcomeOverlay";
 import LogoutOverlay from "@/components/LogoutOverlay";
+import OnboardingFlow from "@/components/OnboardingFlow";
 
 const PREMIUM_PATHS = [
+  "/dashboard/sentiment",
   "/dashboard/ideas",
   "/dashboard/growth",
   "/dashboard/predictions",
@@ -54,13 +57,14 @@ const navItems = [
   { href: "/dashboard", label: "Genel Bakış", icon: Home },
   { href: "/dashboard/trending-videos", label: "Trend Videolar", icon: Play },
   { href: "/dashboard/creators", label: "İçerik Üreticileri", icon: Users },
-  { href: "/dashboard/ad-ideas", label: "Reklam Fikirleri", icon: ShoppingBag },
+  { href: "/dashboard/hook-library", label: "Hook Kütüphanesi", icon: BookOpen },
   { href: "/dashboard/hashtags", label: "Hashtag'ler", icon: Hash },
   { href: "/dashboard/sounds", label: "Sesler", icon: Music },
   { href: "/dashboard/posting-times", label: "Paylaşım Zamanı", icon: Clock },
 ];
 
 const premiumNavItems = [
+  { href: "/dashboard/sentiment", label: "Duygu Analizi", icon: Heart },
   { href: "/dashboard/ideas", label: "İçerik Fikirleri", icon: Zap },
   { href: "/dashboard/growth", label: "Büyüme Stratejisi", icon: TrendingUp },
   { href: "/dashboard/predictions", label: "Trend Tahminleri", icon: Target },
@@ -75,7 +79,10 @@ interface UserInfo {
   username: string;
   email: string;
   role: "admin" | "user";
-  subscriptionType: "free" | "premium";
+  subscriptionType: "free" | "lite" | "standard" | "enterprise";
+  subscriptionNiche: string | null;
+  subscriptionRole: "brand" | "individual" | null;
+  onboardingCompleted: boolean;
 }
 
 function SidebarNav({
@@ -210,12 +217,28 @@ function SidebarNav({
       <div className="p-3 border-t space-y-2">
         {user && (
           <div className="px-1">
-            {isPremium ? (
+            {user.subscriptionType === "enterprise" ? (
               <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-amber-500/5 border border-amber-500/15">
                 <Star className="w-3.5 h-3.5 text-amber-400" />
                 <div className="flex-1">
-                  <p className="text-xs font-medium text-amber-400">Pro Plan</p>
+                  <p className="text-xs font-medium text-amber-400">Kurumsal Plan</p>
                   <p className="text-[10px] text-amber-400/50">Tüm özellikler aktif</p>
+                </div>
+              </div>
+            ) : user.subscriptionType === "standard" ? (
+              <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-teal/5 border border-teal/15">
+                <Star className="w-3.5 h-3.5 text-teal" />
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-teal">Standart Plan</p>
+                  <p className="text-[10px] text-teal/50">4 haftalık arşiv</p>
+                </div>
+              </div>
+            ) : user.subscriptionType === "lite" ? (
+              <div className="flex items-center gap-2 px-3 py-2 rounded-md bg-blue-400/5 border border-blue-400/15">
+                <Star className="w-3.5 h-3.5 text-blue-400" />
+                <div className="flex-1">
+                  <p className="text-xs font-medium text-blue-400">Lite Plan</p>
+                  <p className="text-[10px] text-blue-400/50">14 günlük döngü</p>
                 </div>
               </div>
             ) : (
@@ -228,7 +251,7 @@ function SidebarNav({
                   <p className="text-xs font-medium text-muted-foreground group-hover:text-foreground transition-colors">
                     Free Plan
                   </p>
-                  <p className="text-[10px] text-muted-foreground">Pro&apos;ya yükselt</p>
+                  <p className="text-[10px] text-muted-foreground">Planını yükselt</p>
                 </div>
               </Link>
             )}
@@ -247,6 +270,7 @@ export default function DashboardLayout({
   const [logoutOpen, setLogoutOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<UserInfo | null>(null);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -256,6 +280,9 @@ export default function DashboardLayout({
       .then((data) => {
         if (data.authenticated && data.user) {
           setUser(data.user);
+          if (!data.user.onboardingCompleted && data.user.role !== "admin") {
+            setShowOnboarding(true);
+          }
         }
       })
       .catch(() => {});
@@ -267,7 +294,7 @@ export default function DashboardLayout({
     router.refresh();
   };
 
-  const isPremium = user?.subscriptionType === "premium" || user?.role === "admin";
+  const isPremium = (user?.subscriptionType && user.subscriptionType !== "free") || user?.role === "admin";
 
   const handleNavigate = (href: string) => {
     router.push(href);
@@ -277,6 +304,12 @@ export default function DashboardLayout({
   return (
     <div className="min-h-screen bg-background flex overflow-x-hidden max-w-[100vw]">
       <WelcomeOverlay username={user?.username} />
+      {showOnboarding && (
+        <OnboardingFlow
+          username={user?.username}
+          onComplete={() => setShowOnboarding(false)}
+        />
+      )}
       <LogoutOverlay
         username={user?.username}
         open={logoutOpen}

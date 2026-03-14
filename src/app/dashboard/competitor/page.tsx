@@ -392,7 +392,7 @@ function CompetitorContent() {
 
 export default function CompetitorPage() {
   return (
-    <PremiumGate featureName="Rakip Analizi">
+    <PremiumGate featureName="Rakip Analizi" requiredPlan="enterprise">
       <CompetitorContent />
     </PremiumGate>
   );

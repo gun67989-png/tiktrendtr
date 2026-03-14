@@ -12,7 +12,6 @@ import {
   Music,
   Clock,
   Star,
-  ShoppingBag,
   Heart,
   Info,
 } from "lucide-react";
@@ -178,27 +177,52 @@ export const postingTimesTourSteps: TourStep[] = [
   },
 ];
 
-/** ── Reklam Fikirleri ── */
-export const adIdeasTourSteps: TourStep[] = [
+/** ── Sektörel Hook Kütüphanesi ── */
+export const hookLibraryTourSteps: TourStep[] = [
   {
-    icon: ShoppingBag,
-    title: "Viral Reklam Formatlari",
+    icon: Zap,
+    title: "Hook Kutuphanesi",
     description:
-      "Urun tanitimi, inceleme ve sponsorlu icerik formatlarinda viral olan videolari inceleyin. Kendi reklam stratejiniz icin ilham alin.",
-    color: "text-orange-400",
+      "Sektorunuze ozel viral giris cumlelerini (hook) kesfet. Kozmetik, Teknoloji, Moda gibi nislere gore filtreleme yapin.",
+    color: "text-amber-400",
   },
   {
-    icon: Heart,
-    title: "Begeni Orani Analizi",
+    icon: Star,
+    title: "Hook Performansi",
     description:
-      "Begeni/goruntulenme orani bir videonun kalitesinin en onemli gostergesidir. %10 ustu oran olaganustu performans demek — bu videolardan ogren!",
+      "Her hook'un viral skoru, kullanim ornekleri ve etkilesim orani gorulur. Yuksek skorlu hook'lari iceriklerinize uyarlayin.",
+    color: "text-teal",
+  },
+  {
+    icon: Copy,
+    title: "Kopyala ve Kullan",
+    description:
+      "Begendginiz hook'u tek tikla kopyalayin. AI ile kendi nisinize ozel yeni hook'lar da uretebilirsiniz.",
+    color: "text-purple-400",
+  },
+];
+
+/** ── Duygu Analizi ── */
+export const sentimentTourSteps: TourStep[] = [
+  {
+    icon: Heart,
+    title: "Duygu Analizi",
+    description:
+      "Video yorumlarinin duygusal tonunu analiz edin. Pozitif, negatif ve notr dagilimini goruntuleyin.",
     color: "text-neon-red",
   },
   {
-    icon: Filter,
-    title: "Format Bazli Filtreleme",
+    icon: TrendingUp,
+    title: "Duygu Trendi",
     description:
-      "UGC Reklam, Urun Deneyimi, Haul, Unboxing gibi reklam formatlarina gore filtrele. Markaniza en uygun formatları kesfet.",
+      "Son 7-30 gundeki duygu degisimini takip edin. Duygu trendleri icerik stratejinizi sekillendirir.",
     color: "text-teal",
+  },
+  {
+    icon: BarChart2,
+    title: "Kategori Bazli Duygu",
+    description:
+      "Hangi kategorilerde izleyiciler daha pozitif? Nisinizin duygu haritasini cikartin ve iceriginizi buna gore optimize edin.",
+    color: "text-purple-400",
   },
 ];

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import {
-  getExpiredPremiumUsers,
+  getExpiredPaidUsers,
   updateUser,
   getSubscriptionByUserId,
   updateSubscription,
@@ -25,7 +25,7 @@ export async function GET(request: NextRequest) {
     console.log("[Cron] Abonelik kontrolü başlatılıyor...");
 
     // Süresi dolmuş premium kullanıcıları bul
-    const expiredUsers = await getExpiredPremiumUsers();
+    const expiredUsers = await getExpiredPaidUsers();
 
     let downgraded = 0;
 

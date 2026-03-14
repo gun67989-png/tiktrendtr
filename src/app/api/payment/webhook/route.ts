@@ -32,7 +32,7 @@ export async function POST(request: NextRequest) {
           periodEnd.setDate(periodEnd.getDate() + 30);
 
           await updateUser(payload.userId, {
-            subscription_type: "premium",
+            subscription_type: "standard",
             subscription_status: "active",
             subscription_end: periodEnd.toISOString(),
           });

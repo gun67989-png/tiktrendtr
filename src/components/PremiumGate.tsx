@@ -4,24 +4,60 @@ import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Lock, Zap, Check, ArrowRight } from "lucide-react";
 import Link from "next/link";
+import type { PlanType } from "@/lib/plans";
 
-// ─── Premium gate component ─────────────────────────────────
 interface PremiumGateProps {
   children: React.ReactNode;
   featureName?: string;
+  requiredPlan?: PlanType;
 }
 
-const PRO_FEATURES = [
-  "Sınırsız trend video analizi",
-  "Rakip analizi & karşılaştırma",
-  "Viral hook pattern tespiti",
-  "Günlük detaylı trend raporu",
-  "AI destekli içerik fikirleri",
-  "Gelişmiş büyüme stratejileri",
-];
+const PLAN_FEATURES: Record<string, string[]> = {
+  lite: [
+    "Trend video analizi",
+    "Hashtag & ses analizi",
+    "İçerik üretici takibi",
+    "Sektörel Hook Kütüphanesi",
+    "14 günlük veri döngüsü",
+  ],
+  standard: [
+    "Tüm Lite özellikleri",
+    "Duygu Analizi (Sentiment)",
+    "AI İçerik Fikirleri",
+    "Büyüme Stratejisi",
+    "Trend Tahminleri",
+    "Hook Analizi",
+    "Günlük & Detaylı Rapor",
+  ],
+  enterprise: [
+    "Tüm Standart özellikleri",
+    "Rakip Analizi & Savaş Odası",
+    "AI Hook Üretimi",
+    "PDF Rapor Çıktısı",
+    "Trend Doygunluk Analizi",
+    "Öncelikli destek",
+  ],
+};
 
-export default function PremiumGate({ children, featureName = "Bu özellik" }: PremiumGateProps) {
-  const [subscriptionType, setSubscriptionType] = useState<"free" | "premium">("free");
+const PLAN_NAMES: Record<string, string> = {
+  lite: "Bireysel Lite",
+  standard: "Bireysel Standart",
+  enterprise: "Kurumsal",
+};
+
+const PLAN_PRICES: Record<string, number> = {
+  lite: 280,
+  standard: 350,
+  enterprise: 1250,
+};
+
+export default function PremiumGate({
+  children,
+  featureName = "Bu özellik",
+  requiredPlan = "standard",
+}: PremiumGateProps) {
+  const [subscriptionType, setSubscriptionType] = useState<PlanType>("free");
+  const [userRole, setUserRole] = useState<string>("user");
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -30,6 +66,7 @@ export default function PremiumGate({ children, featureName = "Bu özellik" }: P
       .then((data) => {
         if (data.authenticated && data.user) {
           setSubscriptionType(data.user.subscriptionType || "free");
+          setUserRole(data.user.role || "user");
         }
       })
       .catch(() => {})
@@ -45,9 +82,22 @@ export default function PremiumGate({ children, featureName = "Bu özellik" }: P
     );
   }
 
-  if (subscriptionType === "premium") {
+  // Admin always has access
+  if (userRole === "admin") {
     return <>{children}</>;
   }
+
+  // Check plan hierarchy: enterprise > standard > lite > free
+  const planRank: Record<PlanType, number> = { free: 0, lite: 1, standard: 2, enterprise: 3 };
+  const hasAccess = planRank[subscriptionType] >= planRank[requiredPlan];
+
+  if (hasAccess) {
+    return <>{children}</>;
+  }
+
+  const features = PLAN_FEATURES[requiredPlan] || PLAN_FEATURES.standard;
+  const planName = PLAN_NAMES[requiredPlan] || "Standart";
+  const planPrice = PLAN_PRICES[requiredPlan] || 350;
 
   return (
     <motion.div
@@ -56,7 +106,6 @@ export default function PremiumGate({ children, featureName = "Bu özellik" }: P
       className="flex items-center justify-center min-h-[60vh]"
     >
       <div className="max-w-lg w-full text-center space-y-8">
-        {/* Lock icon */}
         <motion.div
           initial={{ scale: 0.8 }}
           animate={{ scale: 1 }}
@@ -66,23 +115,23 @@ export default function PremiumGate({ children, featureName = "Bu özellik" }: P
           <Lock className="w-8 h-8 text-primary" />
         </motion.div>
 
-        {/* Title */}
         <div className="space-y-2">
           <h2 className="text-2xl font-bold text-foreground">
-            Premium Özellik
+            {planName} Plan Gerekli
           </h2>
           <p className="text-muted-foreground text-sm">
-            {featureName} Pro abonelere özeldir. Tüm gelişmiş özelliklere erişmek için planınızı yükseltin.
+            {featureName} {planName} ve üzeri planlar için aktiftir. Planınızı yükselterek bu özelliğe erişin.
           </p>
         </div>
 
-        {/* Features list */}
         <div className="bg-card rounded-xl border border-border p-6 text-left space-y-3">
           <div className="flex items-center gap-2 mb-4">
-            <Zap className="w-4 h-4 text-primary" />
-            <span className="text-sm font-semibold text-foreground">Pro Plan ile neler kazanırsınız?</span>
+            <Zap className="w-4 h-4 text-teal" />
+            <span className="text-sm font-semibold text-foreground">
+              {planName} Plan ile neler kazanırsınız?
+            </span>
           </div>
-          {PRO_FEATURES.map((feature) => (
+          {features.map((feature) => (
             <div key={feature} className="flex items-center gap-3">
               <div className="w-5 h-5 rounded-full bg-teal/10 flex items-center justify-center shrink-0">
                 <Check className="w-3 h-3 text-teal" />
@@ -92,17 +141,16 @@ export default function PremiumGate({ children, featureName = "Bu özellik" }: P
           ))}
         </div>
 
-        {/* CTA */}
         <Link
           href="/pricing"
-          className="inline-flex items-center gap-2 px-8 py-3 bg-primary text-white font-semibold rounded-lg hover:bg-primary-dark transition-colors"
+          className="inline-flex items-center gap-2 px-8 py-3 bg-teal text-white font-semibold rounded-lg hover:bg-teal/80 transition-colors"
         >
-          Pro&apos;ya Yükselt
+          Planını Yükselt
           <ArrowRight className="w-4 h-4" />
         </Link>
 
         <p className="text-[11px] text-muted-foreground">
-          Aylık sadece ₺299 &middot; İstediğin zaman iptal et
+          {planName} aylık ₺{planPrice} &middot; İstediğin zaman iptal et
         </p>
       </div>
     </motion.div>

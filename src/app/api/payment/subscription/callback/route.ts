@@ -48,7 +48,7 @@ export async function POST(request: NextRequest) {
 
       // Kullanıcıyı premium yap
       await updateUser(payment.user_id, {
-        subscription_type: "premium",
+        subscription_type: "standard",
         subscription_status: "active",
         subscription_start: now.toISOString(),
         subscription_end: periodEnd.toISOString(),

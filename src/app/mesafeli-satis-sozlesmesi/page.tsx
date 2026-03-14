@@ -96,7 +96,15 @@ export default function MesafeliSatisSozlesmesiPage() {
                 <li>Herhangi bir ücret tahsil edilmez</li>
               </ul>
 
-              <p className="mb-1 ml-2"><strong className="text-foreground">b) Pro Plan (Ücretli Abonelik):</strong></p>
+              <p className="mb-1 ml-2"><strong className="text-foreground">b) Bireysel Lite Plan (Ücretli Abonelik):</strong></p>
+              <ul className="list-disc list-inside space-y-1 ml-4 mb-3">
+                <li>Genişletilmiş trend analizi ve viral video veritabanına erişim</li>
+                <li>Gelişmiş hashtag istatistikleri ve büyüme grafikleri</li>
+                <li>Popüler ses ve müzik trend takibi</li>
+                <li>Haftalık performans raporları</li>
+              </ul>
+
+              <p className="mb-1 ml-2"><strong className="text-foreground">c) Bireysel Standart Plan (Ücretli Abonelik):</strong></p>
               <ul className="list-disc list-inside space-y-1 ml-4 mb-3">
                 <li>Sınırsız trend analizi ve viral video veritabanına tam erişim</li>
                 <li>Gelişmiş hashtag istatistikleri, büyüme grafikleri ve karşılaştırmalı analizler</li>
@@ -105,12 +113,20 @@ export default function MesafeliSatisSozlesmesiPage() {
                 <li>İçerik oluşturucu (creator) analiz ve raporlama araçları</li>
                 <li>Popüler ses ve müzik trend takibi</li>
                 <li>Haftalık ve aylık detaylı performans raporları</li>
+              </ul>
+
+              <p className="mb-1 ml-2"><strong className="text-foreground">d) Kurumsal Plan (Ücretli Abonelik):</strong></p>
+              <ul className="list-disc list-inside space-y-1 ml-4 mb-3">
+                <li>Bireysel Standart Plan&apos;ın tüm özellikleri</li>
+                <li>Çoklu kullanıcı ve ekip yönetimi</li>
                 <li>Öncelikli müşteri desteği</li>
+                <li>Özel raporlama ve veri dışa aktarımı</li>
               </ul>
 
               <p className="mb-2"><strong className="text-foreground">3.3 Hizmetin Niteliği:</strong></p>
               <p>
-                Sözleşme konusu hizmet, 6502 sayılı Kanun ve ilgili yönetmelikler kapsamında
+                Sözleşme konusu hizmet, dijital bir SaaS (dijital SaaS hizmeti) olarak sunulmakta olup
+                6502 sayılı Kanun ve ilgili yönetmelikler kapsamında
                 &quot;elektronik ortamda anında ifa edilen hizmet&quot; ve &quot;gayri maddi mal&quot;
                 niteliğindedir. Fiziksel bir teslimat söz konusu değildir. Hizmet, ödemenin
                 tamamlanmasıyla birlikte dijital ortamda derhal ALICI&apos;nın kullanımına sunulur.
@@ -123,8 +139,10 @@ export default function MesafeliSatisSozlesmesiPage() {
 
               <p className="mb-2"><strong className="text-foreground">4.1 Hizmet Bedeli:</strong></p>
               <ul className="list-disc list-inside space-y-1 ml-2 mb-3">
-                <li><strong className="text-foreground">Pro Plan:</strong> Aylık 299 TL (İki yüz doksan dokuz Türk Lirası) – KDV dahil toplam bedel</li>
-                <li><strong className="text-foreground">Ücretsiz Plan:</strong> 0 TL (Herhangi bir ücret talep edilmez)</li>
+                <li><strong className="text-foreground">Ücretsiz (Free) Plan:</strong> 0 TL (Herhangi bir ücret talep edilmez)</li>
+                <li><strong className="text-foreground">Bireysel Lite Plan:</strong> Aylık 280 TL (İki yüz seksen Türk Lirası) – KDV dahil toplam bedel</li>
+                <li><strong className="text-foreground">Bireysel Standart Plan:</strong> Aylık 350 TL (Üç yüz elli Türk Lirası) – KDV dahil toplam bedel</li>
+                <li><strong className="text-foreground">Kurumsal Plan:</strong> Aylık 1.250 TL (Bin iki yüz elli Türk Lirası) – KDV dahil toplam bedel</li>
               </ul>
 
               <p className="mb-2"><strong className="text-foreground">4.2 Ödeme Yöntemi:</strong></p>
@@ -139,7 +157,7 @@ export default function MesafeliSatisSozlesmesiPage() {
 
               <p className="mb-2"><strong className="text-foreground">4.3 Otomatik Yenileme:</strong></p>
               <p className="mb-3">
-                Pro Plan aboneliği, ALICI tarafından iptal edilmedikçe her ayın sonunda otomatik olarak
+                Ücretli plan abonelikleri (Bireysel Lite, Bireysel Standart, Kurumsal), ALICI tarafından iptal edilmedikçe her ayın sonunda otomatik olarak
                 yenilenir ve kayıtlı ödeme aracından ilgili dönem ücreti tahsil edilir. ALICI, aboneliğini
                 dilediği zaman hesap ayarları üzerinden veya destek@valyze.app adresine yazılı bildirim
                 göndererek iptal edebilir. İptal işlemi, mevcut ödeme döneminin sonunda geçerli olur;
@@ -162,7 +180,7 @@ export default function MesafeliSatisSozlesmesiPage() {
               <p className="mb-2"><strong className="text-foreground">5.1 Anında İfa:</strong></p>
               <p className="mb-3">
                 Sözleşme konusu hizmet, dijital niteliktedir ve fiziksel teslimat içermemektedir.
-                Pro Plan özellikleri, ödeme işleminin iyzico tarafından onaylanmasının ardından derhal
+                Ücretli plan özellikleri (Bireysel Lite, Bireysel Standart veya Kurumsal), ödeme işleminin iyzico tarafından onaylanmasının ardından derhal
                 (anında) ALICI&apos;nın hesabında aktif hale getirilir. ALICI, ödeme onayı ile birlikte
                 hizmetten yararlanmaya başlayabilir.
               </p>
@@ -204,7 +222,7 @@ export default function MesafeliSatisSozlesmesiPage() {
               <p className="mb-2"><strong className="text-foreground">6.2 İyi Niyet İade Politikası (Goodwill Refund):</strong></p>
               <p className="mb-3">
                 Yukarıdaki yasal düzenlemeye rağmen, ValyzeTR olarak müşteri memnuniyetini ön planda
-                tutuyoruz. İlk kez Pro Plan aboneliği başlatan ALICI&apos;lar, abonelik başlangıç
+                tutuyoruz. İlk kez ücretli plan aboneliği (Bireysel Lite, Bireysel Standart veya Kurumsal) başlatan ALICI&apos;lar, abonelik başlangıç
                 tarihinden itibaren <strong className="text-foreground">7 (yedi) takvim günü</strong> içinde
                 destek@valyze.app adresine yazılı başvuru yaparak ücret iadesini talep edebilirler.
               </p>

@@ -54,10 +54,12 @@ export default function TermsOfServicePage() {
                 <li><strong className="text-foreground">Kullanıcı:</strong> Platforma erişen, kayıt olan veya hizmetlerden yararlanan tüm gerçek ve tüzel kişiler.</li>
                 <li><strong className="text-foreground">Üye:</strong> Platforma kayıt olarak hesap oluşturmuş ve e-posta doğrulaması tamamlamış Kullanıcı.</li>
                 <li><strong className="text-foreground">Hizmet:</strong> Platform üzerinden sunulan TikTok trend analizi, veri görselleştirme, raporlama ve diğer tüm dijital hizmetler.</li>
-                <li><strong className="text-foreground">Abonelik:</strong> Kullanıcı&apos;nın ücretli (Pro Plan) veya ücretsiz (Ücretsiz Plan) olarak yararlandığı hizmet paketi.</li>
+                <li><strong className="text-foreground">Abonelik:</strong> Kullanıcı&apos;nın ücretli (Bireysel Lite, Bireysel Standart veya Kurumsal Plan) veya ücretsiz (Free Plan) olarak yararlandığı hizmet paketi.</li>
                 <li><strong className="text-foreground">İçerik:</strong> Platform üzerinde sunulan analiz verileri, grafikler, raporlar, istatistikler, öneriler ve diğer tüm dijital materyaller.</li>
-                <li><strong className="text-foreground">Pro Plan:</strong> Aylık 299 TL (KDV dahil) karşılığında sunulan premium abonelik paketi.</li>
-                <li><strong className="text-foreground">Ücretsiz Plan:</strong> Herhangi bir ücret ödemeksizin sınırlı özelliklere erişim sağlayan temel abonelik paketi.</li>
+                <li><strong className="text-foreground">Bireysel Lite Plan:</strong> Aylık ₺280 (KDV dahil) karşılığında sunulan genişletilmiş abonelik paketi.</li>
+                <li><strong className="text-foreground">Bireysel Standart Plan:</strong> Aylık ₺350 (KDV dahil) karşılığında sunulan tam kapsamlı bireysel abonelik paketi.</li>
+                <li><strong className="text-foreground">Kurumsal Plan:</strong> Aylık ₺1.250 (KDV dahil) karşılığında sunulan ekip ve kurumsal abonelik paketi.</li>
+                <li><strong className="text-foreground">Ücretsiz (Free) Plan:</strong> Herhangi bir ücret ödemeksizin sınırlı özelliklere erişim sağlayan temel abonelik paketi.</li>
                 <li><strong className="text-foreground">Ödeme Hizmet Sağlayıcısı:</strong> iyzico Ödeme Hizmetleri A.Ş., ödeme işlemlerinin güvenli şekilde gerçekleştirilmesini sağlayan lisanslı ödeme kuruluşu.</li>
               </ul>
             </section>
@@ -66,7 +68,7 @@ export default function TermsOfServicePage() {
             <section>
               <h2 className="text-lg font-semibold text-foreground mb-3">3. Hizmet Tanımı</h2>
               <p>
-                ValyzeTR, Türkiye&apos;deki TikTok trendlerini analiz eden, içerik üreticileri ve markalar için veri odaklı içgörüler sunan bir SaaS (Software as a Service - Hizmet Olarak Yazılım) platformudur. Platform tamamen dijital bir hizmettir; herhangi bir fiziksel ürün teslimatı veya nakliye söz konusu değildir.
+                ValyzeTR, Türkiye&apos;deki TikTok trendlerini analiz eden, içerik üreticileri ve markalar için veri odaklı içgörüler sunan bir dijital SaaS hizmeti (Software as a Service - Hizmet Olarak Yazılım) platformudur. Platform tamamen dijital bir hizmettir; herhangi bir fiziksel ürün teslimatı veya nakliye söz konusu değildir.
               </p>
               <p className="mt-3 mb-2"><strong className="text-foreground">Sunulan hizmetler şunları kapsar:</strong></p>
               <ul className="list-disc list-inside space-y-1 ml-2">
@@ -77,10 +79,10 @@ export default function TermsOfServicePage() {
                 <li>Günlük ve haftalık trend raporları</li>
                 <li>İçerik üretici (creator) analizi ve keşif araçları</li>
                 <li>En iyi paylaşım zamanı önerileri</li>
-                <li>Yorum analizi ve duygu analizi araçları (Pro Plan)</li>
-                <li>Gelişmiş içerik stratejisi önerileri (Pro Plan)</li>
-                <li>Rakip analizi ve karşılaştırma araçları (Pro Plan)</li>
-                <li>Detaylı performans raporları ve veri dışa aktarımı (Pro Plan)</li>
+                <li>Yorum analizi ve duygu analizi araçları (Bireysel Standart ve üzeri)</li>
+                <li>Gelişmiş içerik stratejisi önerileri (Bireysel Standart ve üzeri)</li>
+                <li>Rakip analizi ve karşılaştırma araçları (Bireysel Standart ve üzeri)</li>
+                <li>Detaylı performans raporları ve veri dışa aktarımı (Kurumsal Plan)</li>
               </ul>
               <p className="mt-3">
                 Platform, TikTok&apos;un kamuya açık verilerini analiz eder. Sunulan analizler ve öneriler bilgilendirme amaçlıdır ve kesin sonuç garantisi vermez.
@@ -117,10 +119,15 @@ export default function TermsOfServicePage() {
                 Ücretsiz Plan, herhangi bir ödeme veya kredi kartı bilgisi gerektirmeksizin sınırlı özelliklere erişim sağlar. ValyzeTR, Ücretsiz Plan&apos;ın kapsamını, özelliklerini ve kullanım limitlerini önceden bildirimde bulunarak değiştirme hakkını saklı tutar.
               </p>
 
-              <p className="mt-3 mb-2"><strong className="text-foreground">5.2. Pro Plan</strong></p>
-              <p>
-                Pro Plan, aylık 299 TL (KDV dahil) karşılığında tüm premium özelliklere sınırsız erişim sağlar. Pro Plan aboneliği aylık dönemler halinde faturalandırılır.
+              <p className="mt-3 mb-2"><strong className="text-foreground">5.2. Ücretli Planlar</strong></p>
+              <p className="mb-2">
+                ValyzeTR, dijital SaaS hizmeti kapsamında aşağıdaki ücretli abonelik planlarını sunmaktadır. Tüm ücretli planlar aylık dönemler halinde faturalandırılır:
               </p>
+              <ul className="list-disc list-inside space-y-1 ml-2">
+                <li><strong className="text-foreground">Bireysel Lite:</strong> Aylık ₺280 (KDV dahil) — genişletilmiş analiz özellikleri.</li>
+                <li><strong className="text-foreground">Bireysel Standart:</strong> Aylık ₺350 (KDV dahil) — tüm bireysel özelliklere sınırsız erişim.</li>
+                <li><strong className="text-foreground">Kurumsal:</strong> Aylık ₺1.250 (KDV dahil) — ekip yönetimi, öncelikli destek ve özel raporlama dahil.</li>
+              </ul>
 
               <p className="mt-3 mb-2"><strong className="text-foreground">5.3. Ödeme Yöntemi</strong></p>
               <p>
@@ -129,7 +136,7 @@ export default function TermsOfServicePage() {
 
               <p className="mt-3 mb-2"><strong className="text-foreground">5.4. Otomatik Yenileme</strong></p>
               <p>
-                Pro Plan abonelikleri, iptal edilmediği sürece her ayın faturalandırma tarihinde otomatik olarak yenilenir. Otomatik yenileme sırasında kayıtlı ödeme yönteminizden aylık abonelik ücreti tahsil edilir. İptal işlemi, mevcut faturalandırma döneminin sonuna kadar geçerli olmaz; iptal ettiğiniz tarihten dönem sonuna kadar hizmetten yararlanmaya devam edersiniz.
+                Ücretli plan abonelikleri (Bireysel Lite, Bireysel Standart, Kurumsal), iptal edilmediği sürece her ayın faturalandırma tarihinde otomatik olarak yenilenir. Otomatik yenileme sırasında kayıtlı ödeme yönteminizden aylık abonelik ücreti tahsil edilir. İptal işlemi, mevcut faturalandırma döneminin sonuna kadar geçerli olmaz; iptal ettiğiniz tarihten dönem sonuna kadar hizmetten yararlanmaya devam edersiniz.
               </p>
 
               <p className="mt-3 mb-2"><strong className="text-foreground">5.5. Fiyat Değişiklikleri</strong></p>
@@ -139,7 +146,7 @@ export default function TermsOfServicePage() {
 
               <p className="mt-3 mb-2"><strong className="text-foreground">5.6. Başarısız Ödeme</strong></p>
               <p>
-                Otomatik yenileme sırasında ödeme başarısız olursa, ValyzeTR size e-posta ile bildirimde bulunur. Ödeme bilgilerinizi 7 gün içinde güncellemeniz gerekmektedir. Bu süre içinde ödeme alınamazsa Pro Plan aboneliğiniz askıya alınabilir ve hesabınız Ücretsiz Plan&apos;a düşürülebilir.
+                Otomatik yenileme sırasında ödeme başarısız olursa, ValyzeTR size e-posta ile bildirimde bulunur. Ödeme bilgilerinizi 7 gün içinde güncellemeniz gerekmektedir. Bu süre içinde ödeme alınamazsa ücretli plan aboneliğiniz askıya alınabilir ve hesabınız Ücretsiz Plan&apos;a düşürülebilir.
               </p>
             </section>
 
@@ -235,7 +242,7 @@ export default function TermsOfServicePage() {
 
               <p className="mt-3 mb-2"><strong className="text-foreground">10.4. Hizmetin Sonlandırılması</strong></p>
               <p>
-                ValyzeTR, Platform&apos;u tamamen veya kısmen sonlandırma hakkını saklı tutar. Bu durumda aktif Pro Plan abonelerine kalan süreye ilişkin orantılı iade yapılır ve en az 30 gün öncesinden bildirimde bulunulur.
+                ValyzeTR, Platform&apos;u tamamen veya kısmen sonlandırma hakkını saklı tutar. Bu durumda aktif ücretli plan abonelerine kalan süreye ilişkin orantılı iade yapılır ve en az 30 gün öncesinden bildirimde bulunulur.
               </p>
             </section>
 
@@ -267,7 +274,7 @@ export default function TermsOfServicePage() {
                 <li>İşbu Kullanım Koşulları&apos;nın herhangi bir hükmünün ihlal edilmesi.</li>
                 <li>Yasaklanan faaliyetlerde bulunulması (Madde 7).</li>
                 <li>Platform güvenliğini tehdit eden veya diğer kullanıcıları olumsuz etkileyen etkinlikler.</li>
-                <li>Pro Plan ödeme yükümlülüğüne uyulmaması veya ödeme bilgilerinin güncellenmemesi.</li>
+                <li>Ücretli plan ödeme yükümlülüğüne uyulmaması veya ödeme bilgilerinin güncellenmemesi.</li>
                 <li>Sahte, yanıltıcı veya yanlış hesap bilgileri kullanılması.</li>
                 <li>12 aydan fazla süreyle hesapta hiçbir etkinlik gerçekleştirilmemesi (hareketsizlik).</li>
                 <li>Yasal makamların talebi veya mahkeme kararı gereği.</li>
