@@ -22,7 +22,10 @@ export async function cached<T>(
 
   const data = await fetcher();
 
-  if (redis) {
+  // Don't cache results marked as non-cacheable (e.g. empty/no_data responses)
+  const shouldCache = !(data && typeof data === "object" && "_cacheable" in data && (data as Record<string, unknown>)._cacheable === false);
+
+  if (redis && shouldCache) {
     try {
       await redis.set(key, JSON.stringify(data), { ex: ttlSeconds });
     } catch {

@@ -12,6 +12,9 @@ const NICHES = [
   { id: "moda", label: "Moda", emoji: "👗" },
   { id: "eğitim", label: "Eğitim", emoji: "📚" },
   { id: "teknoloji", label: "Teknoloji", emoji: "💻" },
+  { id: "fitness", label: "Fitness", emoji: "💪" },
+  { id: "müzik", label: "Müzik", emoji: "🎵" },
+  { id: "oyun", label: "Oyun", emoji: "🎮" },
 ];
 
 interface Idea {
@@ -87,7 +90,7 @@ function IdeasContent() {
       {/* Niche Selection */}
       <div>
         <p className="text-xs text-muted-foreground uppercase tracking-wider mb-3">Niş Seçin</p>
-        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-3">
+        <div className="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-9 gap-3">
           {NICHES.map((niche) => (
             <button
               key={niche.id}

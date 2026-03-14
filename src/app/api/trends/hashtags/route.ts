@@ -132,10 +132,10 @@ export async function GET() {
     async () => {
       const realHashtags = await getRealHashtags();
       if (realHashtags && realHashtags.length > 0) {
-        return { hashtags: realHashtags, source: "live" as const };
+        return { hashtags: realHashtags, source: "live" as const, _cacheable: true };
       }
-      // No fake data — return empty with clear indicator
-      return { hashtags: [], source: "no_data" as const, message: "Henüz yeterli veri yok. Veriler 6 saatte bir güncellenir." };
+      // Don't cache empty results — return directly
+      return { hashtags: [], source: "no_data" as const, message: "Henüz yeterli veri yok. Veriler 6 saatte bir güncellenir.", _cacheable: false };
     },
     600 // 10 minutes
   );
