@@ -38,8 +38,8 @@ function HookLibraryPageContent() {
       try {
         const res = await fetch("/api/hooks");
         if (!res.ok) throw new Error("Failed to fetch hooks");
-        const data: Hook[] = await res.json();
-        setHooks(data);
+        const data = await res.json();
+        setHooks(data.hooks || data);
       } catch (err) {
         console.error("Hook fetch error:", err);
       } finally {
