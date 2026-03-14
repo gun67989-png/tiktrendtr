@@ -44,11 +44,12 @@ export async function invalidateCache(prefix: string): Promise<void> {
     // Upstash scan + delete
     let cursor = 0;
     do {
-      const [nextCursor, keys] = await redis.scan(cursor, {
+      const result = await redis.scan(cursor, {
         match: `${prefix}*`,
         count: 100,
       });
-      cursor = nextCursor;
+      cursor = Number(result[0]);
+      const keys = result[1] as string[];
       if (keys.length > 0) {
         await redis.del(...keys);
       }

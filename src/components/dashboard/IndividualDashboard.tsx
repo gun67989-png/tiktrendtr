@@ -51,12 +51,12 @@ const container = {
 
 const item = {
   hidden: { opacity: 0, y: 25 },
-  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" } },
+  show: { opacity: 1, y: 0, transition: { duration: 0.5, ease: "easeOut" as const } },
 };
 
 const pulseHover = {
   scale: 1.04,
-  transition: { type: "spring", stiffness: 300, damping: 20 },
+  transition: { type: "spring" as const, stiffness: 300, damping: 20 },
 };
 
 // --- Animated Counter ---

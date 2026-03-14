@@ -28,7 +28,7 @@ export function createRequest(
     init.body = JSON.stringify(body);
   }
 
-  const request = new NextRequest(fullUrl, init);
+  const request = new NextRequest(fullUrl, init as never);
 
   // Set cookies
   for (const [key, value] of Object.entries(cookies)) {
