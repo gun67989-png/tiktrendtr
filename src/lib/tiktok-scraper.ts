@@ -23,6 +23,9 @@ export interface ScrapedVideo {
   format: string;
   ad_format: string | null;
   creator_presence_score: number;
+  published_at: string; // When video was published on TikTok
+  collected_at: string; // When we scraped this data
+  // Legacy alias kept for DB compatibility
   scraped_at: string;
 }
 
@@ -476,7 +479,9 @@ async function fetchTikWMPage(
         format,
         ad_format: adFormat,
         creator_presence_score: creatorPresenceScore,
-        scraped_at: publishDate,
+        published_at: publishDate,
+        collected_at: now,
+        scraped_at: publishDate, // Legacy: kept for DB column compatibility
       });
     }
 
@@ -782,5 +787,13 @@ export async function scrapeTrendingVideosBatch(batchNum: number): Promise<Scrap
   }
 
   console.log(`[SCRAPER] Batch ${batchNum} tamamlandı: ${allVideos.length} video`);
+
+  // Enrich with follower counts (previously only done in full scrape)
+  try {
+    await enrichWithFollowerCounts(allVideos);
+  } catch (e) {
+    console.warn(`[SCRAPER] Batch ${batchNum} follower enrichment failed, continuing:`, e);
+  }
+
   return allVideos;
 }

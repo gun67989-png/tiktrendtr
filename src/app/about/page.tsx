@@ -315,10 +315,10 @@ export default function AboutPage() {
             className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-12"
           >
             {[
-              { label: "Analiz Edilen Video", value: "50.000+", color: "text-primary" },
-              { label: "Aktif Kullanici", value: "2.500+", color: "text-teal" },
-              { label: "Gunluk Guncelleme", value: "24/7", color: "text-purple-400" },
-              { label: "Trend Tespiti", value: "%94", color: "text-blue-400" },
+              { label: "Kategori Analizi", value: "12+", color: "text-primary" },
+              { label: "Turkce Anahtar Kelime", value: "70+", color: "text-teal" },
+              { label: "Veri Guncelleme", value: "6 saatte bir", color: "text-purple-400" },
+              { label: "AI Destekli Analiz", value: "Gemini & Claude", color: "text-blue-400" },
             ].map((stat) => (
               <div
                 key={stat.label}

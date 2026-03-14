@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { generatePostingTimes } from "@/lib/data";
+// Real data only — no fake fallback
 import { cached, cacheKey } from "@/lib/cache";
 import { apiLogger } from "@/lib/logger";
 
@@ -95,7 +95,7 @@ export async function GET() {
       if (realData) {
         return { postingTimes: realData, source: "live" as const };
       }
-      return { postingTimes: generatePostingTimes(), source: "generated" as const };
+      return { postingTimes: { heatmap: [], bestTimes: [] }, source: "no_data" as const };
     },
     1800 // 30 minutes
   );

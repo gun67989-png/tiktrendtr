@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { generateSoundDetail, calcViralScore } from "@/lib/data";
+import { calcViralScore } from "@/lib/data";
 import { buildTiktokUrl } from "@/lib/tiktok-scraper";
 import { apiLogger } from "@/lib/logger";
 
@@ -145,13 +145,8 @@ export async function GET(
       }
     }
 
-    // Fall back to generated data
-    const detail = generateSoundDetail(soundId);
-    if (!detail) {
-      return NextResponse.json({ error: "Ses bulunamadı" }, { status: 404 });
-    }
-
-    return NextResponse.json(detail);
+    // No fake data — return not found
+    return NextResponse.json({ error: "Ses bulunamad\u0131 veya hen\u00FCz yeterli veri yok" }, { status: 404 });
   } catch (e) {
     apiLogger.error({ err: e }, "Sound detail error");
     return NextResponse.json({ error: "Sunucu hatası" }, { status: 500 });

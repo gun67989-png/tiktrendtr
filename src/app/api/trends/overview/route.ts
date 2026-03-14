@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { generateOverview, generateEmergingTrends } from "@/lib/data";
 import { cached, cacheKey } from "@/lib/cache";
 import { apiLogger } from "@/lib/logger";
 
@@ -154,26 +153,37 @@ export async function GET() {
       const liveStats = await getLiveStats();
 
       if (liveStats && liveStats.totalVideosAnalyzed > 0) {
-        const baseOverview = generateOverview();
-        const overview = {
-          ...baseOverview,
-          totalVideosAnalyzed: liveStats.totalVideosAnalyzed,
-          activeTrends: liveStats.activeTrends,
-          avgEngagement: liveStats.avgEngagement,
-          bestPostingTime: liveStats.bestPostingTime,
-          trendingNiches: liveStats.trendingNiches,
-        };
         return {
-          overview,
-          emergingTrends: liveStats.emergingTrends.length > 0 ? liveStats.emergingTrends : generateEmergingTrends(),
+          overview: {
+            totalVideosAnalyzed: liveStats.totalVideosAnalyzed,
+            activeTrends: liveStats.activeTrends,
+            avgEngagement: liveStats.avgEngagement,
+            bestPostingTime: liveStats.bestPostingTime,
+            trendingNiches: liveStats.trendingNiches,
+            // Real daily stats will be added when historical tracking is implemented
+            trendingCities: [],
+            viralFormats: [],
+            dailyStats: [],
+          },
+          emergingTrends: liveStats.emergingTrends,
           source: "live" as const,
         };
       }
 
+      // No fake data — return zeros with clear indicator
       return {
-        overview: generateOverview(),
-        emergingTrends: generateEmergingTrends(),
-        source: "generated" as const,
+        overview: {
+          totalVideosAnalyzed: 0,
+          activeTrends: 0,
+          avgEngagement: 0,
+          bestPostingTime: "Henüz veri yok",
+          trendingNiches: [],
+          trendingCities: [],
+          viralFormats: [],
+          dailyStats: [],
+        },
+        emergingTrends: [],
+        source: "no_data" as const,
       };
     },
     600 // 10 minutes

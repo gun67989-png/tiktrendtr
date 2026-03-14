@@ -1,9 +1,8 @@
 "use client";
 
-import { useMemo } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { motion } from "framer-motion";
 import { Clock, Info } from "lucide-react";
-import { generatePostingTimes } from "@/lib/data";
 import OnboardingTour from "@/components/OnboardingTour";
 import { postingTimesTourSteps } from "@/lib/onboarding";
 
@@ -30,7 +29,28 @@ function getLabel(value: number): string {
 }
 
 export default function PostingTimesPage() {
-  const data = useMemo(() => generatePostingTimes(), []);
+  const [data, setData] = useState<{ day: string; hour: number; engagement: number }[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchData() {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/trends/posting-times");
+        const json = await res.json();
+        if (json.postingTimes && json.postingTimes.length > 0) {
+          setData(json.postingTimes);
+        } else {
+          setData([]);
+        }
+      } catch {
+        setData([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchData();
+  }, []);
 
   const getEngagement = (day: string, hour: number) => {
     const entry = data.find((d) => d.day === day && d.hour === hour);
@@ -62,6 +82,17 @@ export default function PostingTimesPage() {
         </p>
       </div>
 
+      {loading ? (
+        <div className="bg-card rounded-xl border border-border p-12 text-center">
+          <p className="text-sm text-muted-foreground">Yükleniyor...</p>
+        </div>
+      ) : data.length === 0 ? (
+        <div className="bg-card rounded-xl border border-border p-12 text-center">
+          <Clock className="w-10 h-10 text-muted-foreground mx-auto mb-3 opacity-50" />
+          <p className="text-sm font-medium text-foreground">Henüz paylaşım zamanı verisi bulunamadı</p>
+          <p className="text-xs text-muted-foreground mt-1">Veriler yüklendiğinde burada görünecek</p>
+        </div>
+      ) : (<>
       {/* Best Times Cards */}
       <div className="grid grid-cols-1 sm:grid-cols-5 gap-3">
         {bestTimes.map((t, i) => (
@@ -183,6 +214,7 @@ export default function PostingTimesPage() {
           </motion.div>
         ))}
       </div>
+      </>)}
     </motion.div>
   );
 }

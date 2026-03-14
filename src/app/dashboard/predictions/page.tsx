@@ -1,9 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Target, TrendingUp, Clock, Hash, Music, Play } from "lucide-react";
-import { generateEmergingTrends } from "@/lib/data";
 import PremiumGate from "@/components/PremiumGate";
 
 const typeIcons: Record<string, typeof Hash> = {
@@ -26,9 +25,41 @@ function timeAgo(dateStr: string): string {
   return `${Math.floor(hours / 24)} gün önce`;
 }
 
+interface Trend {
+  id: string;
+  name: string;
+  type: string;
+  category: string;
+  signal: string;
+  growthRate: number;
+  confidence: number;
+  detectedAt: string;
+}
+
 function PredictionsContent() {
-  const trends = useMemo(() => generateEmergingTrends(), []);
+  const [trends, setTrends] = useState<Trend[]>([]);
+  const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState<"all" | "hashtag" | "sound" | "format">("all");
+
+  useEffect(() => {
+    async function fetchTrends() {
+      setLoading(true);
+      try {
+        const res = await fetch("/api/trends/detect");
+        const json = await res.json();
+        if (json.trends && json.trends.length > 0) {
+          setTrends(json.trends);
+        } else {
+          setTrends([]);
+        }
+      } catch {
+        setTrends([]);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchTrends();
+  }, []);
 
   const filtered = filter === "all" ? trends : trends.filter((t) => t.type === filter);
 
@@ -53,7 +84,7 @@ function PredictionsContent() {
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         {[
           { label: "Tespit Edilen Trend", value: trends.length, icon: TrendingUp, color: "text-primary" },
-          { label: "Ortalama Güven", value: `%${Math.round(trends.reduce((a, t) => a + t.confidence, 0) / trends.length)}`, icon: Target, color: "text-teal" },
+          { label: "Ortalama Güven", value: trends.length > 0 ? `%${Math.round(trends.reduce((a, t) => a + t.confidence, 0) / trends.length)}` : "%0", icon: Target, color: "text-teal" },
           { label: "Son Tarama", value: "2 saat önce", icon: Clock, color: "text-amber-400" },
         ].map((stat) => (
           <div key={stat.label} className="bg-card rounded-xl border border-border p-4 flex items-center gap-4">
@@ -110,6 +141,22 @@ function PredictionsContent() {
       </div>
 
       {/* Trend Cards */}
+      {loading ? (
+        <div className="space-y-4">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="bg-card rounded-xl border border-border p-5 animate-pulse">
+              <div className="h-4 bg-muted rounded w-1/3 mb-3" />
+              <div className="h-3 bg-muted rounded w-2/3" />
+            </div>
+          ))}
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="bg-card rounded-xl border border-border p-12 text-center">
+          <Target className="w-10 h-10 text-muted-foreground mx-auto mb-3 opacity-50" />
+          <p className="text-sm font-medium text-foreground">Henüz trend tahmini bulunamadı</p>
+          <p className="text-xs text-muted-foreground mt-1">Veriler yüklendiğinde burada görünecek</p>
+        </div>
+      ) : (
       <div className="space-y-4">
         {filtered.map((trend, i) => {
           const Icon = typeIcons[trend.type] || Hash;
@@ -180,6 +227,7 @@ function PredictionsContent() {
           );
         })}
       </div>
+      )}
     </motion.div>
   );
 }

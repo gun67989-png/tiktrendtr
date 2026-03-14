@@ -22,6 +22,8 @@ import {
   Sparkles,
   Users,
   ChevronRight,
+  ChevronDown,
+  HelpCircle,
   Swords,
   Brain,
   Building2,
@@ -34,7 +36,7 @@ import {
 import Image from "next/image";
 import LogoLink from "@/components/LogoLink";
 import { ThemeToggle } from "@/components/ThemeToggle";
-import type { LandingContent, LandingFeature } from "@/lib/landing-content";
+import type { LandingContent, LandingFeature, LandingFAQ } from "@/lib/landing-content";
 
 /* ─── Icon map for dynamic features ─── */
 const iconMap: Record<string, LucideIcon> = {
@@ -215,6 +217,44 @@ function FeatureCard({ f, i }: { f: LandingFeature; i: number }) {
   );
 }
 
+/* ─── FAQ Item ─── */
+
+function FAQItem({ faq, index }: { faq: LandingFAQ; index: number }) {
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 10 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      transition={{ delay: index * 0.04 }}
+      className={`${glass} rounded-xl overflow-hidden ${glassHover} transition-all duration-300`}
+    >
+      <button
+        onClick={() => setIsOpen(!isOpen)}
+        className="w-full flex items-center justify-between gap-4 p-4 md:p-5 text-left"
+      >
+        <span className="text-sm font-medium text-foreground">{faq.question}</span>
+        <ChevronDown className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+      </button>
+      <AnimatePresence>
+        {isOpen && (
+          <motion.div
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: "auto", opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.3 }}
+            className="overflow-hidden"
+          >
+            <div className="px-4 md:px-5 pb-4 md:pb-5 pt-0">
+              <p className="text-xs md:text-sm text-muted-foreground leading-relaxed">{faq.answer}</p>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </motion.div>
+  );
+}
+
 /* ─── Main Component ─── */
 
 interface LandingPageProps {
@@ -223,7 +263,7 @@ interface LandingPageProps {
 
 export default function LandingPage({ content }: LandingPageProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { stats, features, testimonials, plans } = content;
+  const { stats, features, testimonials, plans, faq } = content;
 
   return (
     <div className="min-h-screen bg-background text-foreground relative overflow-x-hidden">
@@ -243,6 +283,7 @@ export default function LandingPage({ content }: LandingPageProps) {
             <a href="#features" className="text-sm text-muted-foreground hover:text-foreground transition-colors">{"\u00D6"}zellikler</a>
             <a href="#for-who" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Kimler {"\u0130\u00E7"}in</a>
             <a href="#pricing" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Fiyatland{"\u0131"}rma</a>
+            <a href="#faq" className="text-sm text-muted-foreground hover:text-foreground transition-colors">SSS</a>
             <Link href="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Giri{"\u015F"} Yap</Link>
             <ThemeToggle />
             <Link href="/register" className="text-sm bg-primary/90 backdrop-blur-sm text-primary-foreground px-4 py-2 rounded-lg font-medium hover:bg-primary transition-colors">
@@ -264,6 +305,7 @@ export default function LandingPage({ content }: LandingPageProps) {
                 <a href="#features" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-white/[0.04] rounded-lg transition-colors">{"\u00D6"}zellikler</a>
                 <a href="#for-who" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-white/[0.04] rounded-lg transition-colors">Kimler {"\u0130\u00E7"}in</a>
                 <a href="#pricing" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-white/[0.04] rounded-lg transition-colors">Fiyatland{"\u0131"}rma</a>
+                <a href="#faq" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-white/[0.04] rounded-lg transition-colors">SSS</a>
                 <Link href="/viral-tiktok-videos-turkey" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-white/[0.04] rounded-lg transition-colors">Viral Videolar</Link>
                 <Link href="/trending-hashtags-turkey" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-white/[0.04] rounded-lg transition-colors">Trend Hashtag&apos;ler</Link>
                 <Link href="/about" onClick={() => setMobileMenuOpen(false)} className="block px-3 py-2.5 text-sm text-muted-foreground hover:text-foreground hover:bg-white/[0.04] rounded-lg transition-colors">Hakk{"\u0131"}m{"\u0131"}zda</Link>
@@ -318,20 +360,9 @@ export default function LandingPage({ content }: LandingPageProps) {
 
               <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.5, duration: 0.6 }}
                 className="flex items-center gap-3">
-                <div className="flex -space-x-2">
-                  {["E", "A", "S", "C"].map((letter) => (
-                    <div key={letter} className="w-7 h-7 rounded-full bg-primary/15 border-2 border-background flex items-center justify-center text-[10px] font-bold text-primary backdrop-blur-sm">
-                      {letter}
-                    </div>
-                  ))}
-                </div>
-                <div>
-                  <div className="flex items-center gap-0.5">
-                    {Array.from({ length: 5 }).map((_, i) => (
-                      <Star key={i} className="w-3 h-3 text-primary fill-primary" />
-                    ))}
-                  </div>
-                  <p className="text-[10px] text-muted-foreground">3,000+ {"\u00FC"}retici taraf{"\u0131"}ndan kullan{"\u0131"}l{"\u0131"}yor</p>
+                <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                  <div className="w-2 h-2 rounded-full bg-teal animate-pulse" />
+                  <span>6 saatte bir g{"\u00FC"}ncellenen ger{"\u00E7"}ek TikTok verileri</span>
                 </div>
               </motion.div>
             </div>
@@ -551,7 +582,7 @@ export default function LandingPage({ content }: LandingPageProps) {
         <div className="max-w-5xl mx-auto relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
             <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">{"\u00DC"}reticiler Ne Diyor?</h2>
-            <p className="text-sm text-muted-foreground">Binlerce i{"\u00E7"}erik {"\u00FC"}reticisi Valyze TR ile b{"\u00FC"}y{"\u00FC"}yor.</p>
+            <p className="text-sm text-muted-foreground">Erken kullan{"\u0131"}c{"\u0131"}lardan geri bildirimler.</p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
@@ -654,6 +685,40 @@ export default function LandingPage({ content }: LandingPageProps) {
         </div>
       </section>
 
+      {/* ── FAQ ── */}
+      <section id="faq" className="relative py-16 md:py-24 px-4 sm:px-6 border-t border-white/[0.06] overflow-hidden">
+        <div className="absolute top-1/4 right-0 w-72 h-72 bg-primary/[0.03] rounded-full blur-[150px]" />
+        <div className="absolute bottom-1/4 left-0 w-72 h-72 bg-teal/[0.03] rounded-full blur-[150px]" />
+        <div className="max-w-3xl mx-auto relative z-10">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10 md:mb-14">
+            <div className="inline-flex items-center gap-2 bg-primary/[0.08] backdrop-blur-sm border border-primary/15 text-primary text-xs px-3 py-1.5 rounded-full mb-4">
+              <HelpCircle className="w-3 h-3" />
+              S{"\u0131"}k Sorulan Sorular
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">
+              Merak <span className="text-primary">Ettikleriniz</span>
+            </h2>
+            <p className="text-sm text-muted-foreground max-w-lg mx-auto">
+              Valyze hakk{"\u0131"}nda en {"\u00E7"}ok sorulan sorular ve yan{"\u0131"}tlar{"\u0131"}.
+            </p>
+          </motion.div>
+
+          <div className="space-y-3">
+            {faq.map((item, i) => (
+              <FAQItem key={item.question} faq={item} index={i} />
+            ))}
+          </div>
+
+          <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.3 }}
+            className="mt-8 text-center">
+            <p className="text-xs text-muted-foreground">
+              Ba{"\u015F"}ka sorular{"\u0131"}n{"\u0131"}z m{"\u0131"} var?{" "}
+              <Link href="/contact" className="text-primary hover:underline">Bize ula{"\u015F\u0131"}n</Link>
+            </p>
+          </motion.div>
+        </div>
+      </section>
+
       {/* ── CTA ── */}
       <section className="py-16 md:py-24 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto text-center">
@@ -666,7 +731,7 @@ export default function LandingPage({ content }: LandingPageProps) {
                 Bug{"\u00FC"}nden <span className="text-primary">B{"\u00FC"}y{"\u00FC"}meye</span> Ba{"\u015F"}la
               </h2>
               <p className="text-sm text-muted-foreground mb-8 max-w-md mx-auto">
-                Viral f{"\u0131"}rsatlar{"\u0131"} ke{"\u015F"}fetmek i{"\u00E7"}in Valyze TR kullanan binlerce {"\u00FC"}reticiye kat{"\u0131"}l{"\u0131"}n.
+                Viral f{"\u0131"}rsatlar{"\u0131"} ke{"\u015F"}fetmek i{"\u00E7"}in {"\u00FC"}cretsiz hesab{"\u0131"}n{"\u0131"}z{"\u0131"} olu{"\u015F"}turun ve hemen analiz etmeye ba{"\u015F"}lay{"\u0131"}n.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
                 <Link href="/register" className="inline-flex items-center gap-2 bg-primary/90 backdrop-blur-sm text-primary-foreground px-8 py-3 rounded-xl hover:bg-primary transition-all font-medium text-sm shadow-lg shadow-primary/20">

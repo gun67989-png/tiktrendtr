@@ -1,9 +1,8 @@
 "use client";
 
-import { useState, useMemo } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Zap, Copy, Check, RefreshCw, Hash, Music, Eye } from "lucide-react";
-import { generateContentIdeas } from "@/lib/data";
 import PremiumGate from "@/components/PremiumGate";
 
 const NICHES = [
@@ -15,16 +14,43 @@ const NICHES = [
   { id: "teknoloji", label: "Teknoloji", emoji: "💻" },
 ];
 
+interface Idea {
+  title: string;
+  format: string;
+  hook: string;
+  caption: string;
+  hashtags: string[];
+  sound: string;
+  estimatedViews: string;
+}
+
 function IdeasContent() {
   const [selectedNiche, setSelectedNiche] = useState("komedi");
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [refreshKey, setRefreshKey] = useState(0);
+  const [ideas, setIdeas] = useState<Idea[]>([]);
+  const [loading, setLoading] = useState(true);
 
-  const ideas = useMemo(
-    () => generateContentIdeas(selectedNiche),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [selectedNiche, refreshKey]
-  );
+  const fetchIdeas = useCallback(async () => {
+    setLoading(true);
+    try {
+      const res = await fetch(`/api/ideas?niche=${encodeURIComponent(selectedNiche)}`);
+      const json = await res.json();
+      if (json.ideas && json.ideas.length > 0) {
+        setIdeas(json.ideas);
+      } else {
+        setIdeas([]);
+      }
+    } catch {
+      setIdeas([]);
+    } finally {
+      setLoading(false);
+    }
+  }, [selectedNiche]);
+
+  useEffect(() => {
+    fetchIdeas();
+  }, [fetchIdeas, refreshKey]);
 
   const copyToClipboard = (text: string, id: string) => {
     navigator.clipboard.writeText(text);
@@ -80,6 +106,23 @@ function IdeasContent() {
       </div>
 
       {/* Ideas */}
+      {loading ? (
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <div key={i} className="bg-card rounded-xl border border-border p-5 animate-pulse">
+              <div className="h-4 bg-muted rounded w-2/3 mb-3" />
+              <div className="h-3 bg-muted rounded w-full mb-2" />
+              <div className="h-3 bg-muted rounded w-1/2" />
+            </div>
+          ))}
+        </div>
+      ) : ideas.length === 0 ? (
+        <div className="bg-card rounded-xl border border-border p-12 text-center">
+          <Zap className="w-10 h-10 text-muted-foreground mx-auto mb-3 opacity-50" />
+          <p className="text-sm font-medium text-foreground">Henüz içerik fikri bulunamadı</p>
+          <p className="text-xs text-muted-foreground mt-1">Veriler yüklendiğinde burada görünecek</p>
+        </div>
+      ) : (
       <AnimatePresence mode="wait">
         <motion.div
           key={`${selectedNiche}-${refreshKey}`}
@@ -200,6 +243,7 @@ function IdeasContent() {
           ))}
         </motion.div>
       </AnimatePresence>
+      )}
     </motion.div>
   );
 }

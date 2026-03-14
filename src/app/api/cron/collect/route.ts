@@ -3,6 +3,7 @@ import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { scrapeTrendingVideos, scrapeTrendingVideosBatch, buildTiktokUrl, type ScrapedVideo } from "@/lib/tiktok-scraper";
 import { invalidateCache } from "@/lib/cache";
 import { cronLogger } from "@/lib/logger";
+import { validateVideoBatch } from "@/lib/video-validation";
 
 export const dynamic = "force-dynamic";
 export const maxDuration = 60; // Allow up to 60s for scraping
@@ -211,12 +212,28 @@ async function cacheThumbnails(videos: ScrapedVideo[]): Promise<ScrapedVideo[]> 
   return videos;
 }
 
-// Store videos in Supabase
-async function storeVideos(videos: ScrapedVideo[]): Promise<number> {
-  if (!isSupabaseConfigured || !supabase || videos.length === 0) return 0;
+// Store videos in Supabase with validation
+async function storeVideos(videos: ScrapedVideo[]): Promise<{ stored: number; rejected: number }> {
+  if (!isSupabaseConfigured || !supabase || videos.length === 0) return { stored: 0, rejected: 0 };
 
   try {
-    const rows = videos.map((v) => ({
+    // Validate all videos before storing
+    const now = new Date().toISOString();
+    const rawVideos = videos.map((v) => ({
+      ...v,
+      collected_at: v.collected_at || now,
+      published_at: v.published_at || v.scraped_at || now,
+    }));
+
+    const { valid: validatedVideos, rejected } = validateVideoBatch(rawVideos);
+
+    if (rejected > 0) {
+      cronLogger.info({ rejected }, "Rejected invalid videos during validation");
+    }
+
+    if (validatedVideos.length === 0) return { stored: 0, rejected };
+
+    const rows = validatedVideos.map((v) => ({
       video_id: v.video_id,
       creator_username: v.creator_username,
       creator_nickname: v.creator_nickname,
@@ -235,8 +252,9 @@ async function storeVideos(videos: ScrapedVideo[]): Promise<number> {
       format: v.format,
       ad_format: v.ad_format,
       creator_presence_score: v.creator_presence_score,
+      follower_count: v.follower_count,
       tiktok_url: buildTiktokUrl(v.creator_username, v.video_id),
-      scraped_at: v.scraped_at,
+      scraped_at: v.published_at, // DB column = TikTok publish time
     }));
 
     // Upsert in batches of 50
@@ -255,10 +273,10 @@ async function storeVideos(videos: ScrapedVideo[]): Promise<number> {
       }
     }
 
-    return stored;
+    return { stored, rejected };
   } catch (e) {
     cronLogger.error({ err: e }, "Store failed");
-    return 0;
+    return { stored: 0, rejected: 0 };
   }
 }
 
@@ -322,11 +340,11 @@ export async function GET(request: NextRequest) {
     cronLogger.info("Caching thumbnails");
     const videosWithCachedThumbs = await cacheThumbnails(scrapedVideos);
 
-    // Step 4: Store in database
-    const storedCount = await storeVideos(videosWithCachedThumbs);
-    cronLogger.info({ storedCount }, "Stored videos in database");
+    // Step 4: Store in database (with validation)
+    const { stored: storedCount, rejected: rejectedCount } = await storeVideos(videosWithCachedThumbs);
+    cronLogger.info({ storedCount, rejectedCount }, "Stored videos in database");
 
-    // Step 4: Sadece batch 2'de veya full scrape'de eski kayıtları temizle
+    // Step 5: Clean old records on batch 6 or full scrape
     const cleanedCount = (!validBatch || validBatch === 6) ? await cleanOldVideos() : 0;
 
     const results = {
@@ -334,19 +352,18 @@ export async function GET(request: NextRequest) {
       batch: validBatch ?? "full",
       videosScraped: scrapedVideos.length,
       videosStored: storedCount,
+      videosRejected: rejectedCount,
       videosCleanedUp: cleanedCount,
       status: scrapedVideos.length > 0 ? "success" : "no_data",
       message: scrapedVideos.length > 0
-        ? `Batch ${validBatch ?? "full"}: ${scrapedVideos.length} video çekildi`
+        ? `Batch ${validBatch ?? "full"}: ${scrapedVideos.length} video çekildi, ${rejectedCount} reddedildi`
         : "Veri çekilemedi. Sonraki döngüde tekrar denenecek.",
     };
 
     cronLogger.info({ results }, "Collection completed");
 
-    // Invalidate all trend caches so fresh data is served
-    if (storedCount > 0) {
-      await invalidateCache("trends:");
-    }
+    // Always invalidate caches after collection attempt (prevents stale data)
+    await invalidateCache("trends:");
 
     return NextResponse.json(results);
   } catch (error) {

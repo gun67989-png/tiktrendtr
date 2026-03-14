@@ -4,7 +4,7 @@ import { useState, useMemo, useEffect } from "react";
 import { motion } from "framer-motion";
 import { Music, Search, TrendingUp, ArrowRight, Volume2, Mic } from "lucide-react";
 import { useRouter } from "next/navigation";
-import { generateSounds } from "@/lib/data";
+
 import OnboardingTour from "@/components/OnboardingTour";
 import { soundsTourSteps } from "@/lib/onboarding";
 
@@ -46,21 +46,12 @@ export default function SoundsPage() {
           setSounds(data.sounds);
           setSource(data.source);
         } else {
-          // Fallback
-          const mock = generateSounds().map(s => ({
-            ...s,
-            soundType: s.genre === "Efekt" || s.genre === "Konuşma" ? "sound" : "music",
-          }));
-          setSounds(mock as SoundItem[]);
-          setSource("generated");
+          setSounds([]);
+          setSource("none");
         }
       } catch {
-        const mock = generateSounds().map(s => ({
-          ...s,
-          soundType: s.genre === "Efekt" || s.genre === "Konuşma" ? "sound" : "music",
-        }));
-        setSounds(mock as SoundItem[]);
-        setSource("generated");
+        setSounds([]);
+        setSource("none");
       } finally {
         setLoading(false);
       }
@@ -205,6 +196,12 @@ export default function SoundsPage() {
               </div>
             </div>
           ))}
+        </div>
+      ) : filtered.length === 0 ? (
+        <div className="bg-card rounded-xl border border-border p-12 text-center">
+          <Volume2 className="w-10 h-10 text-muted-foreground mx-auto mb-3 opacity-50" />
+          <p className="text-sm font-medium text-foreground">Henüz ses verisi bulunamadı</p>
+          <p className="text-xs text-muted-foreground mt-1">Veriler yüklendiğinde burada görünecek</p>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

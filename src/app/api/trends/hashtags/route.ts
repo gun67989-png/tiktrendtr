@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { generateHashtags } from "@/lib/data";
 import { cached, cacheKey } from "@/lib/cache";
 import { apiLogger } from "@/lib/logger";
 
@@ -135,7 +134,8 @@ export async function GET() {
       if (realHashtags && realHashtags.length > 0) {
         return { hashtags: realHashtags, source: "live" as const };
       }
-      return { hashtags: generateHashtags(), source: "generated" as const };
+      // No fake data — return empty with clear indicator
+      return { hashtags: [], source: "no_data" as const, message: "Henüz yeterli veri yok. Veriler 6 saatte bir güncellenir." };
     },
     600 // 10 minutes
   );

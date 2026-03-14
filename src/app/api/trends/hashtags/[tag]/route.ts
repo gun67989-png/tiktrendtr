@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { generateHashtagDetail } from "@/lib/data";
+import { apiLogger } from "@/lib/logger";
 import { buildTiktokUrl } from "@/lib/tiktok-scraper";
 
 export const dynamic = "force-dynamic";
@@ -52,25 +52,31 @@ export async function GET(
       }
     }
 
-    // Fall back to generated data for charts/stats
-    const detail = generateHashtagDetail(tag);
-
-    if (!detail) {
-      return NextResponse.json(
-        { error: "Hashtag bulunamadi" },
-        { status: 404 }
-      );
-    }
-
-    // Override fake videos with real ones if available
+    // If we have real videos, build a response from them
     if (realVideos.length > 0) {
-      detail.topVideos = realVideos as typeof detail.topVideos;
+      const totalViews = (realVideos as { views: number }[]).reduce((s, v) => s + v.views, 0);
+      const totalLikes = (realVideos as { likes: number }[]).reduce((s, v) => s + v.likes, 0);
+      const avgEng = totalViews > 0 ? Math.round((totalLikes / totalViews) * 10000) / 100 : 0;
+
+      return NextResponse.json({
+        tag: `#${cleanTag}`,
+        name: cleanTag,
+        videoCount: realVideos.length,
+        totalViews,
+        avgEngagement: avgEng,
+        topVideos: realVideos,
+        source: "live",
+      });
     }
 
-    return NextResponse.json(detail);
-  } catch {
     return NextResponse.json(
-      { error: "Sunucu hatasi" },
+      { error: "Hashtag bulunamad\u0131 veya hen\u00FCz yeterli veri yok" },
+      { status: 404 }
+    );
+  } catch (e) {
+    apiLogger.error({ err: e }, "Hashtag detail error");
+    return NextResponse.json(
+      { error: "Sunucu hatas\u0131" },
       { status: 500 }
     );
   }

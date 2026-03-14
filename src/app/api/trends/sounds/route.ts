@@ -1,6 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { generateSounds } from "@/lib/data";
 import { cached, cacheKey } from "@/lib/cache";
 import { apiLogger } from "@/lib/logger";
 
@@ -169,12 +168,7 @@ export async function GET(request: NextRequest) {
       if (realSounds && realSounds.length > 0) {
         return { sounds: realSounds, source: "live" as const };
       }
-      const sounds = generateSounds().map(s => ({
-        ...s,
-        soundType: s.genre === "Efekt" || s.genre === "Konuşma" ? "sound" : "music",
-      }));
-      const filtered = typeFilter === "all" ? sounds : sounds.filter(s => s.soundType === typeFilter);
-      return { sounds: filtered, source: "generated" as const };
+      return { sounds: [], source: "no_data" as const, message: "Henüz yeterli ses verisi yok. Veriler 6 saatte bir güncellenir." };
     },
     600 // 10 minutes
   );

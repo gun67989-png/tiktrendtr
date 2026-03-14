@@ -1,6 +1,5 @@
 import { NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { generateHashtags } from "@/lib/data";
 import { cached, cacheKey } from "@/lib/cache";
 import { apiLogger } from "@/lib/logger";
 
@@ -77,15 +76,7 @@ export async function GET() {
       if (realHashtags && realHashtags.length > 0) {
         return { hashtags: realHashtags, source: "live" as const };
       }
-      const hashtags = generateHashtags();
-      const enriched = hashtags.map((h) => {
-        const avgViews = Math.round(h.totalUses * (2.5 + Math.random() * 5));
-        return {
-          id: h.id, name: h.name, totalUses: h.totalUses, weeklyGrowth: h.weeklyGrowth,
-          category: h.category, viralScore: h.viralScore, isEmerging: h.isEmerging, avgViews, trend: h.trend,
-        };
-      });
-      return { hashtags: enriched, source: "generated" as const };
+      return { hashtags: [], source: "no_data" as const };
     },
     900 // 15 minutes
   );

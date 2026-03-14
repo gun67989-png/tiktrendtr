@@ -31,10 +31,7 @@ import {
   Tooltip,
   ResponsiveContainer,
 } from "recharts";
-import {
-  generateOverview,
-  generateEmergingTrends,
-} from "@/lib/data";
+import type { TrendOverview } from "@/lib/data";
 import VideoCard, { type VideoData } from "@/components/VideoCard";
 import VideoModal from "@/components/VideoModal";
 import OnboardingTour from "@/components/OnboardingTour";
@@ -144,13 +141,22 @@ interface Props {
   } | null;
 }
 
-const fallbackOverview = generateOverview();
-const fallbackTrends = generateEmergingTrends();
+const emptyOverview: TrendOverview = {
+  totalVideosAnalyzed: 0,
+  activeTrends: 0,
+  avgEngagement: 0,
+  bestPostingTime: "—",
+  trendingNiches: [],
+  trendingCities: [],
+  viralFormats: [],
+  dailyStats: [],
+};
 
 export default function IndividualDashboard({ user }: Props) {
-  const [overview, setOverview] = useState(fallbackOverview);
-  const [emergingTrends, setEmergingTrends] = useState(fallbackTrends);
-  const [dataSource, setDataSource] = useState<"loading" | "live" | "generated">("loading");
+  const [overview, setOverview] = useState(emptyOverview);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [emergingTrends, setEmergingTrends] = useState<any[]>([]);
+  const [dataSource, setDataSource] = useState<"loading" | "live" | "no_data">("loading");
   const [topVideos, setTopVideos] = useState<VideoData[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<VideoData | null>(null);
   const [lastUpdate, setLastUpdate] = useState("");
@@ -181,7 +187,7 @@ export default function IndividualDashboard({ user }: Props) {
         }
         setDataSource(data.source || "generated");
       })
-      .catch(() => setDataSource("generated"));
+      .catch(() => setDataSource("no_data"));
   }, []);
 
   useEffect(() => {
@@ -202,9 +208,9 @@ export default function IndividualDashboard({ user }: Props) {
 
   const nicheColors = ["#FF3B5C", "#2dd4bf", "#8b5cf6", "#f59e0b", "#3b82f6", "#ec4899", "#14b8a6", "#f97316"];
 
-  // Growth target mock
-  const growthTarget = { current: 1240, goal: 5000, label: "Takipçi Hedefi" };
-  const growthPercent = Math.round((growthTarget.current / growthTarget.goal) * 100);
+  // Real data stats
+  const growthTarget = { current: overview.totalVideosAnalyzed, goal: Math.max(overview.totalVideosAnalyzed * 2, 1000), label: "Analiz Edilen Video" };
+  const growthPercent = growthTarget.goal > 0 ? Math.round((growthTarget.current / growthTarget.goal) * 100) : 0;
 
   return (
     <motion.div

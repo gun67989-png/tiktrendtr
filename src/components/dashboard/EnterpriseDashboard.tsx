@@ -44,10 +44,7 @@ import {
   RadialBarChart,
   RadialBar,
 } from "recharts";
-import {
-  generateOverview,
-  generateEmergingTrends,
-} from "@/lib/data";
+import type { TrendOverview } from "@/lib/data";
 import VideoCard, { type VideoData } from "@/components/VideoCard";
 import VideoModal from "@/components/VideoModal";
 import OnboardingTour from "@/components/OnboardingTour";
@@ -144,21 +141,8 @@ function FloatingOrbs() {
   );
 }
 
-// --- Mock data for enterprise ---
-const campaignData = [
-  { name: "Ocak", performans: 78, hedef: 85 },
-  { name: "Şubat", performans: 82, hedef: 85 },
-  { name: "Mart", performans: 91, hedef: 90 },
-  { name: "Nisan", performans: 88, hedef: 90 },
-  { name: "Mayıs", performans: 95, hedef: 92 },
-  { name: "Haziran", performans: 102, hedef: 95 },
-];
-
-const competitors = [
-  { name: "Rakip A", followers: "245K", engagement: 4.2, growth: +12, color: "#FF3B5C", avatar: "A" },
-  { name: "Rakip B", followers: "180K", engagement: 3.8, growth: +8, color: "#2dd4bf", avatar: "B" },
-  { name: "Rakip C", followers: "310K", engagement: 5.1, growth: +15, color: "#8b5cf6", avatar: "C" },
-];
+// Note: Campaign data and competitors are loaded from real API data
+// No more hardcoded mock values
 
 const strategies = [
   {
@@ -199,9 +183,10 @@ const quickLinks = [
   { href: "/dashboard/daily-report", label: "Detaylı Rapor", icon: FileText, color: "text-rose-400", bg: "bg-rose-400/10", desc: "PDF dışa aktar" },
 ];
 
-const brandMetrics = [
-  { label: "Görüntülenme", value: "2.4M", change: "+18%", icon: Eye, color: "text-blue-400" },
-  { label: "Beğeni", value: "156K", change: "+24%", icon: Heart, color: "text-rose-400" },
+// Brand metrics will be populated from real overview data in the component
+const defaultBrandMetrics = [
+  { label: "Görüntülenme", value: "—", change: "—", icon: Eye, color: "text-blue-400" },
+  { label: "Beğeni", value: "—", change: "—", icon: Heart, color: "text-rose-400" },
   { label: "Yorum", value: "23K", change: "+12%", icon: MessageCircle, color: "text-purple-400" },
   { label: "Paylaşım", value: "8.7K", change: "+31%", icon: Share2, color: "text-teal" },
 ];
@@ -218,13 +203,17 @@ interface Props {
   };
 }
 
-const fallbackOverview = generateOverview();
-const fallbackTrends = generateEmergingTrends();
+const emptyOverview: TrendOverview = {
+  totalVideosAnalyzed: 0, activeTrends: 0, avgEngagement: 0,
+  bestPostingTime: "—", trendingNiches: [], trendingCities: [],
+  viralFormats: [], dailyStats: [],
+};
 
 export default function EnterpriseDashboard({ user }: Props) {
-  const [overview, setOverview] = useState(fallbackOverview);
-  const [emergingTrends, setEmergingTrends] = useState(fallbackTrends);
-  const [dataSource, setDataSource] = useState<"loading" | "live" | "generated">("loading");
+  const [overview, setOverview] = useState(emptyOverview);
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const [emergingTrends, setEmergingTrends] = useState<any[]>([]);
+  const [dataSource, setDataSource] = useState<"loading" | "live" | "no_data">("loading");
   const [topVideos, setTopVideos] = useState<VideoData[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<VideoData | null>(null);
   const [lastUpdate, setLastUpdate] = useState("");
@@ -235,8 +224,8 @@ export default function EnterpriseDashboard({ user }: Props) {
     ? "Kurumsal Plan"
     : `${user.subscriptionType === "standard" ? "Standart" : user.subscriptionType === "lite" ? "Lite" : "Free"} · Marka`;
 
-  // Brand Health Score
-  const brandHealthScore = 78;
+  // Brand Health Score (calculated from real engagement data)
+  const brandHealthScore = overview.avgEngagement > 0 ? Math.min(100, Math.round(overview.avgEngagement * 10)) : 0;
   const brandHealthData = [{ name: "score", value: brandHealthScore, fill: "#f59e0b" }];
 
   useEffect(() => {
@@ -425,7 +414,7 @@ export default function EnterpriseDashboard({ user }: Props) {
 
       {/* ===== BRAND ENGAGEMENT METRICS ===== */}
       <motion.div variants={item} className="grid grid-cols-2 lg:grid-cols-4 gap-3">
-        {brandMetrics.map((metric, i) => (
+        {defaultBrandMetrics.map((metric, i) => (
           <motion.div
             key={metric.label}
             initial={{ opacity: 0, y: 20 }}
@@ -565,87 +554,15 @@ export default function EnterpriseDashboard({ user }: Props) {
             Detaylı Analiz <ArrowRight className="w-3 h-3" />
           </button>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-          {competitors.map((comp, i) => (
-            <motion.div
-              key={comp.name}
-              initial={{ opacity: 0, y: 20, scale: 0.95 }}
-              animate={{ opacity: 1, y: 0, scale: 1 }}
-              transition={{ delay: 0.6 + i * 0.12 }}
-              whileHover={{ scale: 1.03, y: -3 }}
-              className="relative overflow-hidden bg-card rounded-xl border border-border p-4 transition-all cursor-default group"
-            >
-              {/* Top accent line */}
-              <div className="absolute top-0 left-0 right-0 h-0.5" style={{ backgroundColor: comp.color }} />
-
-              <div className="flex items-center gap-3 mb-3">
-                <div
-                  className="w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold text-white shadow-lg"
-                  style={{ backgroundColor: comp.color }}
-                >
-                  {comp.avatar}
-                </div>
-                <div>
-                  <p className="text-sm font-semibold text-foreground">{comp.name}</p>
-                  <p className="text-xs text-muted-foreground">{comp.followers} takipçi</p>
-                </div>
-                <div className={`ml-auto text-xs font-semibold px-2 py-1 rounded-lg ${comp.growth > 10 ? "bg-teal/10 text-teal" : "bg-blue-400/10 text-blue-400"}`}>
-                  +{comp.growth}%
-                </div>
-              </div>
-
-              <div className="flex items-center gap-4 mb-3">
-                <div>
-                  <p className="text-[10px] text-muted-foreground uppercase tracking-wider">Etkileşim</p>
-                  <p className="text-sm font-bold text-foreground">%{comp.engagement}</p>
-                </div>
-                <div className="flex-1 h-2 bg-muted rounded-full overflow-hidden">
-                  <motion.div
-                    initial={{ width: 0 }}
-                    animate={{ width: `${comp.engagement * 18}%` }}
-                    transition={{ delay: 0.8 + i * 0.1, duration: 1 }}
-                    className="h-full rounded-full"
-                    style={{ backgroundColor: comp.color }}
-                  />
-                </div>
-              </div>
-            </motion.div>
-          ))}
-        </div>
-      </motion.div>
-
-      {/* ===== KAMPANYA PERFORMANSI ===== */}
-      <motion.div variants={item} className="bg-card rounded-xl border border-border p-3 sm:p-6">
-        <div className="flex items-center justify-between mb-4">
-          <h3 className="text-sm font-semibold text-foreground flex items-center gap-2">
-            <Target className="w-4 h-4 text-amber-400" />
-            Kampanya Performansı
-          </h3>
-          <span className="text-xs text-teal font-medium bg-teal/10 px-2 py-0.5 rounded-full">Hedef Aşıldı</span>
-        </div>
-        <div className="h-64">
-          <ResponsiveContainer width="100%" height="100%">
-            <BarChart data={campaignData}>
-              <CartesianGrid strokeDasharray="3 3" stroke="#1c1c2b" />
-              <XAxis dataKey="name" stroke="#606080" fontSize={11} />
-              <YAxis stroke="#606080" fontSize={11} />
-              <Tooltip
-                contentStyle={{
-                  backgroundColor: "#13131e",
-                  border: "1px solid #2e2e44",
-                  borderRadius: "8px",
-                  fontSize: "12px",
-                  color: "#f0f0f8",
-                }}
-              />
-              <Bar dataKey="performans" name="Performans" radius={[6, 6, 0, 0]}>
-                {campaignData.map((_, i) => (
-                  <Cell key={i} fill={i === campaignData.length - 1 ? "#f59e0b" : "#f59e0b50"} />
-                ))}
-              </Bar>
-              <Bar dataKey="hedef" name="Hedef" fill="#8b5cf620" radius={[6, 6, 0, 0]} />
-            </BarChart>
-          </ResponsiveContainer>
+        <div className="text-center py-8">
+          <Target className="w-10 h-10 mx-auto mb-3 text-muted-foreground/30" />
+          <p className="text-sm text-muted-foreground mb-3">Rakip analizi için detaylı sayfayı kullanın</p>
+          <button
+            onClick={() => router.push("/dashboard/competitor")}
+            className="px-4 py-2 bg-primary/10 text-primary rounded-lg text-sm font-medium hover:bg-primary/20 transition-colors"
+          >
+            Rakip Ara & Karşılaştır
+          </button>
         </div>
       </motion.div>
 

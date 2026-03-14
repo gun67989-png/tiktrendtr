@@ -61,6 +61,8 @@ export interface GrowthStage {
 
 // Viral Threshold Constants for Turkey Market
 export const VIRAL_THRESHOLDS = {
+  // Minimum views for a video to appear in "Top Viral" list
+  MIN_VIEWS_FOR_TOP: 50_000,
   MIN_VIEWS: 500_000,
   MIN_LIKES: 50_000,
   MIN_ENGAGEMENT: 3.0,
@@ -119,7 +121,17 @@ export function calcViewScore(views: number): number {
   return views / 50_000 * 0.05;
 }
 
-// Compute full viral score with all new metrics
+// Viral score breakdown for transparency
+export interface ViralScoreBreakdown {
+  engagement_rate: number;
+  view_growth_rate: number;
+  share_rate: number;
+  comment_activity: number;
+  recency_score: number;
+}
+
+// Compute full viral score using the weighted formula:
+// viral_score = (engagement_rate * 0.35) + (view_growth_rate * 0.25) + (share_rate * 0.15) + (comment_activity * 0.15) + (recency_score * 0.10)
 export function calcViralScore(opts: {
   views: number;
   likes: number;
@@ -128,56 +140,68 @@ export function calcViralScore(opts: {
   followerCount: number;
   creatorPresenceScore: number;
   publishedAt: string;
-}): { viralScore: number; surpriseFactor: number; engagementVelocity: number; discoveryScore: number; tier: ViralTier } {
-  const { views, likes, comments, shares, followerCount, creatorPresenceScore, publishedAt } = opts;
+}): { viralScore: number; surpriseFactor: number; engagementVelocity: number; discoveryScore: number; tier: ViralTier; breakdown: ViralScoreBreakdown } {
+  const { views, likes, comments, shares, followerCount, publishedAt } = opts;
 
-  const engRate = views > 0 ? ((likes + comments + shares) / views) * 100 : 0;
-  const likeRatio = views > 0 ? (likes / views) * 100 : 0;
-  const shareRatio = views > 0 ? (shares / views) * 100 : 0;
+  // If no views, minimal score
+  if (views <= 0) {
+    return { viralScore: 0, surpriseFactor: 0, engagementVelocity: 0, discoveryScore: 0, tier: null, breakdown: { engagement_rate: 0, view_growth_rate: 0, share_rate: 0, comment_activity: 0, recency_score: 0 } };
+  }
 
-  const surpriseFactor = calcSurpriseFactor(likes, followerCount);
+  // Core metrics (raw ratios)
+  const rawEngagementRate = (likes + comments + shares) / views; // typically 0.01 to 0.20
+  const rawShareRate = shares / views; // typically 0.001 to 0.05
+  const rawCommentActivity = comments / views; // typically 0.001 to 0.05
+
+  // Normalized components (0-1 scale, capped)
+  // engagement_rate: 10% engagement = 1.0 (very high for TikTok)
+  const engagementRateNorm = Math.min(1, rawEngagementRate / 0.10);
+
+  // view_growth_rate: estimated from engagement velocity + view magnitude
   const engagementVelocity = calcEngagementVelocity(likes, comments, shares, publishedAt);
-  const discoveryScore = calcDiscoveryScore(views, followerCount);
+  const viewGrowthNorm = Math.min(1, (calcViewScore(views) * 0.6 + Math.min(1, engagementVelocity / 50_000) * 0.4));
 
-  // Normalized components (0-1 scale)
-  const viewScoreNorm = calcViewScore(views);
-  const likeRatioNorm = Math.min(1, likeRatio / 10);
-  const engRateNorm = Math.min(1, engRate / 15);
-  const presenceNorm = creatorPresenceScore / 100;
-  const shareNorm = Math.min(1, shareRatio / 2);
-  // Surprise: 0=expected, 1=strong discovery, 2+=algorithm explosion
-  const surpriseNorm = Math.min(1, Math.max(0, surpriseFactor / 2.5));
-  // Velocity: normalize to 100K engagement/day = 1.0
-  const velocityNorm = Math.min(1, engagementVelocity / 100_000);
-  // Discovery: 100x follower reach = 1.0
-  const discoveryNorm = Math.min(1, discoveryScore / 100);
+  // share_rate: 2% share rate = 1.0 (excellent sharing)
+  const shareRateNorm = Math.min(1, rawShareRate / 0.02);
 
-  // Freshness score — newer content gets boosted
+  // comment_activity: 2% comment rate = 1.0 (very active discussion)
+  const commentActivityNorm = Math.min(1, rawCommentActivity / 0.02);
+
+  // recency_score: newer videos score higher
   const daysSincePublished = Math.max(0.1, (Date.now() - new Date(publishedAt).getTime()) / (1000 * 60 * 60 * 24));
-  const freshnessNorm = daysSincePublished <= 1 ? 1.0
-    : daysSincePublished <= 3 ? 0.85
-    : daysSincePublished <= 7 ? 0.60
-    : daysSincePublished <= 14 ? 0.30
-    : 0.10;
+  const recencyNorm = daysSincePublished <= 1 ? 1.0
+    : daysSincePublished <= 2 ? 0.90
+    : daysSincePublished <= 3 ? 0.75
+    : daysSincePublished <= 5 ? 0.55
+    : daysSincePublished <= 7 ? 0.40
+    : daysSincePublished <= 14 ? 0.20
+    : 0.05;
 
-  // Updated weighted formula with freshness
-  const viralScore = Math.min(10, Math.max(0.1,
-    Math.round((
-      viewScoreNorm * 0.12 +
-      likeRatioNorm * 0.08 +
-      engRateNorm * 0.08 +
-      presenceNorm * 0.08 +
-      shareNorm * 0.08 +
-      surpriseNorm * 0.18 +
-      velocityNorm * 0.15 +
-      discoveryNorm * 0.08 +
-      freshnessNorm * 0.15
-    ) * 100) / 10
-  ));
+  // Weighted formula
+  const rawScore =
+    engagementRateNorm * 0.35 +
+    viewGrowthNorm * 0.25 +
+    shareRateNorm * 0.15 +
+    commentActivityNorm * 0.15 +
+    recencyNorm * 0.10;
 
+  // Scale to 0-10
+  const viralScore = Math.min(10, Math.max(0.1, Math.round(rawScore * 100) / 10));
+
+  // Keep legacy metrics for compatibility
+  const surpriseFactor = calcSurpriseFactor(likes, followerCount);
+  const discoveryScore = calcDiscoveryScore(views, followerCount);
   const tier = getViralTier(views, likes, surpriseFactor);
 
-  return { viralScore, surpriseFactor, engagementVelocity, discoveryScore, tier };
+  const breakdown: ViralScoreBreakdown = {
+    engagement_rate: Math.round(engagementRateNorm * 100) / 100,
+    view_growth_rate: Math.round(viewGrowthNorm * 100) / 100,
+    share_rate: Math.round(shareRateNorm * 100) / 100,
+    comment_activity: Math.round(commentActivityNorm * 100) / 100,
+    recency_score: Math.round(recencyNorm * 100) / 100,
+  };
+
+  return { viralScore, surpriseFactor, engagementVelocity, discoveryScore, tier, breakdown };
 }
 
 // Legacy viral score calculation (for hashtags/sounds)

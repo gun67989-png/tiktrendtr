@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
-import { generateVideos, calcViralScore } from "@/lib/data";
+import { calcViralScore, VIRAL_THRESHOLDS } from "@/lib/data";
 import { buildTiktokUrl } from "@/lib/tiktok-scraper";
 import { cached, cacheKey } from "@/lib/cache";
 import { apiLogger } from "@/lib/logger";
@@ -166,15 +166,8 @@ export async function GET(request: NextRequest) {
       if (realData && realData.videos.length > 0) {
         return { videos: realData.videos, total: realData.total, limit, offset, source: "live" as const };
       }
-      // Fall back to generated data
-      const gen = generateVideos({
-        limit,
-        offset,
-        category,
-        sortBy: sortBy as "viralScore" | "views" | "engagementRate" | "publishedAt",
-        order: order as "asc" | "desc",
-      });
-      return { videos: gen.videos, total: gen.total, limit, offset, source: "generated" as const };
+      // No fake data — return empty
+      return { videos: [], total: 0, limit, offset, source: "no_data" as const };
     },
     300 // 5 minutes
   );

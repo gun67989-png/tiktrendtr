@@ -1,7 +1,6 @@
 import { NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import {
-  generateVideos,
   calcViralScore,
   VIRAL_THRESHOLDS,
   type ViralTier,
@@ -152,40 +151,6 @@ async function fetchViralVideos() {
     return { videos, source: "live" as const };
   }
 
-  // Step 4: Fallback to generated mock data
-  const { videos: mockVideos } = generateVideos({
-    limit: 60,
-    sortBy: "viralScore",
-    order: "desc",
-  });
-
-  const filteredMock = mockVideos
-    .filter((v) => v.views >= VIRAL_THRESHOLDS.MIN_VIEWS && v.likes >= VIRAL_THRESHOLDS.MIN_LIKES)
-    .slice(0, 30);
-
-  return {
-    videos: filteredMock.map((v) => ({
-      id: v.id,
-      creator: v.creator,
-      description: v.description.substring(0, 100),
-      thumbnailUrl: v.thumbnailUrl,
-      tiktokUrl: v.tiktokUrl,
-      views: v.views,
-      likes: v.likes,
-      comments: v.comments,
-      shares: v.shares,
-      followerCount: v.followerCount,
-      engagementRate: v.engagementRate,
-      viralScore: v.viralScore,
-      surpriseFactor: v.surpriseFactor,
-      engagementVelocity: v.engagementVelocity,
-      discoveryScore: v.discoveryScore,
-      tier: v.tier,
-      format: v.format,
-      category: v.category,
-      hashtags: v.hashtags,
-      publishedAt: v.publishedAt,
-    })),
-    source: "generated" as const,
-  };
+  // Step 4: No fake data — return empty
+  return { videos: [], source: "no_data" as const };
 }
