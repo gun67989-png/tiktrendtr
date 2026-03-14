@@ -1,10 +1,62 @@
 "use client";
 
-import { useMemo } from "react";
+import { useMemo, useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { TrendingUp, Target, Calendar, Users, Zap, CheckCircle } from "lucide-react";
+import Link from "next/link";
+import { TrendingUp, Target, Calendar, Users, Zap, CheckCircle, Lightbulb, ArrowRight, BookOpen, Clock, Play } from "lucide-react";
 import { getGrowthStages } from "@/lib/data";
 import PremiumGate from "@/components/PremiumGate";
+
+const NICHE_TIPS: Record<string, string[]> = {
+  Kozmetik: [
+    "Before/After dönüşüm videoları en yüksek kaydetme oranına sahiptir",
+    "GRWM (Get Ready With Me) formatı kozmetik nişinde %40 daha fazla izlenme alır",
+    "Ürün inceleme videolarında doğal ışık kullanımı güvenilirliği artırır",
+    "Trending ses + makyaj geçişi kombinasyonu viral potansiyeli yükseltir",
+  ],
+  Teknoloji: [
+    "Unboxing ve ilk izlenim videoları teknoloji nişinde en çok paylaşılır",
+    "Kısa ve öz 'nasıl yapılır' içerikleri kaydetme oranını artırır",
+    "Yeni çıkan ürünlerin ilk günlerinde içerik üretmek keşfet şansını yükseltir",
+    "Karşılaştırma videoları (A vs B) yüksek yorum etkileşimi sağlar",
+  ],
+  Moda: [
+    "Outfit of the Day (OOTD) serisi tutarlı takipçi büyümesi sağlar",
+    "Sezon geçişlerinde gardırop düzenleme içerikleri trend olur",
+    "Uygun fiyatlı vs lüks karşılaştırmaları geniş kitleye ulaşır",
+    "Kişisel stil ipuçları içerikleri en yüksek takip oranına sahiptir",
+  ],
+  Yemek: [
+    "Overhead (kuşbakışı) çekim yemek videolarında altın standarttır",
+    "30 saniyenin altında hızlı tarif videoları en çok paylaşılır",
+    "Trend olan yiyecekleri deneme içerikleri keşfet algoritmasını tetikler",
+    "ASMR yemek sesleri izlenme süresini önemli ölçüde artırır",
+  ],
+  "Eğitim": [
+    "3 şey öğreneceksin formatı eğitim nişinde en etkili hook'tur",
+    "Karmaşık konuları basitleştiren animasyonlar kaydetme oranını artırır",
+    "Günlük bilgi serisi formatı sadık takipçi kitlesi oluşturur",
+    "Sınav/quiz formatı yorum etkileşimini %60 artırır",
+  ],
+  Fitness: [
+    "Egzersiz rutini videolarında ilk 3 saniyede sonucu gösterin",
+    "Evde yapılabilir egzersiz içerikleri en geniş kitleye ulaşır",
+    "İlerleme videoları (transformation) en yüksek kaydetme oranına sahiptir",
+    "Beslenme ipuçları + egzersiz kombinasyonu çapraz kitle çeker",
+  ],
+  Oyun: [
+    "Oyun içi epic anlar ve fail derlemeleri en çok paylaşılır",
+    "Yeni çıkan oyunların ilk 48 saatinde içerik üretmek kritiktir",
+    "İpucu ve trick videoları kaydetme oranını maksimize eder",
+    "Canlı yayın kesitleri kısa video platformlarında çok iyi performans gösterir",
+  ],
+  Seyahat: [
+    "Gizli mekan keşifleri seyahat nişinde en çok kaydedilen içerik türüdür",
+    "Bütçe dostu seyahat ipuçları geniş kitleye hitap eder",
+    "Drone çekimleri ve geçiş efektleri izlenme süresini artırır",
+    "Yerel yemek deneyimleri seyahat + yemek çapraz kitlesini çeker",
+  ],
+};
 
 const stageColors = [
   { bg: "bg-primary/10", border: "border-primary/30", text: "text-primary", accent: "#ff3b5c" },
@@ -14,6 +66,18 @@ const stageColors = [
 
 function GrowthContent() {
   const stages = useMemo(() => getGrowthStages(), []);
+  const [niche, setNiche] = useState<string | null>(null);
+
+  useEffect(() => {
+    fetch("/api/auth/check")
+      .then((res) => res.json())
+      .then((data) => {
+        if (data.authenticated && data.user) {
+          setNiche(data.user.subscriptionNiche || null);
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   return (
     <motion.div
@@ -25,7 +89,7 @@ function GrowthContent() {
       <div>
         <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
           <TrendingUp className="text-teal" />
-          Büyüme Stratejisi
+          Büyüme Stratejisi{niche ? ` - ${niche}` : ""}
         </h1>
         <p className="text-muted-foreground text-sm mt-1">
           0&apos;dan 100K takipçiye ulaşmak için adım adım yol haritası
@@ -185,6 +249,89 @@ function GrowthContent() {
             </div>
           ))}
         </div>
+      </motion.div>
+
+      {/* Niche Tips Section */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.0 }}
+        className="bg-card rounded-xl border border-teal/20 p-4 sm:p-6"
+      >
+        <h3 className="text-sm font-semibold text-teal flex items-center gap-2 mb-4">
+          <Lightbulb className="w-4 h-4" />
+          Nişinize Özel İpuçları
+        </h3>
+        {niche && NICHE_TIPS[niche] ? (
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {NICHE_TIPS[niche].map((tip, i) => (
+              <div
+                key={i}
+                className="flex items-start gap-2 text-sm text-muted-foreground bg-teal/5 rounded-lg p-3"
+              >
+                <CheckCircle className="w-4 h-4 text-teal flex-shrink-0 mt-0.5" />
+                {tip}
+              </div>
+            ))}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground">
+            Nişinizi belirleyerek size özel büyüme ipuçları alabilirsiniz. Ayarlardan nişinizi seçerek kişiselleştirilmiş öneriler görün.
+          </p>
+        )}
+      </motion.div>
+
+      {/* CTA - Related Tools */}
+      <motion.div
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ delay: 1.2 }}
+        className="grid grid-cols-1 sm:grid-cols-3 gap-4"
+      >
+        {[
+          {
+            href: "/dashboard/hook-library",
+            title: "Hook Kütüphanesi",
+            description: "Dikkat çekici açılışlar ile izlenme sürenizi artırın",
+            icon: BookOpen,
+            color: "text-primary",
+            borderColor: "border-primary/20",
+            bgColor: "bg-primary/5",
+          },
+          {
+            href: "/dashboard/posting-times",
+            title: "Paylaşım Zamanları",
+            description: "En yüksek etkileşim saatlerini keşfedin",
+            icon: Clock,
+            color: "text-teal",
+            borderColor: "border-teal/20",
+            bgColor: "bg-teal/5",
+          },
+          {
+            href: "/dashboard/trending-videos",
+            title: "Trend Videolar",
+            description: "Güncel trendleri takip edin ve ilham alın",
+            icon: Play,
+            color: "text-purple-400",
+            borderColor: "border-purple-500/20",
+            bgColor: "bg-purple-500/5",
+          },
+        ].map((cta) => (
+          <Link
+            key={cta.href}
+            href={cta.href}
+            className={`group bg-card rounded-xl border ${cta.borderColor} p-4 sm:p-5 hover:${cta.bgColor} transition-colors`}
+          >
+            <div className="flex items-center gap-3 mb-2">
+              <cta.icon className={`w-5 h-5 ${cta.color}`} />
+              <h4 className="text-sm font-semibold text-foreground">{cta.title}</h4>
+            </div>
+            <p className="text-xs text-muted-foreground mb-3">{cta.description}</p>
+            <span className={`text-xs font-medium ${cta.color} flex items-center gap-1 group-hover:gap-2 transition-all`}>
+              Keşfet <ArrowRight className="w-3 h-3" />
+            </span>
+          </Link>
+        ))}
       </motion.div>
     </motion.div>
   );

@@ -114,21 +114,6 @@ function FloatingParticles() {
   );
 }
 
-// --- Mock data ---
-const viralOpportunities = [
-  { format: "POV Formatı", potential: 92, trend: "+45%", desc: "Birinci şahıs anlatım trendde" },
-  { format: "Before/After", potential: 87, trend: "+38%", desc: "Dönüşüm videoları viral oluyor" },
-  { format: "Storytime", potential: 85, trend: "+32%", desc: "Hikaye anlatımı etkileşimi artırıyor" },
-  { format: "Tutorial Kısa", potential: 80, trend: "+28%", desc: "30 sn altı eğitim videoları" },
-];
-
-const dailySuggestions = [
-  { time: "09:00", content: "Trend ses ile POV videosu paylaş", type: "Video", icon: Play, color: "text-primary" },
-  { time: "13:00", content: "Nişine uygun hashtag araştırması yap", type: "Araştırma", icon: Eye, color: "text-purple-400" },
-  { time: "18:00", content: "Hook kütüphanesinden ilham al", type: "İçerik", icon: BookOpen, color: "text-teal" },
-  { time: "20:00", content: "En yüksek etkileşim saati - ana videoyu paylaş", type: "Paylaşım", icon: Rocket, color: "text-amber-400" },
-];
-
 interface Props {
   user: {
     userId: string;
@@ -205,6 +190,24 @@ export default function IndividualDashboard({ user }: Props) {
     { label: "Ortalama Etkileşim", value: overview.avgEngagement, icon: Percent, color: "text-purple-400", bg: "bg-purple-400/10", suffix: "%" },
     { label: "En İyi Paylaşım Saati", value: 0, displayValue: overview.bestPostingTime, icon: Clock, color: "text-amber-400", bg: "bg-amber-400/10" },
   ];
+
+  const viralOpportunities = overview.viralFormats.length > 0
+    ? overview.viralFormats.slice(0, 4).map((f, i) => ({
+        format: f.name,
+        potential: Math.max(60, 95 - i * 8),
+        trend: `+${Math.round(overview.trendingNiches[i]?.growth || 20)}%`,
+        desc: f.description,
+      }))
+    : [];
+
+  const dailySuggestions = overview.bestPostingTime !== "—"
+    ? [
+        { time: "09:00", content: "Trend ses ile POV videosu paylaş", type: "Video", icon: Play, color: "text-primary" },
+        { time: "13:00", content: "Nişine uygun hashtag araştırması yap", type: "Araştırma", icon: Eye, color: "text-purple-400" },
+        { time: overview.bestPostingTime.split(" - ")[0] || "18:00", content: "Hook kütüphanesinden ilham al", type: "İçerik", icon: BookOpen, color: "text-teal" },
+        { time: overview.bestPostingTime.split(" - ")[1] || "20:00", content: "En yüksek etkileşim saati - ana videoyu paylaş", type: "Paylaşım", icon: Rocket, color: "text-amber-400" },
+      ]
+    : [];
 
   const nicheColors = ["#FF3B5C", "#2dd4bf", "#8b5cf6", "#f59e0b", "#3b82f6", "#ec4899", "#14b8a6", "#f97316"];
 

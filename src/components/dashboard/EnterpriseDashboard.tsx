@@ -250,9 +250,9 @@ export default function EnterpriseDashboard({ user }: Props) {
           }));
           setEmergingTrends(normalized);
         }
-        setDataSource(data.source || "generated");
+        setDataSource(data.source || "no_data");
       })
-      .catch(() => setDataSource("generated"));
+      .catch(() => setDataSource("no_data"));
   }, []);
 
   useEffect(() => {

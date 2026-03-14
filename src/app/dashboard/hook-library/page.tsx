@@ -1,8 +1,8 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Zap, Copy, Check, Search, Sparkles, TrendingUp } from "lucide-react";
+import { Zap, Copy, Check, Search, Sparkles, TrendingUp, Loader2 } from "lucide-react";
 import OnboardingTour from "@/components/OnboardingTour";
 import { hookLibraryTourSteps } from "@/lib/onboarding";
 import PremiumGate from "@/components/PremiumGate";
@@ -15,24 +15,8 @@ interface Hook {
   viralScore: number;
   usageCount: number;
   example: string;
+  source: "trending" | "curated";
 }
-
-const HOOKS: Hook[] = [
-  { id: 1, title: "Shock Reveal", script: "Bunu deneyene kadar inanmıyordum...", niche: "Kozmetik", viralScore: 8.7, usageCount: 12400, example: "Makyaj öncesi-sonrası" },
-  { id: 2, title: "POV Hook", script: "POV: İlk defa [ürün] deniyorsun ve...", niche: "Kozmetik", viralScore: 7.9, usageCount: 9800, example: "Ürün deneyimi" },
-  { id: 3, title: "Karşılaştırma", script: "Sol taraf 50 TL, sağ taraf 500 TL. Farkı görebiliyor musun?", niche: "Moda", viralScore: 9.1, usageCount: 18200, example: "Ucuz vs pahalı" },
-  { id: 4, title: "Soru Hook", script: "Telefonunu böyle kullanıyorsan yanlış yapıyorsun", niche: "Teknoloji", viralScore: 8.4, usageCount: 15600, example: "Telefon ipuçları" },
-  { id: 5, title: "Liste Hook", script: "Bu 3 uygulama hayatını değiştirecek", niche: "Teknoloji", viralScore: 8.2, usageCount: 22100, example: "Uygulama önerileri" },
-  { id: 6, title: "Story Hook", script: "Dün müşterimle yaşadığım şeyi anlatmam lazım...", niche: "Finans", viralScore: 7.6, usageCount: 6700, example: "Müşteri hikayesi" },
-  { id: 7, title: "Yemek Reveal", script: "Bu tarifi 1M kişi denedi ama kimse [X] eklemeyi düşünmedi", niche: "Yemek", viralScore: 8.8, usageCount: 31200, example: "Tarif videosu" },
-  { id: 8, title: "Transformation", script: "30 günde nasıl [X] kg verdim? İşte plan:", niche: "Fitness", viralScore: 8.5, usageCount: 14300, example: "Dönüşüm hikayesi" },
-  { id: 9, title: "Eğitim Hook", script: "Okulda öğretmedikleri ama bilmen gereken tek şey:", niche: "Eğitim", viralScore: 7.8, usageCount: 11900, example: "Bilgi videosu" },
-  { id: 10, title: "Challenge", script: "Bu trendi denemeden geçme! İşte nasıl:", niche: "Moda", viralScore: 8.0, usageCount: 20500, example: "Trend challenge" },
-  { id: 11, title: "Seyahat Reveal", script: "Türkiye'de kimsenin bilmediği bu yer...", niche: "Seyahat", viralScore: 8.9, usageCount: 16800, example: "Gizli mekan keşfi" },
-  { id: 12, title: "Oyun İpucu", script: "Bu ayarı açmazsan hep kaybedersin", niche: "Oyun", viralScore: 7.5, usageCount: 8900, example: "Oyun ipucu" },
-];
-
-const NICHES = ["Tümü", "Kozmetik", "Teknoloji", "Moda", "Yemek", "Fitness", "Eğitim", "Finans", "Seyahat", "Oyun"];
 
 export default function HookLibraryPage() {
   return (
@@ -43,11 +27,31 @@ export default function HookLibraryPage() {
 }
 
 function HookLibraryPageContent() {
+  const [hooks, setHooks] = useState<Hook[]>([]);
+  const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState("");
   const [selectedNiche, setSelectedNiche] = useState("Tümü");
   const [copiedId, setCopiedId] = useState<number | null>(null);
 
-  const filtered = HOOKS.filter((h) => {
+  useEffect(() => {
+    async function fetchHooks() {
+      try {
+        const res = await fetch("/api/hooks");
+        if (!res.ok) throw new Error("Failed to fetch hooks");
+        const data: Hook[] = await res.json();
+        setHooks(data);
+      } catch (err) {
+        console.error("Hook fetch error:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchHooks();
+  }, []);
+
+  const niches = ["Tümü", ...Array.from(new Set(hooks.map((h) => h.niche)))];
+
+  const filtered = hooks.filter((h) => {
     const matchNiche = selectedNiche === "Tümü" || h.niche === selectedNiche;
     const matchSearch = !search || h.title.toLowerCase().includes(search.toLowerCase()) || h.script.toLowerCase().includes(search.toLowerCase());
     return matchNiche && matchSearch;
@@ -58,6 +62,25 @@ function HookLibraryPageContent() {
     setCopiedId(hook.id);
     setTimeout(() => setCopiedId(null), 2000);
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center py-32">
+        <Loader2 className="w-8 h-8 text-teal animate-spin" />
+        <span className="ml-3 text-muted-foreground text-sm">Hook&apos;lar yükleniyor...</span>
+      </div>
+    );
+  }
+
+  if (hooks.length === 0) {
+    return (
+      <div className="text-center py-32">
+        <Sparkles className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+        <h2 className="text-lg font-semibold text-foreground mb-1">Henüz hook bulunamadı</h2>
+        <p className="text-sm text-muted-foreground">Hook kütüphanesi şu anda boş. Daha sonra tekrar kontrol edin.</p>
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
@@ -87,7 +110,7 @@ function HookLibraryPageContent() {
 
       {/* Niche Filters */}
       <div className="flex flex-wrap gap-2">
-        {NICHES.map((niche) => (
+        {niches.map((niche) => (
           <button
             key={niche}
             onClick={() => setSelectedNiche(niche)}
@@ -117,6 +140,15 @@ function HookLibraryPageContent() {
               <div className="flex items-center gap-2">
                 <Zap className="w-4 h-4 text-amber-400" />
                 <span className="text-sm font-semibold text-foreground">{hook.title}</span>
+                <span
+                  className={`text-[10px] font-medium px-1.5 py-0.5 rounded ${
+                    hook.source === "trending"
+                      ? "bg-amber-500/10 text-amber-500"
+                      : "bg-violet-500/10 text-violet-500"
+                  }`}
+                >
+                  {hook.source === "trending" ? "Trend" : "Şablon"}
+                </span>
               </div>
               <span className="text-xs bg-teal/10 text-teal px-2 py-0.5 rounded font-mono">
                 {hook.viralScore.toFixed(1)}

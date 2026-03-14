@@ -8,9 +8,12 @@ export interface CommentAnalysis {
   commentToLikeRatio: number;       // comments per like
   engagementDepth: "düşük" | "orta" | "yüksek" | "çok yüksek";
   audienceActivity: string;         // description of audience behavior
-  sentimentEstimate: "pozitif" | "nötr" | "karma";
+  sentimentEstimate: "pozitif" | "nötr" | "karma" | "tartışmalı" | "düşük etkileşim";
   discussionPotential: number;      // 0-100 score
+  controversyScore: number;         // 0-100 how controversial/debate-sparking
+  viralCommentPotential: boolean;   // whether comments themselves are driving virality
   recommendations: string[];
+  analysisMethod: string;
 }
 
 /**
@@ -48,17 +51,45 @@ export function analyzeComments(params: {
   const durationBonus = duration > 30 ? 10 : duration > 15 ? 5 : 0;
   const discussionPotential = Math.round(Math.min(cvScore + clScore + volumeScore + durationBonus, 100));
 
-  // Sentiment estimate based on engagement patterns
-  // High like ratio + moderate comments = positive
-  // High comments + low likes = mixed/negative
-  // Balanced = neutral
+  // Sentiment estimate based on multiple engagement signal patterns
   let sentimentEstimate: CommentAnalysis["sentimentEstimate"] = "nötr";
   const likeToViewRatio = views > 0 ? likes / views : 0;
-  if (likeToViewRatio > 0.05 && commentToLikeRatio < 0.3) {
+  const commentToViewPct = commentToViewRatio / 100; // as decimal for comparison
+
+  if (likeToViewRatio < 0.01 && commentToViewPct < 0.001) {
+    // Very low engagement overall
+    sentimentEstimate = "düşük etkileşim";
+  } else if (commentToViewPct > 0.01 && likeToViewRatio < 0.03) {
+    // High comment/view ratio with LOW like/view = controversial debate content
+    sentimentEstimate = "tartışmalı";
+  } else if (commentToViewPct > 0.01 && likeToViewRatio > 0.05) {
+    // High comment/view ratio with high like/view = active engaged positive audience
+    sentimentEstimate = "pozitif";
+  } else if (likeToViewRatio > 0.08 && commentToViewPct < 0.005) {
+    // Very high like/view ratio with low comments = audience loves it silently
     sentimentEstimate = "pozitif";
   } else if (commentToLikeRatio > 0.5 && likeToViewRatio < 0.03) {
+    // Fallback: high comments relative to likes with low like ratio = mixed
     sentimentEstimate = "karma";
   }
+
+  // Controversy score (0-100): measures how debate-sparking a video is
+  // High comments relative to likes = more controversial
+  // High shares relative to likes = divisive content people want others to see
+  const clControversy = Math.min(commentToLikeRatio / 0.8, 1) * 50;
+  const shareToLikeRatio = likes > 0 ? shares / likes : 0;
+  const slControversy = Math.min(shareToLikeRatio / 0.5, 1) * 30;
+  const lowLikeBonus = likeToViewRatio < 0.03 ? 20 : likeToViewRatio < 0.05 ? 10 : 0;
+  const controversyScore = Math.round(Math.min(clControversy + slControversy + lowLikeBonus, 100));
+
+  // Viral comment potential: estimate whether comments themselves are driving virality
+  // Signals: very high comment-to-view ratio, high discussion potential,
+  // comments outpacing likes (people come to debate, not just consume)
+  const viralCommentPotential =
+    commentToViewPct > 0.015 &&
+    commentToLikeRatio > 0.3 &&
+    comments > 500 &&
+    (controversyScore > 50 || (shareToCommentRatio > 0.8 && commentToViewPct > 0.01));
 
   // Audience activity description
   let audienceActivity: string;
@@ -74,14 +105,58 @@ export function analyzeComments(params: {
     audienceActivity = "Çok düşük yorum etkileşimi — izleyiciler beğeniyor ama yorum yapmıyor.";
   }
 
-  // Category-specific context
-  const categoryContext: Record<string, string> = {
-    "Komedi": "Komedi içerikleri genellikle etiketleme yorumları alır.",
-    "Eğitim": "Eğitim içerikleri soru-cevap yorumları çeker.",
-    "Dans": "Dans videolarında yorumlar genellikle beğeni niteliğindedir.",
-    "Müzik": "Müzik videolarında şarkı sözü ve duygusal yorumlar yaygındır.",
-    "Moda": "Moda içeriklerinde ürün soruları sık görülür.",
-    "Yemek": "Yemek videolarında tarif soruları ve deneyim paylaşımları yaygındır.",
+  // Category-specific context and recommendations
+  const categoryContext: Record<string, string[]> = {
+    "Komedi": [
+      "Komedi içerikleri genellikle etiketleme yorumları alır.",
+      "Arkadaş etiketleme oranını artırmak için videonun sonunda 'Bu kim?' tarzı sorular sorun.",
+      "Komedi serisi oluşturmak yorum sadakatini artırır — takipçiler devamını ister.",
+    ],
+    "Eğitim": [
+      "Eğitim içerikleri soru-cevap yorumları çeker.",
+      "Yorumlarda gelen soruları bir sonraki videoda yanıtlayarak topluluk oluşturun.",
+      "Eğitim videolarında 'Bunu biliyor muydunuz?' formatı yorum oranını artırır.",
+    ],
+    "Dans": [
+      "Dans videolarında yorumlar genellikle beğeni niteliğindedir.",
+      "Challenge başlatarak takipçilerin kendi videolarını paylaşmasını sağlayın.",
+      "Koreografi öğretici içerik eklemek yorum etkileşimini artırabilir.",
+    ],
+    "Müzik": [
+      "Müzik videolarında şarkı sözü ve duygusal yorumlar yaygındır.",
+      "Cover veya remix içeriklerde orijinal sanatçıyı etiketlemek keşfedilebilirliği artırır.",
+      "'Bu şarkıyı dinleyince ne hissediyorsunuz?' gibi sorular duygusal bağ kurar.",
+    ],
+    "Moda": [
+      "Moda içeriklerinde ürün soruları sık görülür.",
+      "Ürün linklerini bio'ya ekleyip yorumlarda yönlendirme yaparak etkileşimi artırın.",
+      "'Hangisini tercih edersiniz?' formatı A/B tercih yorumları çeker.",
+    ],
+    "Yemek": [
+      "Yemek videolarında tarif soruları ve deneyim paylaşımları yaygındır.",
+      "Tarifi yorumlarda paylaşmak hem etkileşim hem güven oluşturur.",
+      "'Bu tarifi denediniz mi?' sorusu deneyim paylaşımlarını teşvik eder.",
+    ],
+    "Spor": [
+      "Spor videolarında taraftar tartışmaları yoğun yorum çeker.",
+      "Tahmin soruları (örn: 'Sizce kim kazanır?') yorum katılımını artırır.",
+      "Antrenman videolarında ilerleme paylaşımı isteyin — topluluk motivasyonu yükselir.",
+    ],
+    "Teknoloji": [
+      "Teknoloji incelemelerinde kullanıcılar kendi deneyimlerini paylaşır.",
+      "'Siz hangi cihazı kullanıyorsunuz?' sorusu karşılaştırma yorumları çeker.",
+      "Hata ve çözüm paylaşımları eğitim değerini artırarak tekrar ziyaret sağlar.",
+    ],
+    "Günlük Yaşam": [
+      "Vlog içeriklerde kişisel bağ kurmak yorum oranını doğrudan etkiler.",
+      "Takipçilere ismiyle hitap etmek ve yorumlarını yanıtlamak bağlılığı artırır.",
+      "Günlük rutininizle ilgili anket tarzı sorular yorum çeşitliliğini artırır.",
+    ],
+    "Güzellik": [
+      "Güzellik içeriklerinde ürün önerileri ve cilt tipi soruları yaygındır.",
+      "'Cilt tipinize göre hangisini önerirsiniz?' sorusu kişisel deneyim paylaşımı çeker.",
+      "Öncesi-sonrası formatı yorum ve kaydetme oranını artırır.",
+    ],
   };
 
   // Recommendations
@@ -96,6 +171,19 @@ export function analyzeComments(params: {
   if (commentToLikeRatio > 0.4) {
     recommendations.push("Yorum/beğeni oranı yüksek — içerik tartışma yaratıyor. Bu tarz içeriklere devam edin.");
   }
+  if (sentimentEstimate === "tartışmalı") {
+    recommendations.push("İçerik tartışmalı bir konu — yorumlarda moderasyon yaparak olumsuz algıyı kontrol edin.");
+    recommendations.push("Tartışmalı içerikler keşfet algoritmasında öne çıkabilir, ancak marka güvenliğine dikkat edin.");
+  }
+  if (sentimentEstimate === "düşük etkileşim") {
+    recommendations.push("Etkileşim çok düşük — hedef kitleyi daha iyi analiz edin ve içerik formatını değiştirmeyi deneyin.");
+  }
+  if (viralCommentPotential) {
+    recommendations.push("Yorumlar viralitenin ana kaynağı olabilir — yorum bölümünü aktif tutun ve öne çıkan yorumları sabitleyin.");
+  }
+  if (controversyScore > 70) {
+    recommendations.push("Tartışma skoru çok yüksek — bu içerik güçlü tepkiler çekiyor. Topluluk yönetimini güçlendirin.");
+  }
   if (duration < 15 && commentToViewRatio < 0.2) {
     recommendations.push("Kısa videolarda yorum oranı düşük olabilir. Videonun sonuna soru ekleyerek yorum almayı deneyin.");
   }
@@ -107,7 +195,9 @@ export function analyzeComments(params: {
   }
 
   if (category && categoryContext[category]) {
-    recommendations.push(categoryContext[category]);
+    for (const tip of categoryContext[category]) {
+      recommendations.push(tip);
+    }
   }
 
   // Ensure at least one recommendation
@@ -122,7 +212,10 @@ export function analyzeComments(params: {
     audienceActivity,
     sentimentEstimate,
     discussionPotential,
+    controversyScore,
+    viralCommentPotential,
     recommendations,
+    analysisMethod: "Etkileşim metrikleri üzerinden tahmini analiz (yorum sayısı, beğeni oranı, paylaşım oranı). Gerçek yorum metni analiz edilmemektedir.",
   };
 }
 

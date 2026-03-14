@@ -3,7 +3,7 @@
 import { Suspense, useState, useEffect } from "react";
 import { useSearchParams, useRouter } from "next/navigation";
 import { motion } from "framer-motion";
-import { Check, ArrowLeft, Zap, Star, AlertCircle, CheckCircle, Loader, Crown, Sparkles } from "lucide-react";
+import { Check, ArrowLeft, Zap, Star, AlertCircle, CheckCircle, Loader, Crown, Sparkles, Shield } from "lucide-react";
 import Link from "next/link";
 import { PLANS, type PlanType } from "@/lib/plans";
 
@@ -67,6 +67,22 @@ function PricingPageContent() {
 
   const planOrder: PlanType[] = ["free", "lite", "standard", "enterprise"];
 
+  const COMPARISON_FEATURES = [
+    { name: "Veri saklama süresi", free: "7 gün", lite: "14 gün", standard: "28 gün", enterprise: "30 gün" },
+    { name: "Trend video analizi", free: "Sınırlı", lite: "Sınırsız", standard: "Sınırsız", enterprise: "Sınırsız" },
+    { name: "Hashtag analizi", free: "✓", lite: "✓", standard: "✓", enterprise: "✓" },
+    { name: "Ses trendleri", free: "✓", lite: "✓", standard: "✓", enterprise: "✓" },
+    { name: "Paylaşım zamanı", free: "✓", lite: "✓", standard: "✓", enterprise: "✓" },
+    { name: "İçerik üretici takibi", free: "—", lite: "✓", standard: "✓", enterprise: "✓" },
+    { name: "Hook Kütüphanesi", free: "—", lite: "✓", standard: "✓", enterprise: "✓" },
+    { name: "Duygu Analizi", free: "—", lite: "—", standard: "✓", enterprise: "✓" },
+    { name: "AI İçerik Fikirleri", free: "—", lite: "—", standard: "✓", enterprise: "✓" },
+    { name: "Trend Tahminleri", free: "—", lite: "—", standard: "✓", enterprise: "✓" },
+    { name: "Günlük Rapor", free: "—", lite: "—", standard: "✓", enterprise: "✓" },
+    { name: "Rakip Analizi", free: "—", lite: "—", standard: "—", enterprise: "✓" },
+    { name: "PDF Rapor Dışa Aktarma", free: "—", lite: "—", standard: "—", enterprise: "✓" },
+  ];
+
   return (
     <div className="min-h-screen bg-background">
       {/* Navbar */}
@@ -103,6 +119,14 @@ function PricingPageContent() {
             </div>
           </motion.div>
         )}
+
+        {/* Money-back Guarantee Badge */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} className="flex justify-center mb-8">
+          <div className="inline-flex items-center gap-2 bg-teal/10 border border-teal/20 rounded-full px-5 py-2.5">
+            <Shield className="w-4 h-4 text-teal" />
+            <span className="text-sm font-medium text-teal">7 gün içinde memnun kalmazsanız paranız iade edilir</span>
+          </div>
+        </motion.div>
 
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="text-center mb-16">
@@ -192,6 +216,43 @@ function PricingPageContent() {
           })}
         </div>
 
+        {/* Trust Badge */}
+        <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.4 }} className="mt-10 flex justify-center">
+          <div className="inline-flex items-center gap-2 bg-card border border-teal/20 rounded-full px-5 py-2.5">
+            <Shield className="w-4 h-4 text-teal" />
+            <span className="text-xs text-muted-foreground">7 gün iade garantisi · Güvenli ödeme · İstediğiniz zaman iptal</span>
+          </div>
+        </motion.div>
+
+        {/* Feature Comparison Table */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.45 }} className="mt-20 max-w-5xl mx-auto">
+          <h2 className="text-2xl font-bold text-foreground text-center mb-8">Özellik Karşılaştırması</h2>
+          <div className="overflow-x-auto -mx-6 px-6">
+            <table className="w-full min-w-[600px] border-collapse">
+              <thead>
+                <tr className="border-b border-border">
+                  <th className="text-left text-sm font-semibold text-foreground py-3 pr-4 w-[200px]">Özellik</th>
+                  <th className="text-center text-sm font-semibold text-foreground py-3 px-3">Free</th>
+                  <th className="text-center text-sm font-semibold text-foreground py-3 px-3">Lite</th>
+                  <th className="text-center text-sm font-semibold text-foreground py-3 px-3 bg-teal/5 rounded-t-lg">Standart</th>
+                  <th className="text-center text-sm font-semibold text-foreground py-3 px-3">Kurumsal</th>
+                </tr>
+              </thead>
+              <tbody>
+                {COMPARISON_FEATURES.map((feature, idx) => (
+                  <tr key={feature.name} className={`border-b border-border/50 ${idx % 2 === 0 ? "bg-muted/20" : ""}`}>
+                    <td className="text-sm text-muted-foreground py-3 pr-4">{feature.name}</td>
+                    <td className={`text-center text-sm py-3 px-3 ${feature.free === "✓" ? "text-teal" : feature.free === "—" ? "text-muted-foreground/40" : "text-foreground"}`}>{feature.free}</td>
+                    <td className={`text-center text-sm py-3 px-3 ${feature.lite === "✓" ? "text-teal" : feature.lite === "—" ? "text-muted-foreground/40" : "text-foreground"}`}>{feature.lite}</td>
+                    <td className={`text-center text-sm py-3 px-3 bg-teal/5 ${feature.standard === "✓" ? "text-teal" : feature.standard === "—" ? "text-muted-foreground/40" : "text-foreground"}`}>{feature.standard}</td>
+                    <td className={`text-center text-sm py-3 px-3 ${feature.enterprise === "✓" ? "text-teal" : feature.enterprise === "—" ? "text-muted-foreground/40" : "text-foreground"}`}>{feature.enterprise}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </motion.div>
+
         {/* FAQ */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.5 }} className="mt-20 max-w-2xl mx-auto">
           <h2 className="text-2xl font-bold text-foreground text-center mb-8">Sık Sorulan Sorular</h2>
@@ -202,6 +263,11 @@ function PricingPageContent() {
               { q: "Ödeme yöntemleri nelerdir?", a: "Kredi kartı ve banka kartı ile iyzico güvenli altyapısı üzerinden ödeme yapabilirsiniz. 3D Secure ile korunur." },
               { q: "Planlar arası geçiş yapabilir miyim?", a: "Evet, istediğiniz zaman planınızı yükseltebilir veya düşürebilirsiniz. Fark hesaplanarak uygulanır." },
               { q: "Kurumsal plan ne fark eder?", a: "Kurumsal plan ile rakip analizi, AI hook üretimi, PDF rapor çıktısı ve 30 günlük arşiv dahil tüm özelliklere erişirsiniz." },
+              { q: "Ücretsiz plan ne kadar süre kullanılabilir?", a: "Ücretsiz plan süresiz olarak kullanılabilir. İstediğiniz zaman ücretli plana geçebilirsiniz." },
+              { q: "Verilerim güvende mi?", a: "Tüm veriler SSL şifreleme ile korunmaktadır. Ödeme işlemleri PCI DSS uyumlu iyzico altyapısı üzerinden gerçekleştirilir." },
+              { q: "API erişimi var mı?", a: "Şu an API erişimi sunulmamaktadır. Kurumsal plan kullanıcıları için gelecekte API erişimi planlanmaktadır." },
+              { q: "Fatura alabilir miyim?", a: "Evet, her ödeme sonrası otomatik olarak e-fatura oluşturulur ve e-posta adresinize gönderilir." },
+              { q: "Yıllık ödeme seçeneği var mı?", a: "Şu an sadece aylık abonelik seçeneği mevcuttur. Yıllık plan yakında eklenecektir." },
             ].map((faq) => (
               <div key={faq.q} className="bg-card rounded-xl border border-border p-5">
                 <h4 className="text-sm font-semibold text-foreground mb-2">{faq.q}</h4>
