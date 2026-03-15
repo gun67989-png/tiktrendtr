@@ -153,7 +153,52 @@ export async function GET(request: NextRequest) {
     // Step 3: Run psychological analysis
     const analysis = runFullAnalysis(cleanUsername, "tiktok", videos);
 
-    // Step 4: Generate AI editorial commentary
+    // Step 3.5: Fetch real comments from top 3 videos
+    interface CommentData {
+      video_caption: string;
+      video_views: number;
+      comments: { username: string; text: string; likes: number }[];
+    }
+    const commentsByVideo: CommentData[] = [];
+    const topVideos = [...videos].sort((a, b) => b.view_count - a.view_count).slice(0, 3);
+
+    for (const video of topVideos) {
+      try {
+        const commentRes = await fetch(
+          `https://www.tikwm.com/api/comment/list?url=https://www.tiktok.com/@${cleanUsername}/video/${video.video_id}&count=30&cursor=0`,
+          {
+            headers: {
+              "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
+              Accept: "application/json",
+            },
+            signal: AbortSignal.timeout(8000),
+          }
+        );
+        if (commentRes.ok) {
+          const commentResult = await commentRes.json();
+          if (commentResult.code === 0 && commentResult.data?.comments) {
+            commentsByVideo.push({
+              video_caption: video.caption.substring(0, 100),
+              video_views: video.view_count,
+              comments: commentResult.data.comments.slice(0, 30).map((c: { user?: { unique_id?: string; nickname?: string }; text?: string; digg_count?: number }) => ({
+                username: c.user?.unique_id || c.user?.nickname || "anonim",
+                text: (c.text || "").substring(0, 200),
+                likes: c.digg_count || 0,
+              })),
+            });
+          }
+        }
+      } catch {
+        // Skip this video's comments if fetch fails
+      }
+    }
+
+    // Build comment summary for AI
+    const allComments = commentsByVideo.flatMap((v) => v.comments);
+    const commentTexts = allComments.map((c) => c.text).filter((t) => t.length > 2);
+    const topLikedComments = [...allComments].sort((a, b) => b.likes - a.likes).slice(0, 10);
+
+    // Step 4: Generate AI editorial commentary (now with real comments)
     let ai_commentary = null;
     try {
       const commentaryPrompt = `Sen bir sosyal medya psikoloji uzmanı ve gazetecisin. Aşağıdaki TikTok profil analiz verilerini kullanarak derinlemesine, magazinsel bir psikolojik analiz yaz. Türkçe yaz.
@@ -196,21 +241,43 @@ Metrikler:
 Ortalama video süresi: ${(videos.reduce((a, v) => a + v.duration, 0) / videos.length).toFixed(1)} saniye
 En çok kullanılan hashtag'ler: ${analysis.metrics.anchor_points.top_hashtags.slice(0, 8).join(", ")}
 
+${commentTexts.length > 0 ? `GERÇEK YORUMLAR (${commentTexts.length} yorum analiz edildi):
+${commentsByVideo.map((v, i) => `
+Video ${i + 1}: "${v.video_caption}" (${v.video_views.toLocaleString()} görüntülenme)
+Yorumlar:
+${v.comments.slice(0, 15).map((c) => `- @${c.username}: "${c.text}" (${c.likes} beğeni)`).join("\n")}
+`).join("\n")}
+
+En çok beğenilen yorumlar:
+${topLikedComments.map((c) => `- @${c.username}: "${c.text}" (${c.likes} beğeni)`).join("\n")}
+` : "Yorum verisi mevcut değil."}
+
 ÖNEMLİ KURALLAR:
 - Metrikleri birbirleriyle ilişkilendir, çapraz çıkarımlar yap
 - Psikolojik terimler kullan: "psikolojik kopma noktası", "çapa etkisi", "nefret-izleme döngüsü", "izleyici kaybı", "duygusal bağ", "bilinçaltı tetikleyici"
 - Spesifik yüzdeler ve sayılarla destekle
 - Gazete köşe yazısı gibi akıcı ve etkileyici yaz
 - Her yorumu birbirine bağla, tutarlı bir hikaye anlat
+- GERÇEK YORUMLARI ANALİZ ET: Yorumları kategorilere ayır, en çarpıcı örnekleri ver, yorum örüntülerini tespit et
+- Yorum örneklerini tırnak içinde doğrudan alıntıla
 
 JSON formatında döndür:
 {
-  "editorial": "Genel editöryal analiz (3-4 paragraf, derinlemesine magazinsel yorum)",
+  "editorial": "Genel editöryal analiz (3-4 paragraf, derinlemesine magazinsel yorum, gerçek yorum örnekleriyle desteklenmiş)",
   "hate_watching": "Nefret-izleme metriği hakkında 2-3 cümle magazinsel yorum",
   "anchor_points": "Çapa noktası metriği hakkında 2-3 cümle magazinsel yorum",
   "drop_off": "İzleyici tutma metriği hakkında 2-3 cümle magazinsel yorum",
   "demographics": "Demografik metrik hakkında 2-3 cümle magazinsel yorum",
-  "sentiment_drift": "Duygu kayması metriği hakkında 2-3 cümle magazinsel yorum"
+  "sentiment_drift": "Duygu kayması metriği hakkında 2-3 cümle magazinsel yorum",
+  "comment_analysis": {
+    "total_analyzed": ${commentTexts.length},
+    "clusters": [
+      {"theme": "Tema adı", "percentage": yüzde, "example_comments": ["gerçek yorum 1", "gerçek yorum 2"], "insight": "Bu temanın psikolojik anlamı"}
+    ],
+    "striking_findings": ["Çarpıcı bulgu 1 (yüzde ve yorum örneğiyle)", "Çarpıcı bulgu 2"],
+    "top_comments": [{"text": "yorum metni", "likes": beğeni_sayısı, "why_important": "neden önemli"}],
+    "sentiment_breakdown": {"positive_pct": number, "negative_pct": number, "neutral_pct": number}
+  }
 }
 Sadece JSON döndür, başka açıklama ekleme.`;
 
@@ -233,6 +300,11 @@ Sadece JSON döndür, başka açıklama ekleme.`;
       viral_post_drafts: analysis.viral_post_drafts,
       analyzed_at: analysis.analyzed_at,
       ai_commentary,
+      comments_data: {
+        total_fetched: allComments.length,
+        videos_analyzed: commentsByVideo.length,
+        top_comments: topLikedComments.slice(0, 5),
+      },
     });
   } catch (e) {
     console.error("Psychological analysis error:", e);

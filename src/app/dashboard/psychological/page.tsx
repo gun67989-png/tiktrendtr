@@ -19,6 +19,9 @@ import {
   Copy,
   Check,
   Sparkles,
+  MessageSquare,
+  ThumbsUp,
+  BarChart3,
 } from "lucide-react";
 import {
   RadarChart,
@@ -98,7 +101,32 @@ interface AnalysisData {
     drop_off: string;
     demographics: string;
     sentiment_drift: string;
+    comment_analysis?: {
+      total_analyzed: number;
+      clusters: Array<{
+        theme: string;
+        percentage: number;
+        example_comments: string[];
+        insight: string;
+      }>;
+      striking_findings: string[];
+      top_comments: Array<{
+        text: string;
+        likes: number;
+        why_important: string;
+      }>;
+      sentiment_breakdown: {
+        positive_pct: number;
+        negative_pct: number;
+        neutral_pct: number;
+      };
+    };
   } | null;
+  comments_data: {
+    total_fetched: number;
+    videos_analyzed: number;
+    top_comments: Array<{ username: string; text: string; likes: number }>;
+  };
 }
 
 const METRIC_CONFIG = [
@@ -563,6 +591,121 @@ function PsychologicalContent() {
               <p className="text-xs text-muted-foreground leading-relaxed">{data.analysis_data.summary}</p>
             </div>
           </div>
+
+          {/* Comment Analysis */}
+          {(() => {
+            const ca = data.ai_commentary?.comment_analysis;
+            if (!ca && data.comments_data.total_fetched === 0) return null;
+            return (
+              <div className="bg-gradient-to-br from-cyan-500/5 via-card to-pink-500/5 rounded-xl border border-cyan-500/20 p-5 space-y-4">
+                <div className="flex items-center justify-between">
+                  <div className="flex items-center gap-2">
+                    <MessageSquare className="w-5 h-5 text-cyan-400" />
+                    <h3 className="text-sm font-semibold text-cyan-400">Yorum Analizi</h3>
+                  </div>
+                  <span className="text-[10px] text-muted-foreground bg-muted/50 px-2 py-1 rounded">
+                    {ca?.total_analyzed || data.comments_data.total_fetched} yorum analiz edildi
+                  </span>
+                </div>
+
+                {/* Striking Findings */}
+                {ca?.striking_findings && ca.striking_findings.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-[11px] font-medium text-foreground uppercase tracking-wider">Carpici Bulgular</p>
+                    {ca.striking_findings.map((finding, i) => (
+                      <div key={i} className="flex items-start gap-2 bg-background/50 rounded-lg p-3 border border-border/50">
+                        <Zap className="w-3.5 h-3.5 text-yellow-400 mt-0.5 flex-shrink-0" />
+                        <p className="text-xs text-foreground leading-relaxed">{finding}</p>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Comment Clusters */}
+                {ca?.clusters && ca.clusters.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-[11px] font-medium text-foreground uppercase tracking-wider">Yorum Temalari</p>
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                      {ca.clusters.map((cluster, i) => (
+                        <div key={i} className="bg-background/50 rounded-lg p-3 border border-border/50">
+                          <div className="flex items-center justify-between mb-2">
+                            <span className="text-xs font-semibold text-foreground">{cluster.theme}</span>
+                            <span className="text-[10px] font-bold text-cyan-400 bg-cyan-400/10 px-2 py-0.5 rounded">%{cluster.percentage}</span>
+                          </div>
+                          <div className="w-full h-1.5 bg-border/30 rounded-full mb-2 overflow-hidden">
+                            <div className="h-full bg-cyan-400 rounded-full" style={{ width: `${Math.min(cluster.percentage, 100)}%` }} />
+                          </div>
+                          {cluster.example_comments.slice(0, 2).map((c, j) => (
+                            <p key={j} className="text-[11px] text-muted-foreground italic mb-1">&ldquo;{c}&rdquo;</p>
+                          ))}
+                          <p className="text-[10px] text-purple-300/80 mt-1">{cluster.insight}</p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {/* Top Comments with Context */}
+                {ca?.top_comments && ca.top_comments.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-[11px] font-medium text-foreground uppercase tracking-wider">Onemli Yorumlar</p>
+                    {ca.top_comments.slice(0, 3).map((comment, i) => (
+                      <div key={i} className="bg-background/50 rounded-lg p-3 border border-border/50">
+                        <div className="flex items-start gap-2">
+                          <MessageCircle className="w-3.5 h-3.5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                          <div className="flex-1">
+                            <p className="text-xs text-foreground italic">&ldquo;{comment.text}&rdquo;</p>
+                            <div className="flex items-center gap-3 mt-1.5">
+                              <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                                <ThumbsUp className="w-3 h-3" /> {comment.likes.toLocaleString()} begeni
+                              </span>
+                            </div>
+                            <p className="text-[10px] text-purple-300/80 mt-1">{comment.why_important}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+
+                {/* Sentiment Breakdown */}
+                {ca?.sentiment_breakdown && (
+                  <div className="flex items-center gap-4 bg-background/50 rounded-lg p-3 border border-border/50">
+                    <BarChart3 className="w-4 h-4 text-cyan-400 flex-shrink-0" />
+                    <div className="flex-1">
+                      <p className="text-[10px] text-muted-foreground mb-1.5">Yorum Duygu Dagilimi</p>
+                      <div className="flex h-2.5 rounded-full overflow-hidden gap-0.5">
+                        <div className="bg-teal rounded-l-full" style={{ width: `${ca.sentiment_breakdown.positive_pct}%` }} />
+                        <div className="bg-gray-500" style={{ width: `${ca.sentiment_breakdown.neutral_pct}%` }} />
+                        <div className="bg-red-500 rounded-r-full" style={{ width: `${ca.sentiment_breakdown.negative_pct}%` }} />
+                      </div>
+                      <div className="flex justify-between mt-1 text-[9px]">
+                        <span className="text-teal">Pozitif %{ca.sentiment_breakdown.positive_pct}</span>
+                        <span className="text-gray-400">Notr %{ca.sentiment_breakdown.neutral_pct}</span>
+                        <span className="text-red-400">Negatif %{ca.sentiment_breakdown.negative_pct}</span>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {/* Raw Top Comments Fallback */}
+                {!ca && data.comments_data.top_comments.length > 0 && (
+                  <div className="space-y-2">
+                    <p className="text-[11px] font-medium text-foreground uppercase tracking-wider">En Cok Begenilen Yorumlar</p>
+                    {data.comments_data.top_comments.map((c, i) => (
+                      <div key={i} className="flex items-start gap-2 bg-background/50 rounded-lg p-3 border border-border/50">
+                        <MessageCircle className="w-3.5 h-3.5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                        <div>
+                          <p className="text-xs text-foreground italic">&ldquo;{c.text}&rdquo;</p>
+                          <span className="text-[10px] text-muted-foreground">@{c.username} - {c.likes} begeni</span>
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })()}
 
           {/* Viral Post Drafts */}
           {data.viral_post_drafts.length > 0 && (
