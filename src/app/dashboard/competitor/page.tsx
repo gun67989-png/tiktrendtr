@@ -406,6 +406,77 @@ function CompareAnalysis() {
   const [commentary, setCommentary] = useState<ComparisonCommentary | null>(null);
   const [commentaryLoading, setCommentaryLoading] = useState(false);
 
+  // Fallback: generate local comparison when AI is unavailable
+  function generateLocalCommentary(r1: CompetitorData, r2: CompetitorData): ComparisonCommentary {
+    const s1 = r1.stats;
+    const s2 = r2.stats;
+    const u1 = `@${r1.username}`;
+    const u2 = `@${r2.username}`;
+
+    // Determine category winners
+    const viewsWinner = s1.totalViews > s2.totalViews ? u1 : u2;
+    const viewsLoser = viewsWinner === u1 ? u2 : u1;
+    const viewsDiff = Math.abs(s1.totalViews - s2.totalViews);
+    const viewsRatio = Math.max(s1.totalViews, s2.totalViews) / Math.max(Math.min(s1.totalViews, s2.totalViews), 1);
+
+    const engWinner = s1.avgEngagementRate > s2.avgEngagementRate ? u1 : u2;
+    const engLoser = engWinner === u1 ? u2 : u1;
+    const engHigh = Math.max(s1.avgEngagementRate, s2.avgEngagementRate);
+    const engLow = Math.min(s1.avgEngagementRate, s2.avgEngagementRate);
+
+    const likesWinner = s1.totalLikes > s2.totalLikes ? u1 : u2;
+    const commentsWinner = s1.totalComments > s2.totalComments ? u1 : u2;
+    const sharesWinner = s1.totalShares > s2.totalShares ? u1 : u2;
+
+    const format1 = r1.formatDistribution[0]?.format || "Kısa Video";
+    const format2 = r2.formatDistribution[0]?.format || "Kısa Video";
+
+    const hours1 = r1.bestHours.map(h => `${h}:00`).join(", ");
+    const hours2 = r2.bestHours.map(h => `${h}:00`).join(", ");
+
+    // Score: who wins more categories
+    let score1 = 0, score2 = 0;
+    if (s1.totalViews > s2.totalViews) score1++; else score2++;
+    if (s1.avgEngagementRate > s2.avgEngagementRate) score1++; else score2++;
+    if (s1.totalLikes > s2.totalLikes) score1++; else score2++;
+    if (s1.totalComments > s2.totalComments) score1++; else score2++;
+    if (s1.totalShares > s2.totalShares) score1++; else score2++;
+    const overallWinner = score1 >= score2 ? u1 : u2;
+    const overallLoser = overallWinner === u1 ? u2 : u1;
+
+    return {
+      winner: overallWinner,
+      summary: `${overallWinner} genel performansta ${overallLoser}'e gore daha basarili gorunuyor (${Math.max(score1, score2)}/5 kategoride onde). ${viewsWinner} toplam goruntulenme acisindan ${formatNumber(viewsDiff)} farkla lider durumda (${viewsRatio.toFixed(1)}x). Etkilesim oraninda ise ${engWinner} %${engHigh} ile ${engLoser}'in %${engLow}'lik oraninin ustunde. Bu farklar icerik stratejisi, hedef kitle uyumu ve paylasim zamanlama farkliliklarindan kaynaklanabilir.`,
+      categories: [
+        {
+          name: "Erisim Gucu",
+          winner: viewsWinner,
+          comment: `${viewsWinner} toplam ${formatNumber(Math.max(s1.totalViews, s2.totalViews))} goruntulenmeyle ${viewsLoser}'in ${formatNumber(Math.min(s1.totalViews, s2.totalViews))} goruntulenme rakaminin ${viewsRatio.toFixed(1)} kati erisime sahip. Bu daha genis bir kitleye ulastigini gosteriyor.`,
+        },
+        {
+          name: "Etkilesim Kalitesi",
+          winner: engWinner,
+          comment: `${engWinner} %${engHigh} etkilesim oraniyla ${engLoser}'in %${engLow}'lik oraninin ustunde. Bu, kitlesinin icerikle daha fazla etkilesime girdigini gosteriyor. ${likesWinner} begenilerde, ${commentsWinner} yorumlarda, ${sharesWinner} paylasimlarda onde.`,
+        },
+        {
+          name: "Icerik Stratejisi",
+          winner: overallWinner,
+          comment: `${u1} agirlikli olarak "${format1}" formati kullanirken, ${u2} "${format2}" formatina yoneliyor. ${overallWinner}'in icerik formati secimi hedef kitlesiyle daha uyumlu gorunuyor.`,
+        },
+        {
+          name: "Paylasim Zamanlama",
+          winner: overallWinner,
+          comment: `${u1} en cok ${hours1} saatlerinde, ${u2} ise ${hours2} saatlerinde paylasiyor. Dogru zamanlama, icerik erisimini dogrudan etkileyen onemli bir faktor.`,
+        },
+      ],
+      tips: [
+        `${overallLoser} etkilesimi artirmak icin ${overallWinner}'in icerik formatindan ilham alabilir.`,
+        `Her iki hesap da hashtag stratejisini cakisan trendlere gore optimize etmeli.`,
+        `Paylasim saatlerini hedef kitlenin en aktif oldugu saatlere kaydirmak erisimi artirabilir.`,
+      ],
+    };
+  }
+
   const handleCompare = async () => {
     if (!username1.trim() || !username2.trim()) return;
     setLoading(true);
@@ -437,7 +508,7 @@ function CompareAnalysis() {
       setData2(result2);
       setLoading(false);
 
-      // Fetch AI commentary
+      // Fetch AI commentary, fallback to local analysis
       setCommentaryLoading(true);
       try {
         const compareRes = await fetch("/api/competitor/compare", {
@@ -477,9 +548,13 @@ function CompareAnalysis() {
         const compareResult = await compareRes.json();
         if (compareResult.commentary) {
           setCommentary(compareResult.commentary);
+        } else {
+          // AI returned no commentary, use local fallback
+          setCommentary(generateLocalCommentary(result1, result2));
         }
       } catch {
-        // Commentary is optional, don't fail the whole comparison
+        // AI unavailable, generate local comparison
+        setCommentary(generateLocalCommentary(result1, result2));
       } finally {
         setCommentaryLoading(false);
       }
