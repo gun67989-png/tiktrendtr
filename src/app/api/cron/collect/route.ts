@@ -233,32 +233,29 @@ async function storeVideos(videos: ScrapedVideo[]): Promise<{ stored: number; re
 
     if (validatedVideos.length === 0) return { stored: 0, rejected };
 
-    // Build rows — only include columns that exist in the database
-    // sound_type and follower_count may not exist yet (migration requires SQL editor)
-    const rows = validatedVideos.map((v) => {
-      const row: Record<string, unknown> = {
-        video_id: v.video_id,
-        creator_username: v.creator_username,
-        creator_nickname: v.creator_nickname,
-        caption: v.caption,
-        hashtags: v.hashtags,
-        view_count: v.view_count,
-        like_count: v.like_count,
-        comment_count: v.comment_count,
-        share_count: v.share_count,
-        thumbnail_url: v.thumbnail_url,
-        duration: v.duration,
-        sound_name: v.sound_name,
-        sound_creator: v.sound_creator,
-        category: v.category,
-        format: v.format,
-        ad_format: v.ad_format,
-        creator_presence_score: v.creator_presence_score,
-        tiktok_url: buildTiktokUrl(v.creator_username, v.video_id),
-        scraped_at: v.published_at, // DB column = TikTok publish time
-      };
-      return row;
-    });
+    const rows = validatedVideos.map((v) => ({
+      video_id: v.video_id,
+      creator_username: v.creator_username,
+      creator_nickname: v.creator_nickname,
+      caption: v.caption,
+      hashtags: v.hashtags,
+      view_count: v.view_count,
+      like_count: v.like_count,
+      comment_count: v.comment_count,
+      share_count: v.share_count,
+      thumbnail_url: v.thumbnail_url,
+      duration: v.duration,
+      sound_name: v.sound_name,
+      sound_creator: v.sound_creator,
+      sound_type: v.sound_type || "sound",
+      category: v.category,
+      format: v.format,
+      ad_format: v.ad_format,
+      creator_presence_score: v.creator_presence_score,
+      follower_count: v.follower_count,
+      tiktok_url: buildTiktokUrl(v.creator_username, v.video_id),
+      scraped_at: v.published_at, // DB column = TikTok publish time
+    }));
 
     // Upsert in batches of 50
     let stored = 0;
