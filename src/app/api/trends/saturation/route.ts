@@ -44,8 +44,6 @@ async function fetchSaturation(): Promise<SaturationResult> {
 
     // Split videos into recent (first half) and older (second half) for growth detection
     const midpoint = Math.floor(totalVideos / 2);
-    const recentVideos = videos.slice(0, midpoint);
-    const olderVideos = videos.slice(midpoint);
 
     // --- Hashtag saturation ---
     const hashtagStats: Record<string, {

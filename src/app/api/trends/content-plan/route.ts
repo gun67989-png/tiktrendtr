@@ -60,8 +60,6 @@ async function generateContentPlan(niche?: string): Promise<ContentPlan | null> 
     // --- Aggregate stats ---
     let totalViews = 0;
     let totalLikes = 0;
-    let totalComments = 0;
-    let totalShares = 0;
     let engSum = 0;
     let engCount = 0;
 
@@ -74,8 +72,6 @@ async function generateContentPlan(niche?: string): Promise<ContentPlan | null> 
     for (const v of data) {
       totalViews += v.view_count || 0;
       totalLikes += v.like_count || 0;
-      totalComments += v.comment_count || 0;
-      totalShares += v.share_count || 0;
 
       if (v.view_count > 0) {
         const eng = Math.min(((v.like_count + v.comment_count + v.share_count) / v.view_count) * 100, 50);

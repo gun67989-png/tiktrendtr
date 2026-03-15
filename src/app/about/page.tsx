@@ -229,7 +229,7 @@ export default function AboutPage() {
               </p>
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {whyValyze.map((w, idx) => (
+              {whyValyze.map((w) => (
                 <motion.div
                   key={w.title}
                   variants={item}
