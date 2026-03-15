@@ -230,7 +230,7 @@ function generateFallbackCommentAnalysis(
   const isMultilingual = languages.size > 1;
 
   // Detect emoji usage
-  const emojiComments = topComments.filter(c => /[\u{1F600}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F300}-\u{1F5FF}]/u.test(c.text));
+  const emojiComments = topComments.filter(c => /[\uD83C-\uDBFF][\uDC00-\uDFFF]|[\u2600-\u26FF]|[\u2700-\u27BF]/.test(c.text));
   const emojiPct = Math.round((emojiComments.length / topComments.length) * 100);
 
   // Detect short vs long comments
