@@ -15,6 +15,7 @@ import {
   Menu,
   Play,
   Shield,
+  Brain,
   Users,
   BarChart2,
   Lock,
@@ -246,21 +247,41 @@ function SidebarNav({
 
         {/* Admin */}
         {user?.role === "admin" && (
-          <Button
-            variant="ghost"
-            onClick={() => onNavigate("/dashboard/admin")}
-            className={`relative w-full justify-start gap-2.5 h-9 px-3 text-[13px] font-medium ${
-              isActive("/dashboard/admin")
-                ? "bg-teal/10 text-teal hover:bg-teal/15 hover:text-teal"
-                : "text-muted-foreground hover:text-teal"
-            }`}
-          >
-            {isActive("/dashboard/admin") && (
-              <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-teal rounded-r" />
-            )}
-            <Shield className={`w-4 h-4 ${isActive("/dashboard/admin") ? "text-teal" : ""}`} />
-            <span>Admin Paneli</span>
-          </Button>
+          <>
+            <p className="px-3 py-1 text-[11px] font-medium text-muted-foreground uppercase tracking-wider">
+              Admin
+            </p>
+            <Button
+              variant="ghost"
+              onClick={() => onNavigate("/dashboard/admin")}
+              className={`relative w-full justify-start gap-2.5 h-9 px-3 text-[13px] font-medium ${
+                pathname === "/dashboard/admin"
+                  ? "bg-teal/10 text-teal hover:bg-teal/15 hover:text-teal"
+                  : "text-muted-foreground hover:text-teal"
+              }`}
+            >
+              {pathname === "/dashboard/admin" && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-teal rounded-r" />
+              )}
+              <Shield className={`w-4 h-4 ${pathname === "/dashboard/admin" ? "text-teal" : ""}`} />
+              <span>Admin Paneli</span>
+            </Button>
+            <Button
+              variant="ghost"
+              onClick={() => onNavigate("/dashboard/admin/psychological")}
+              className={`relative w-full justify-start gap-2.5 h-9 px-3 text-[13px] font-medium ${
+                isActive("/dashboard/admin/psychological")
+                  ? "bg-purple-500/10 text-purple-400 hover:bg-purple-500/15 hover:text-purple-400"
+                  : "text-muted-foreground hover:text-purple-400"
+              }`}
+            >
+              {isActive("/dashboard/admin/psychological") && (
+                <div className="absolute left-0 top-1/2 -translate-y-1/2 w-[2px] h-4 bg-purple-400 rounded-r" />
+              )}
+              <Brain className={`w-4 h-4 ${isActive("/dashboard/admin/psychological") ? "text-purple-400" : ""}`} />
+              <span>Psikolojik Analiz</span>
+            </Button>
+          </>
         )}
       </nav>
 
