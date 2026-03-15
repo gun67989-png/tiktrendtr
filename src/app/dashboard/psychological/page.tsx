@@ -210,6 +210,84 @@ function generateFallbackCommentary(data: AnalysisData) {
   return { editorial, hate_watching, anchor_points, drop_off, demographics, sentiment_drift };
 }
 
+function generateFallbackCommentAnalysis(
+  topComments: Array<{ username: string; text: string; likes: number }>,
+  totalFetched: number,
+  data: AnalysisData
+) {
+  if (!topComments || topComments.length === 0) return null;
+
+  const totalLikes = topComments.reduce((sum, c) => sum + c.likes, 0);
+  const avgLikes = Math.round(totalLikes / topComments.length);
+  const topComment = topComments[0];
+  const engRate = data.analysis_data.avg_engagement_rate;
+
+  // Detect language patterns
+  const languages = new Set<string>();
+  topComments.forEach(c => {
+    if (/[a-zA-Z]{3,}/.test(c.text)) languages.add("en");
+    if (/[ğüşöçıİĞÜŞÖÇ]/.test(c.text)) languages.add("tr");
+    if (/[áéíóúñ¿¡]/.test(c.text)) languages.add("es");
+    if (/[ãõçê]/.test(c.text)) languages.add("pt");
+  });
+  const isMultilingual = languages.size > 1;
+
+  // Detect emoji usage
+  const emojiComments = topComments.filter(c => /[\u{1F600}-\u{1F9FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F300}-\u{1F5FF}]/u.test(c.text));
+  const emojiPct = Math.round((emojiComments.length / topComments.length) * 100);
+
+  // Detect short vs long comments
+  const shortComments = topComments.filter(c => c.text.length < 30);
+  const shortPct = Math.round((shortComments.length / topComments.length) * 100);
+
+  const editorial_comment = `${totalFetched} yorum incelendiginde, en cok begenilen ${topComments.length} yorumun toplam ${formatNumber(totalLikes)} begeni topladigi gorulur. ` +
+    `Bu da her bir ust yorumun ortalama ${formatNumber(avgLikes)} begeni aldigini gosteriyor - bu, izleyicilerin sadece video izlemekle yetinmeyip, birbirlerinin yorumlarini da aktif olarak 'onayladiginin' kaniti. ` +
+    (isMultilingual
+      ? `Dikkat cekici bir detay: Yorumlar birden fazla dilde yazilmis. Bu, icerigin dil bariyerini asan 'evrensel bir psikolojik cekicilige' sahip oldugunu gosteriyor.`
+      : `Yorumlardaki dil oruntuleri, izleyici kitlesinin belirli bir cografya ve kultur grubunda yogunlastigini ortaya koyuyor.`) +
+    (emojiPct > 50
+      ? ` Yorumlarin %${emojiPct}'i emoji iceriyor - bu, izleyicilerin duygularini kelimelerle ifade etmekte zorlandigi, 'duygusal tasman' yasadigi anlamina geliyor.`
+      : emojiPct > 20
+      ? ` Yorumlarin %${emojiPct}'inde emoji kullanilmis - ortalama bir duygusal ifade orani.`
+      : ` Emoji kullanimi dusuk (%${emojiPct}) - izleyiciler daha cok sozel ifadeyi tercih ediyor, bu da daha 'bilincli bir izleyici kitlesi' isaretdir.`) +
+    (shortPct > 60
+      ? ` Ilginc bir bulgu: Yorumlarin %${shortPct}'i 30 karakterden kisa. Bu 'ani reaksiyon' paterni, izleyicilerin icerigi izlerken dusunmeden, icgudusel olarak yorum biraktigini gosteriyor.`
+      : ``);
+
+  // Generate per-comment insights
+  const commentInsights = topComments.map((c, i) => {
+    const likeRatio = totalLikes > 0 ? Math.round((c.likes / totalLikes) * 100) : 0;
+    let insight = "";
+
+    if (i === 0) {
+      insight = `En cok begenilen yorum olarak, tum ust yorumlardaki begenilerin %${likeRatio}'ini tek basina toplamis. Bu, izleyici kitlesinin 'kolektif sesi' niteliginde - cogunluk bu duyguyla ozdesim kuruyor.`;
+    } else if (c.text.length < 20) {
+      insight = `Kisa ama etkili: ${c.text.length} karakterlik bu yorum ${formatNumber(c.likes)} begeni almis. Izleyiciler, kisa ve vurgulu ifadelere guclu tepki veriyor - 'az soz cok etki' prensibi.`;
+    } else if (/[!]{2,}|[A-Z]{4,}|😂|🤣|💀/.test(c.text)) {
+      insight = `Guclu duygusal reaksiyon iceriyor. Bu tarz 'patlamali' ifadeler, icerigin izleyicide beklenmedik bir duygusal tetikleme yarattigini gosteriyor.`;
+    } else if (/\?/.test(c.text)) {
+      insight = `Soru formundaki bu yorum, izleyicinin merak duygusunun tetiklendigini gosteriyor. ${formatNumber(c.likes)} kisi ayni merakı paylasmis - potansiyel bir 'devam icerigi' firsati.`;
+    } else {
+      insight = `Ust yorumlarin %${likeRatio}'lik begeni payina sahip. Yorumun tonu ve uzunlugu, izleyici kitlesinin etkilesim tercihleri hakkında ipucu veriyor.`;
+    }
+
+    return { ...c, insight, likeRatio };
+  });
+
+  return {
+    editorial_comment,
+    commentInsights,
+    stats: {
+      totalLikes,
+      avgLikes,
+      emojiPct,
+      shortPct,
+      isMultilingual,
+      languageCount: languages.size,
+    }
+  };
+}
+
 function PsychologicalContent() {
   const [username, setUsername] = useState("");
   const [data, setData] = useState<AnalysisData | null>(null);
@@ -688,21 +766,53 @@ function PsychologicalContent() {
                   </div>
                 )}
 
-                {/* Raw Top Comments Fallback */}
-                {!ca && data.comments_data.top_comments.length > 0 && (
-                  <div className="space-y-2">
-                    <p className="text-[11px] font-medium text-foreground uppercase tracking-wider">En Cok Begenilen Yorumlar</p>
-                    {data.comments_data.top_comments.map((c, i) => (
-                      <div key={i} className="flex items-start gap-2 bg-background/50 rounded-lg p-3 border border-border/50">
-                        <MessageCircle className="w-3.5 h-3.5 text-cyan-400 mt-0.5 flex-shrink-0" />
-                        <div>
-                          <p className="text-xs text-foreground italic">&ldquo;{c.text}&rdquo;</p>
-                          <span className="text-[10px] text-muted-foreground">@{c.username} - {c.likes} begeni</span>
+                {/* Magazinsel Yorum Analizi Fallback */}
+                {!ca && data.comments_data.top_comments.length > 0 && (() => {
+                  const fb = generateFallbackCommentAnalysis(
+                    data.comments_data.top_comments,
+                    data.comments_data.total_fetched,
+                    data
+                  );
+                  if (!fb) return null;
+                  return (
+                    <div className="space-y-3">
+                      {/* Editorial Comment Overview */}
+                      <div className="bg-gradient-to-r from-purple-500/10 via-background/50 to-cyan-500/10 rounded-lg p-4 border border-purple-500/20">
+                        <div className="flex items-center gap-2 mb-2">
+                          <Sparkles className="w-3.5 h-3.5 text-purple-400" />
+                          <p className="text-[11px] font-medium text-purple-400 uppercase tracking-wider">Yorum Psikolojisi</p>
+                        </div>
+                        <p className="text-xs text-foreground/90 leading-relaxed italic">{fb.editorial_comment}</p>
+                        <div className="flex items-center gap-4 mt-3 text-[10px] text-muted-foreground">
+                          <span className="flex items-center gap-1"><ThumbsUp className="w-3 h-3 text-cyan-400" /> Toplam {formatNumber(fb.stats.totalLikes)} begeni</span>
+                          <span className="flex items-center gap-1"><BarChart3 className="w-3 h-3 text-purple-400" /> Ort. {formatNumber(fb.stats.avgLikes)} begeni/yorum</span>
+                          {fb.stats.isMultilingual && <span className="text-yellow-400">🌍 {fb.stats.languageCount} dil tespit edildi</span>}
                         </div>
                       </div>
-                    ))}
-                  </div>
-                )}
+
+                      {/* Per-Comment Magazine Insights */}
+                      <p className="text-[11px] font-medium text-foreground uppercase tracking-wider">En Carpici Yorumlar</p>
+                      {fb.commentInsights.map((c, i) => (
+                        <div key={i} className="bg-background/50 rounded-lg p-3 border border-border/50">
+                          <div className="flex items-start gap-2">
+                            <MessageCircle className="w-3.5 h-3.5 text-cyan-400 mt-0.5 flex-shrink-0" />
+                            <div className="flex-1">
+                              <p className="text-xs text-foreground font-medium italic">&ldquo;{c.text}&rdquo;</p>
+                              <div className="flex items-center gap-3 mt-1.5">
+                                <span className="text-[10px] text-muted-foreground flex items-center gap-1">
+                                  <ThumbsUp className="w-3 h-3" /> {formatNumber(c.likes)} begeni
+                                </span>
+                                <span className="text-[10px] text-muted-foreground">@{c.username}</span>
+                                <span className="text-[10px] text-cyan-400/70">begenilerin %{c.likeRatio}&apos;i</span>
+                              </div>
+                              <p className="text-[10px] text-purple-300/80 mt-1.5 leading-relaxed">{c.insight}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  );
+                })()}
               </div>
             );
           })()}
