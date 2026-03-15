@@ -63,6 +63,7 @@ const PREMIUM_PATHS = [
   "/dashboard/reports",
   "/dashboard/daily-report",
   "/dashboard/ad-analysis",
+  "/dashboard/campaigns",
   "/dashboard/psychological",
 ];
 
@@ -86,6 +87,7 @@ const premiumNavItems: { href: string; label: string; icon: typeof Home; badge?:
   { href: "/dashboard/reports", label: "Günlük Rapor", icon: BarChart2 },
   { href: "/dashboard/daily-report", label: "Detaylı Rapor", icon: FileText },
   { href: "/dashboard/ad-analysis", label: "Reklam Analizi", icon: BarChart2, badge: "Yeni" },
+  { href: "/dashboard/campaigns", label: "Kampanya Performans", icon: Target, badge: "Yeni" },
   { href: "/dashboard/psychological", label: "Psikolojik Analiz", icon: Brain, badge: "Yeni" },
 ];
 

@@ -34,6 +34,8 @@
     "framer-motion": "^12.35.2",
     "iyzipay": "^2.0.65",
     "jose": "^6.2.1",
+    "jspdf": "^4.2.0",
+    "jspdf-autotable": "^5.0.7",
     "lucide-react": "^0.577.0",
     "nanoid": "^5.1.6",
     "next": "14.2.35",

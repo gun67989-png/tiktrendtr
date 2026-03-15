@@ -18,6 +18,8 @@ import {
   Clock,
   RefreshCw,
   Lightbulb,
+  Download,
+  Loader2,
 } from "lucide-react";
 import {
   BarChart,
@@ -47,6 +49,208 @@ function formatNumber(n: number): string {
 }
 
 const PIE_COLORS = ["#FF3B5C", "#2dd4bf", "#a78bfa", "#60a5fa", "#f59e0b", "#f472b6", "#34d399", "#fb923c"];
+
+async function generatePDF(data: DailyReport, commentStats: CommentStats | null) {
+  const { jsPDF } = await import("jspdf");
+  const autoTable = (await import("jspdf-autotable")).default;
+
+  const doc = new jsPDF({ orientation: "portrait", unit: "mm", format: "a4" });
+  const pageWidth = doc.internal.pageSize.getWidth();
+  let y = 15;
+
+  // Header
+  doc.setFontSize(20);
+  doc.setTextColor(88, 28, 135); // purple
+  doc.text("Valyze TR", 15, y);
+  doc.setFontSize(10);
+  doc.setTextColor(120, 120, 140);
+  doc.text("TikTok Trend Analiz Platformu", 15, y + 7);
+  y += 18;
+
+  // Title
+  doc.setFontSize(16);
+  doc.setTextColor(30, 30, 50);
+  const reportDate = new Date(data.date).toLocaleDateString("tr-TR", {
+    weekday: "long", year: "numeric", month: "long", day: "numeric",
+  });
+  doc.text(`Gunluk Trend Raporu - ${reportDate}`, 15, y);
+  y += 12;
+
+  // Divider
+  doc.setDrawColor(200, 200, 220);
+  doc.line(15, y, pageWidth - 15, y);
+  y += 8;
+
+  // Stats Summary
+  doc.setFontSize(12);
+  doc.setTextColor(88, 28, 135);
+  doc.text("Genel Istatistikler", 15, y);
+  y += 6;
+
+  autoTable(doc, {
+    startY: y,
+    head: [["Metrik", "Deger"]],
+    body: [
+      ["Toplam Video", data.stats.totalVideos.toLocaleString("tr-TR")],
+      ["Son 24 Saat", data.stats.recentVideos.toString()],
+      ["Toplam Izlenme", formatNumber(data.stats.totalViews)],
+      ["Ort. Izlenme", formatNumber(data.stats.avgViews)],
+      ["Ort. Etkilesim", `%${data.stats.avgEngagement}`],
+      ["Top Kategori", data.stats.topCategory],
+      ...(commentStats ? [
+        ["Toplam Yorum", formatNumber(commentStats.stats.totalComments)],
+        ["Ort. Yorum Orani", `%${commentStats.stats.avgCommentRate}`],
+      ] : []),
+    ],
+    theme: "striped",
+    headStyles: { fillColor: [88, 28, 135], textColor: 255, fontSize: 9 },
+    bodyStyles: { fontSize: 9, textColor: [50, 50, 70] },
+    alternateRowStyles: { fillColor: [245, 245, 252] },
+    margin: { left: 15, right: 15 },
+  });
+  y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
+
+  // Top Videos
+  if (data.topVideos.length > 0) {
+    if (y > 230) { doc.addPage(); y = 15; }
+    doc.setFontSize(12);
+    doc.setTextColor(88, 28, 135);
+    doc.text("En Viral Videolar", 15, y);
+    y += 6;
+
+    autoTable(doc, {
+      startY: y,
+      head: [["#", "Icerik Uretici", "Izlenme", "Begeni", "Etkilesim", "Format"]],
+      body: data.topVideos.slice(0, 10).map((v, i) => [
+        (i + 1).toString(),
+        `@${v.creator}`,
+        formatNumber(v.views),
+        formatNumber(v.likes),
+        `%${v.engagementRate}`,
+        v.format,
+      ]),
+      theme: "striped",
+      headStyles: { fillColor: [88, 28, 135], textColor: 255, fontSize: 8 },
+      bodyStyles: { fontSize: 8, textColor: [50, 50, 70] },
+      alternateRowStyles: { fillColor: [245, 245, 252] },
+      columnStyles: { 0: { cellWidth: 8 } },
+      margin: { left: 15, right: 15 },
+    });
+    y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
+  }
+
+  // Trending Hashtags
+  if (data.trendingHashtags.length > 0) {
+    if (y > 230) { doc.addPage(); y = 15; }
+    doc.setFontSize(12);
+    doc.setTextColor(88, 28, 135);
+    doc.text("Trend Hashtag'ler", 15, y);
+    y += 6;
+
+    autoTable(doc, {
+      startY: y,
+      head: [["Hashtag", "Video Sayisi", "Buyume"]],
+      body: data.trendingHashtags.slice(0, 10).map((h) => [
+        h.tag,
+        h.count.toString(),
+        `${h.growth > 0 ? "+" : ""}${h.growth}%`,
+      ]),
+      theme: "striped",
+      headStyles: { fillColor: [45, 212, 191], textColor: 255, fontSize: 8 },
+      bodyStyles: { fontSize: 8, textColor: [50, 50, 70] },
+      alternateRowStyles: { fillColor: [240, 253, 250] },
+      margin: { left: 15, right: 15 },
+    });
+    y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
+  }
+
+  // Trending Sounds
+  if (data.trendingSounds.length > 0) {
+    if (y > 230) { doc.addPage(); y = 15; }
+    doc.setFontSize(12);
+    doc.setTextColor(88, 28, 135);
+    doc.text("Trend Sesler", 15, y);
+    y += 6;
+
+    autoTable(doc, {
+      startY: y,
+      head: [["Ses", "Sanatci", "Video", "Izlenme"]],
+      body: data.trendingSounds.slice(0, 10).map((s) => [
+        s.name.substring(0, 40),
+        s.creator.substring(0, 25),
+        s.videoCount.toString(),
+        formatNumber(s.totalViews),
+      ]),
+      theme: "striped",
+      headStyles: { fillColor: [139, 92, 246], textColor: 255, fontSize: 8 },
+      bodyStyles: { fontSize: 8, textColor: [50, 50, 70] },
+      alternateRowStyles: { fillColor: [245, 243, 255] },
+      margin: { left: 15, right: 15 },
+    });
+    y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
+  }
+
+  // Emerging Formats
+  if (data.emergingFormats.length > 0) {
+    if (y > 230) { doc.addPage(); y = 15; }
+    doc.setFontSize(12);
+    doc.setTextColor(88, 28, 135);
+    doc.text("Yukselen Icerik Formatlari", 15, y);
+    y += 6;
+
+    autoTable(doc, {
+      startY: y,
+      head: [["Format", "Bu Hafta", "Gecen Hafta", "Buyume"]],
+      body: data.emergingFormats.map((f) => [
+        f.format,
+        f.count.toString(),
+        f.oldCount.toString(),
+        `${f.growth > 0 ? "+" : ""}${f.growth}%`,
+      ]),
+      theme: "striped",
+      headStyles: { fillColor: [249, 115, 22], textColor: 255, fontSize: 8 },
+      bodyStyles: { fontSize: 8, textColor: [50, 50, 70] },
+      alternateRowStyles: { fillColor: [255, 247, 237] },
+      margin: { left: 15, right: 15 },
+    });
+    y = (doc as unknown as { lastAutoTable: { finalY: number } }).lastAutoTable.finalY + 10;
+  }
+
+  // Category Distribution
+  if (data.categoryDistribution.length > 0) {
+    if (y > 230) { doc.addPage(); y = 15; }
+    doc.setFontSize(12);
+    doc.setTextColor(88, 28, 135);
+    doc.text("Kategori Dagilimi", 15, y);
+    y += 6;
+
+    autoTable(doc, {
+      startY: y,
+      head: [["Kategori", "Video", "Yuzde"]],
+      body: data.categoryDistribution.slice(0, 10).map((c) => [
+        c.category,
+        c.count.toString(),
+        `%${c.percentage}`,
+      ]),
+      theme: "striped",
+      headStyles: { fillColor: [59, 130, 246], textColor: 255, fontSize: 8 },
+      bodyStyles: { fontSize: 8, textColor: [50, 50, 70] },
+      alternateRowStyles: { fillColor: [239, 246, 255] },
+      margin: { left: 15, right: 15 },
+    });
+  }
+
+  // Footer on each page
+  const pageCount = doc.getNumberOfPages();
+  for (let i = 1; i <= pageCount; i++) {
+    doc.setPage(i);
+    doc.setFontSize(8);
+    doc.setTextColor(150, 150, 170);
+    doc.text(`Valyze TR - Detayli Rapor | Sayfa ${i}/${pageCount}`, pageWidth / 2, doc.internal.pageSize.getHeight() - 8, { align: "center" });
+  }
+
+  doc.save(`valyze-rapor-${new Date().toISOString().split("T")[0]}.pdf`);
+}
 
 interface DailyReport {
   date: string;
@@ -117,6 +321,19 @@ function DailyReportContent() {
   const [commentStats, setCommentStats] = useState<CommentStats | null>(null);
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
+  const [pdfLoading, setPdfLoading] = useState(false);
+
+  const handleDownloadPDF = async () => {
+    if (!data) return;
+    setPdfLoading(true);
+    try {
+      await generatePDF(data, commentStats);
+    } catch (e) {
+      console.error("PDF generation error:", e);
+    } finally {
+      setPdfLoading(false);
+    }
+  };
 
   const fetchData = () => {
     setRefreshing(true);
@@ -198,14 +415,24 @@ function DailyReportContent() {
             <Calendar className="w-3.5 h-3.5" /> {reportDate}
           </p>
         </div>
-        <button
-          onClick={fetchData}
-          disabled={refreshing}
-          className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-lg text-sm text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
-        >
-          <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
-          Yenile
-        </button>
+        <div className="flex items-center gap-2">
+          <button
+            onClick={handleDownloadPDF}
+            disabled={pdfLoading}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-sm font-medium hover:bg-primary/90 transition-colors disabled:opacity-50"
+          >
+            {pdfLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Download className="w-4 h-4" />}
+            PDF Indir
+          </button>
+          <button
+            onClick={fetchData}
+            disabled={refreshing}
+            className="flex items-center gap-2 px-4 py-2 bg-card border border-border rounded-lg text-sm text-muted-foreground hover:text-foreground transition-colors disabled:opacity-50"
+          >
+            <RefreshCw className={`w-4 h-4 ${refreshing ? "animate-spin" : ""}`} />
+            Yenile
+          </button>
+        </div>
       </div>
 
       {/* AI Insights */}
