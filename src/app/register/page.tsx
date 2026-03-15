@@ -129,53 +129,55 @@ function RegisterContent() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-500/[0.06] via-background to-blue-500/[0.06] flex relative overflow-hidden">
-      {/* ─────────── SOL PANEL — Marka & Avantajlar (sadece desktop) ─────────── */}
-      <div className="hidden lg:flex lg:w-[55%] xl:w-[60%] relative flex-col justify-between p-10 xl:p-16 overflow-hidden">
-        {/* Arka plan efektleri */}
-        <div className="absolute inset-0">
-          <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-purple-500/[0.08] rounded-full blur-[150px]" />
-          <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-blue-500/[0.06] rounded-full blur-[120px]" />
+    <div className="min-h-screen bg-background flex relative overflow-hidden">
+      {/* Background gradient overlay for entire page */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/[0.04] via-transparent to-blue-500/[0.04]" />
+
+      {/* ─────────── LEFT PANEL - Canva-style showcase (desktop only) ─────────── */}
+      <div className="hidden md:flex md:w-[50%] lg:w-[55%] xl:w-[58%] relative flex-col justify-between p-8 lg:p-12 xl:p-16 overflow-hidden bg-gradient-to-br from-purple-600/20 via-blue-600/15 to-teal-500/10">
+        {/* Floating gradient blurs */}
+        <div className="absolute inset-0 overflow-hidden">
+          <div className="absolute -top-32 -left-32 w-[450px] h-[450px] bg-purple-500/20 rounded-full blur-[130px]" />
+          <div className="absolute bottom-20 right-10 w-[350px] h-[350px] bg-teal-500/15 rounded-full blur-[120px]" />
+          <div className="absolute top-1/2 left-1/3 w-[300px] h-[300px] bg-blue-500/10 rounded-full blur-[100px]" />
         </div>
 
         {/* Grid pattern */}
         <div
-          className="absolute inset-0 opacity-[0.04]"
+          className="absolute inset-0 opacity-[0.03]"
           style={{
             backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
             backgroundSize: "50px 50px",
           }}
         />
 
-        {/* Köşe dekorasyon */}
-        <div className="absolute top-0 right-0 w-px h-40 bg-teal/20" />
-        <div className="absolute bottom-0 left-0 w-40 h-px bg-primary/20" />
-
-        {/* Üst — Logo */}
+        {/* Top - Logo & back */}
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.6 }}
           className="relative z-10"
         >
-          <Link href="/" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm mb-8">
+          <Link href="/" className="inline-flex items-center gap-2 text-foreground/50 hover:text-foreground transition-colors text-sm mb-8">
             <ArrowLeft className="w-4 h-4" />
             Ana Sayfa
           </Link>
-
           <LogoLink size="lg" showSubtitle subtitle="TikTok Trend Analiz Platformu" />
         </motion.div>
 
-        {/* Orta — Avantajlar */}
+        {/* Center - Headline + benefit cards */}
         <div className="relative z-10 flex-1 flex items-center">
           <div className="w-full max-w-lg">
             <motion.h2
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.3, duration: 0.5 }}
-              className="text-xl xl:text-2xl font-semibold text-foreground mb-2"
+              className="text-2xl xl:text-3xl font-bold text-foreground mb-4 leading-tight"
             >
-              Ücretsiz Başlayın
+              Ücretsiz Başlayın,{" "}
+              <span className="bg-gradient-to-r from-purple-400 via-pink-400 to-teal-400 bg-clip-text text-transparent">
+                Hemen Keşfetmeye Başlayın
+              </span>
             </motion.h2>
             <motion.p
               initial={{ opacity: 0, x: -20 }}
@@ -186,29 +188,47 @@ function RegisterContent() {
               Hesap oluşturun ve Türkiye&apos;nin TikTok trendlerini analiz etmeye hemen başlayın.
             </motion.p>
 
-            {/* Benefit kartları */}
+            {/* Colorful benefit cards */}
             <div className="space-y-3 mb-8">
               {benefits.map((benefit, i) => {
                 const Icon = benefit.icon;
-                const cardColors = [
-                  { bg: "bg-purple-500/[0.08]", border: "border-purple-500/10", iconBg: "bg-purple-500/15", iconColor: "text-purple-400", shadow: "hover:shadow-purple-500/10" },
-                  { bg: "bg-blue-500/[0.08]", border: "border-blue-500/10", iconBg: "bg-blue-500/15", iconColor: "text-blue-400", shadow: "hover:shadow-blue-500/10" },
-                  { bg: "bg-teal-500/[0.08]", border: "border-teal-500/10", iconBg: "bg-teal-500/15", iconColor: "text-teal", shadow: "hover:shadow-teal-500/10" },
+                const cardStyles = [
+                  {
+                    bg: "bg-purple-500/[0.12]",
+                    border: "border-purple-500/20",
+                    iconBg: "bg-purple-500/25",
+                    iconColor: "text-purple-300",
+                    shadow: "hover:shadow-purple-500/10",
+                  },
+                  {
+                    bg: "bg-teal-500/[0.12]",
+                    border: "border-teal-500/20",
+                    iconBg: "bg-teal-500/25",
+                    iconColor: "text-teal-300",
+                    shadow: "hover:shadow-teal-500/10",
+                  },
+                  {
+                    bg: "bg-amber-500/[0.12]",
+                    border: "border-amber-500/20",
+                    iconBg: "bg-amber-500/25",
+                    iconColor: "text-amber-300",
+                    shadow: "hover:shadow-amber-500/10",
+                  },
                 ];
-                const c = cardColors[i % cardColors.length];
+                const c = cardStyles[i % cardStyles.length];
                 return (
                   <motion.div
                     key={benefit.title}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 + i * 0.1, duration: 0.4 }}
-                    className={`flex items-start gap-4 p-4 rounded-xl ${c.bg} border ${c.border} transition-all duration-300 hover:scale-[1.02] hover:shadow-md ${c.shadow} hover:-translate-y-0.5`}
+                    className={`flex items-start gap-4 p-4 rounded-xl ${c.bg} border ${c.border} backdrop-blur-sm transition-all duration-300 hover:scale-[1.02] hover:shadow-lg ${c.shadow}`}
                   >
-                    <div className={`w-10 h-10 rounded-lg ${c.iconBg} flex items-center justify-center flex-shrink-0`}>
+                    <div className={`w-11 h-11 rounded-xl ${c.iconBg} flex items-center justify-center flex-shrink-0`}>
                       <Icon className={`w-5 h-5 ${c.iconColor}`} />
                     </div>
                     <div>
-                      <p className="text-sm font-medium text-foreground">
+                      <p className="text-sm font-semibold text-foreground">
                         {benefit.title}
                       </p>
                       <p className="text-xs text-foreground/60 mt-0.5">
@@ -225,9 +245,9 @@ function RegisterContent() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9, duration: 0.4 }}
-              className="bg-rose-500/[0.06] border border-rose-500/10 rounded-xl p-4"
+              className="bg-white/[0.04] border border-white/[0.08] rounded-xl p-4 backdrop-blur-sm"
             >
-              <p className="text-xs font-semibold text-foreground/60 mb-3 uppercase tracking-wider">
+              <p className="text-xs font-semibold text-foreground/50 mb-3 uppercase tracking-wider">
                 Free Plana Dahil
               </p>
               <div className="grid grid-cols-2 gap-2">
@@ -248,23 +268,23 @@ function RegisterContent() {
           </div>
         </div>
 
-        {/* Alt — Güven göstergesi ve istatistikler */}
+        {/* Bottom - Stats row with colored backgrounds */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2, duration: 0.5 }}
-          className="relative z-10 space-y-4"
+          className="relative z-10 space-y-3"
         >
-          <div className="flex items-center gap-4">
-            <div className="bg-purple-500/[0.08] border border-purple-500/10 rounded-xl px-4 py-3">
+          <div className="flex items-center gap-3">
+            <div className="bg-purple-500/[0.15] border border-purple-500/20 rounded-xl px-4 py-3 backdrop-blur-sm">
               <p className="text-2xl font-bold text-purple-400">5.2K+</p>
               <p className="text-foreground/60 text-xs">Aktif Kullanıcı</p>
             </div>
-            <div className="bg-teal-500/[0.08] border border-teal-500/10 rounded-xl px-4 py-3">
+            <div className="bg-teal-500/[0.15] border border-teal-500/20 rounded-xl px-4 py-3 backdrop-blur-sm">
               <p className="text-2xl font-bold text-teal">25K+</p>
               <p className="text-foreground/60 text-xs">Günlük Analiz</p>
             </div>
-            <div className="bg-amber-500/[0.08] border border-amber-500/10 rounded-xl px-4 py-3">
+            <div className="bg-amber-500/[0.15] border border-amber-500/20 rounded-xl px-4 py-3 backdrop-blur-sm">
               <p className="text-2xl font-bold text-amber-400">150K+</p>
               <p className="text-foreground/60 text-xs">Trend Takibi</p>
             </div>
@@ -286,36 +306,25 @@ function RegisterContent() {
         </motion.div>
       </div>
 
-      {/* ─────────── Dikey Ayırıcı (desktop) ─────────── */}
-      <div className="hidden lg:block w-px bg-border" />
-
-      {/* ─────────── SAĞ PANEL — Form ─────────── */}
-      <div className="flex-1 flex items-center justify-center relative">
-        {/* Mobile arka plan */}
-        <div className="lg:hidden absolute inset-0 overflow-hidden">
-          <div className="absolute -top-40 -left-40 w-80 h-80 bg-primary/8 rounded-full blur-[100px]" />
-          <div className="absolute top-1/2 -right-40 w-96 h-96 bg-teal/5 rounded-full blur-[120px]" />
+      {/* ─────────── RIGHT PANEL - Form ─────────── */}
+      <div className="flex-1 flex flex-col items-center justify-center relative min-h-screen">
+        {/* Mobile gradient background */}
+        <div className="md:hidden absolute inset-0 overflow-hidden bg-gradient-to-br from-purple-600/10 via-background to-teal-500/10">
+          <div className="absolute -top-32 -left-20 w-72 h-72 bg-purple-500/15 rounded-full blur-[100px]" />
+          <div className="absolute bottom-1/4 -right-20 w-80 h-80 bg-teal-500/10 rounded-full blur-[120px]" />
+          <div className="absolute top-1/3 left-1/2 w-60 h-60 bg-blue-500/8 rounded-full blur-[80px]" />
         </div>
-
-        {/* Mobile grid pattern */}
-        <div
-          className="lg:hidden absolute inset-0 opacity-[0.03]"
-          style={{
-            backgroundImage: `linear-gradient(rgba(255,255,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.1) 1px, transparent 1px)`,
-            backgroundSize: "60px 60px",
-          }}
-        />
 
         {/* Mobile back button */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className="lg:hidden fixed top-0 left-0 right-0 z-20 px-4 py-4"
+          className="md:hidden absolute top-0 left-0 right-0 z-20 px-4 py-4"
         >
           <div className="max-w-md mx-auto">
             <Link
               href="/"
-              className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground transition-colors text-sm"
+              className="inline-flex items-center gap-2 text-foreground/50 hover:text-foreground transition-colors text-sm"
             >
               <ArrowLeft className="w-4 h-4" />
               Ana Sayfa
@@ -323,53 +332,64 @@ function RegisterContent() {
           </div>
         </motion.div>
 
-        {/* Form kartı */}
+        {/* Mobile compact header */}
+        <motion.div
+          initial={{ opacity: 0, y: -10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.1 }}
+          className="md:hidden relative z-10 text-center mt-16 mb-6 px-6"
+        >
+          <LogoLink size="lg" />
+          <p className="text-foreground/60 text-sm mt-3">TikTok Trend Analiz Platformu</p>
+        </motion.div>
+
+        {/* Form card */}
         <motion.div
           initial={{ opacity: 0, y: 30, scale: 0.95 }}
           animate={{ opacity: 1, y: 0, scale: 1 }}
           transition={{ duration: 0.6, ease: "easeOut" }}
-          className="relative z-10 w-full max-w-md px-6 py-8 lg:px-10 xl:px-14"
+          className="relative z-10 w-full max-w-md px-6 py-4 md:py-10 md:px-10 xl:px-14"
         >
-          <div className="lg:bg-transparent lg:shadow-none glass lg:backdrop-blur-none rounded-xl p-8 lg:p-0 shadow-2xl">
-            {/* Başlık */}
+          <div className="md:bg-transparent md:shadow-none md:backdrop-blur-none md:border-0 bg-white/[0.06] backdrop-blur-xl border border-white/[0.1] rounded-2xl p-6 sm:p-8 md:p-0 shadow-2xl">
+            {/* Header */}
             <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.2 }}
-              className="text-center lg:text-left mb-6"
+              className="text-center md:text-left mb-8"
             >
-              <div className="inline-flex mb-4 lg:hidden">
+              <div className="hidden md:inline-flex md:mb-6">
                 <LogoLink size="lg" />
               </div>
-              <h2 className="hidden lg:block text-2xl xl:text-3xl font-bold text-foreground mb-2">
-                Hesap Oluştur
+              <h2 className="text-xl sm:text-2xl xl:text-3xl font-bold text-foreground mb-2">
+                <span className="md:hidden">Yeni Hesap Oluştur</span>
+                <span className="hidden md:inline">Hesap Oluştur</span>
               </h2>
-              <p className="text-foreground/60 text-sm">
-                <span className="lg:hidden">Yeni Hesap Oluştur</span>
-                <span className="hidden lg:inline">
+              <p className="text-foreground/70 text-sm">
+                <span className="hidden md:inline">
                   Bilgilerinizi girerek hemen başlayın
                 </span>
               </p>
             </motion.div>
 
             {/* Form */}
-            <form onSubmit={handleSubmit} className="space-y-4">
+            <form onSubmit={handleSubmit} className="space-y-5">
               <motion.div
                 initial={{ opacity: 0, x: -10 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.25 }}
               >
-                <label className="block text-sm font-medium text-foreground/60 mb-1.5">
+                <label className="block text-sm font-medium text-foreground/70 mb-1.5">
                   Kullanıcı Adı
                 </label>
                 <div className="relative">
-                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                  <User className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40 w-5 h-5" />
                   <input
                     type="text"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     placeholder="Kullanıcı adınız"
-                    className="w-full bg-muted border border-border rounded-xl py-3 pl-10 pr-4 text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
+                    className="w-full bg-muted border border-border rounded-xl py-3 pl-10 pr-4 text-foreground placeholder-foreground/30 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
                     required
                   />
                 </div>
@@ -380,17 +400,17 @@ function RegisterContent() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <label className="block text-sm font-medium text-foreground/60 mb-1.5">
+                <label className="block text-sm font-medium text-foreground/70 mb-1.5">
                   E-posta
                 </label>
                 <div className="relative">
-                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                  <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40 w-5 h-5" />
                   <input
                     type="email"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
                     placeholder="E-posta adresiniz"
-                    className="w-full bg-muted border border-border rounded-xl py-3 pl-10 pr-4 text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
+                    className="w-full bg-muted border border-border rounded-xl py-3 pl-10 pr-4 text-foreground placeholder-foreground/30 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
                     required
                   />
                 </div>
@@ -401,23 +421,23 @@ function RegisterContent() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.35 }}
               >
-                <label className="block text-sm font-medium text-foreground/60 mb-1.5">
+                <label className="block text-sm font-medium text-foreground/70 mb-1.5">
                   Şifre
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40 w-5 h-5" />
                   <input
                     type={showPassword ? "text" : "password"}
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                     placeholder="En az 6 karakter"
-                    className="w-full bg-muted border border-border rounded-xl py-3 pl-10 pr-12 text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
+                    className="w-full bg-muted border border-border rounded-xl py-3 pl-10 pr-12 text-foreground placeholder-foreground/30 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
                     required
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-muted-foreground transition-colors"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 text-foreground/40 hover:text-foreground transition-colors"
                   >
                     {showPassword ? (
                       <EyeOff className="w-5 h-5" />
@@ -433,17 +453,17 @@ function RegisterContent() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                <label className="block text-sm font-medium text-foreground/60 mb-1.5">
+                <label className="block text-sm font-medium text-foreground/70 mb-1.5">
                   Şifre Tekrar
                 </label>
                 <div className="relative">
-                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground w-5 h-5" />
+                  <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-foreground/40 w-5 h-5" />
                   <input
                     type={showPassword ? "text" : "password"}
                     value={confirmPassword}
                     onChange={(e) => setConfirmPassword(e.target.value)}
                     placeholder="Şifrenizi tekrar girin"
-                    className="w-full bg-muted border border-border rounded-xl py-3 pl-10 pr-4 text-foreground placeholder-muted-foreground focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
+                    className="w-full bg-muted border border-border rounded-xl py-3 pl-10 pr-4 text-foreground placeholder-foreground/30 focus:outline-none focus:border-primary/50 focus:ring-1 focus:ring-primary/20 transition-all"
                     required
                   />
                 </div>
@@ -467,7 +487,7 @@ function RegisterContent() {
                 disabled={
                   loading || !username || !email || !password || !confirmPassword
                 }
-                className="w-full bg-gradient-to-r from-primary to-rose-500 text-white font-semibold py-3 rounded-md hover:opacity-90 hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-primary to-rose-500 text-white font-semibold py-3 rounded-xl hover:opacity-90 hover:scale-[1.02] transition-all shadow-lg shadow-primary/20 disabled:opacity-50 disabled:cursor-not-allowed disabled:shadow-none flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -496,7 +516,7 @@ function RegisterContent() {
               transition={{ delay: 0.55 }}
               className="text-center mt-6"
             >
-              <p className="text-foreground/60 text-sm">
+              <p className="text-foreground/70 text-sm">
                 Zaten hesabınız var mı?{" "}
                 <Link
                   href="/login"
@@ -506,6 +526,27 @@ function RegisterContent() {
                 </Link>
               </p>
             </motion.div>
+          </div>
+        </motion.div>
+
+        {/* Mobile trust badges */}
+        <motion.div
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6 }}
+          className="md:hidden relative z-10 flex items-center justify-center gap-3 px-6 pb-8 mt-2"
+        >
+          <div className="flex items-center gap-1.5 bg-purple-500/10 border border-purple-500/15 rounded-lg px-3 py-2">
+            <TrendingUp className="w-3.5 h-3.5 text-purple-400" />
+            <span className="text-xs text-foreground/70 font-medium">5.2K+ Kullanıcı</span>
+          </div>
+          <div className="flex items-center gap-1.5 bg-teal-500/10 border border-teal-500/15 rounded-lg px-3 py-2">
+            <Zap className="w-3.5 h-3.5 text-teal" />
+            <span className="text-xs text-foreground/70 font-medium">25K+ Analiz</span>
+          </div>
+          <div className="flex items-center gap-1.5 bg-amber-500/10 border border-amber-500/15 rounded-lg px-3 py-2">
+            <Shield className="w-3.5 h-3.5 text-amber-400" />
+            <span className="text-xs text-foreground/70 font-medium">SSL Güvenli</span>
           </div>
         </motion.div>
       </div>

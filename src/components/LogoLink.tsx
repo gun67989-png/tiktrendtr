@@ -33,7 +33,7 @@ export default function LogoLink({ size = "md", showSubtitle, subtitle }: LogoLi
   };
 
   return (
-    <Link href={href} className="flex items-center gap-2">
+    <Link href={href} className="flex items-center gap-3">
       <Image
         src="/logo.png"
         alt="Valyze TR"
@@ -47,7 +47,7 @@ export default function LogoLink({ size = "md", showSubtitle, subtitle }: LogoLi
           Valyze <span className="text-teal">TR</span>
         </span>
         {showSubtitle && subtitle && (
-          <p className="text-[10px] text-muted-foreground uppercase tracking-wider">{subtitle}</p>
+          <p className="text-[11px] text-muted-foreground uppercase tracking-wider mt-0.5">{subtitle}</p>
         )}
       </div>
     </Link>
