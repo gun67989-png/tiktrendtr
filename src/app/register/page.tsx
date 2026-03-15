@@ -116,7 +116,7 @@ function RegisterContent() {
       const data = await res.json();
 
       if (res.ok) {
-        router.push("/dashboard");
+        router.push("/onboarding");
         router.refresh();
       } else {
         setError(data.error || "Kayıt başarısız");

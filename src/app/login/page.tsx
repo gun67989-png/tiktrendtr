@@ -83,7 +83,9 @@ function LoginContent() {
       });
 
       if (res.ok) {
-        router.push("/dashboard");
+        const data = await res.json();
+        const destination = data.user?.onboardingCompleted === false ? "/onboarding" : "/dashboard";
+        router.push(destination);
         router.refresh();
       } else {
         const data = await res.json();

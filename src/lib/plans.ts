@@ -140,6 +140,7 @@ export const PLANS: Record<PlanType, PlanConfig> = {
       "/dashboard/daily-report",
       "/dashboard/competitor",
       "/dashboard/ad-analysis",
+      "/dashboard/live-monitor",
     ],
     badge: "Kurumsal",
     badgeColor: "text-amber-400",

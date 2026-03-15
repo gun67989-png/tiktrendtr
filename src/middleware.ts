@@ -11,6 +11,7 @@ interface SessionPayload {
   username: string;
   email: string;
   role: "admin" | "user";
+  onboardingCompleted?: boolean;
 }
 
 async function getSessionFromRequest(
@@ -51,6 +52,7 @@ export async function middleware(request: NextRequest) {
     pathname === "/mesafeli-satis-sozlesmesi" ||
     pathname === "/iptal-ve-iade" ||
     pathname === "/cookie-policy" ||
+    pathname === "/onboarding" ||
     pathname === "/payment" ||
     pathname.startsWith("/_next") ||
     pathname.startsWith("/favicon") ||
@@ -109,6 +111,11 @@ export async function middleware(request: NextRequest) {
 
     if (!session) {
       return NextResponse.redirect(new URL("/login", request.url));
+    }
+
+    // Redirect to onboarding if not completed (skip for admins)
+    if (session.role !== "admin" && session.onboardingCompleted === false) {
+      return NextResponse.redirect(new URL("/onboarding", request.url));
     }
 
     // Admin-only route protection

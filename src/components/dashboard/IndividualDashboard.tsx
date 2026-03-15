@@ -22,6 +22,8 @@ import {
   Rocket,
   Eye,
   Hash,
+  Volume2,
+  Music,
 } from "lucide-react";
 import {
   AreaChart,
@@ -152,6 +154,7 @@ export default function IndividualDashboard({ user }: Props) {
     tacticSuggestions: string[];
     nicheStats: { avgViews: number; avgEngagement: number; totalVideos: number };
   } | null>(null);
+  const [trendingSounds, setTrendingSounds] = useState<Array<{ id: string; name: string; creator: string; usageCount: number; totalViews: number; growth: number; viralScore: number; soundType: string; genre: string }>>([]);
   const router = useRouter();
 
   useEffect(() => {
@@ -196,6 +199,17 @@ export default function IndividualDashboard({ user }: Props) {
       .then((data) => { if (data.plan) setContentPlan(data.plan); })
       .catch(() => {});
   }, [user?.subscriptionNiche]);
+
+  useEffect(() => {
+    fetch("/api/trends/sounds?type=all")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.sounds && data.sounds.length > 0) {
+          setTrendingSounds(data.sounds.slice(0, 6));
+        }
+      })
+      .catch(() => {});
+  }, []);
 
   const isPremium = user?.subscriptionType && user.subscriptionType !== "free";
 
@@ -617,6 +631,62 @@ export default function IndividualDashboard({ user }: Props) {
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3 sm:gap-4">
             {topVideos.map((video, i) => (
               <VideoCard key={video.id} video={video} index={i} onSelect={setSelectedVideo} />
+            ))}
+          </div>
+        </motion.div>
+      )}
+
+      {/* ===== TREND SESLER & MÜZİKLER ===== */}
+      {trendingSounds.length > 0 && (
+        <motion.div variants={item}>
+          <div className="flex items-center justify-between mb-4">
+            <div className="flex items-center gap-2">
+              <Volume2 className="w-4 h-4 text-teal" />
+              <h3 className="text-sm font-semibold text-foreground">Trend Sesler & Müzikler</h3>
+              <span className="text-xs bg-teal/10 text-teal px-2 py-0.5 rounded-full">Canlı</span>
+            </div>
+            <button
+              onClick={() => router.push("/dashboard/sounds")}
+              className="flex items-center gap-1 text-xs text-muted-foreground hover:text-teal transition-colors"
+            >
+              Tümünü Gör <ArrowRight className="w-3 h-3" />
+            </button>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3">
+            {trendingSounds.map((sound, i) => (
+              <motion.div
+                key={sound.id}
+                initial={{ opacity: 0, y: 15 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.6 + i * 0.08 }}
+                whileHover={{ scale: 1.02 }}
+                onClick={() => router.push(`/dashboard/sounds/${encodeURIComponent(sound.name)}`)}
+                className="bg-card rounded-xl border border-border p-4 hover:border-teal/20 transition-all cursor-pointer group"
+              >
+                <div className="flex items-start justify-between mb-2">
+                  <div className="flex items-center gap-2 min-w-0">
+                    <div className={`p-1.5 rounded-lg shrink-0 ${sound.soundType === "music" ? "bg-purple-500/10" : "bg-teal/10"}`}>
+                      {sound.soundType === "music" ? <Music className="w-3.5 h-3.5 text-purple-400" /> : <Volume2 className="w-3.5 h-3.5 text-teal" />}
+                    </div>
+                    <div className="min-w-0">
+                      <p className="text-sm font-semibold text-foreground truncate">{sound.name}</p>
+                      <p className="text-[10px] text-muted-foreground">@{sound.creator}</p>
+                    </div>
+                  </div>
+                  <span className="text-xs font-mono bg-teal/10 text-teal px-2 py-1 rounded-md ml-2 shrink-0">
+                    {sound.viralScore.toFixed(2)}
+                  </span>
+                </div>
+                <div className="flex items-center justify-between mt-3 pt-2 border-t border-border/50">
+                  <div className="flex items-center gap-3 text-[10px] text-muted-foreground">
+                    <span>{sound.usageCount} kullanım</span>
+                    <span>{sound.totalViews > 1000000 ? `${(sound.totalViews / 1000000).toFixed(1)}M` : `${Math.round(sound.totalViews / 1000)}K`} izlenme</span>
+                  </div>
+                  <span className={`text-[10px] font-medium ${sound.growth >= 0 ? "text-teal" : "text-primary"}`}>
+                    {sound.growth >= 0 ? "+" : ""}{sound.growth}%
+                  </span>
+                </div>
+              </motion.div>
             ))}
           </div>
         </motion.div>

@@ -79,9 +79,13 @@ export async function GET(request: NextRequest) {
       email: user.email,
       role: user.role,
       subscription_type: user.subscription_type,
+      subscription_niche: user.subscription_niche,
+      subscription_role: user.subscription_role,
+      onboarding_completed: user.onboarding_completed,
     });
 
-    const response = NextResponse.redirect(new URL("/dashboard", BASE_URL));
+    const destination = user.onboarding_completed ? "/dashboard" : "/onboarding";
+    const response = NextResponse.redirect(new URL(destination, BASE_URL));
     response.cookies.set("session", token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",

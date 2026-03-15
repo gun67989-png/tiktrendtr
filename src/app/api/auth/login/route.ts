@@ -27,6 +27,9 @@ export async function POST(request: NextRequest) {
       email: user.email,
       role: user.role,
       subscription_type: user.subscription_type || "free",
+      subscription_niche: user.subscription_niche,
+      subscription_role: user.subscription_role,
+      onboarding_completed: user.onboarding_completed,
     });
 
     const response = NextResponse.json({
@@ -37,6 +40,7 @@ export async function POST(request: NextRequest) {
         email: user.email,
         role: user.role,
         subscriptionType: user.subscription_type || "free",
+        onboardingCompleted: user.onboarding_completed ?? false,
       },
     });
 
