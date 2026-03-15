@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { supabase, isSupabaseConfigured } from "@/lib/supabase";
 import { runFullAnalysis } from "@/lib/psychological-analysis";
 import type { VideoData } from "@/lib/psychological-analysis";
+import { askAI } from "@/lib/ai";
 
 export const dynamic = "force-dynamic";
 
@@ -152,6 +153,78 @@ export async function GET(request: NextRequest) {
     // Step 3: Run psychological analysis
     const analysis = runFullAnalysis(cleanUsername, "tiktok", videos);
 
+    // Step 4: Generate AI editorial commentary
+    let ai_commentary = null;
+    try {
+      const commentaryPrompt = `Sen bir sosyal medya psikoloji uzmanı ve gazetecisin. Aşağıdaki TikTok profil analiz verilerini kullanarak derinlemesine, magazinsel bir psikolojik analiz yaz. Türkçe yaz.
+
+Profil: @${cleanUsername}
+Video sayısı: ${videos.length}
+Toplam görüntülenme: ${analysis.analysis_data.total_views.toLocaleString()}
+Toplam beğeni: ${analysis.analysis_data.total_likes.toLocaleString()}
+Toplam yorum: ${analysis.analysis_data.total_comments.toLocaleString()}
+Toplam paylaşım: ${analysis.analysis_data.total_shares.toLocaleString()}
+Ortalama etkileşim oranı: %${analysis.analysis_data.avg_engagement_rate}
+
+Metrikler:
+1. Nefret-İzleme Skoru: ${analysis.metrics.hate_watching.score}/100
+   - Yorum/Görüntülenme oranı: %${analysis.metrics.hate_watching.comment_to_view_ratio}
+   - Olumsuzluk tahmini: %${analysis.metrics.hate_watching.negativity_estimate}
+   - Durum: ${analysis.metrics.hate_watching.label}
+
+2. Çapa Noktası Skoru: ${analysis.metrics.anchor_points.score}/100
+   - Tetikleyiciler: ${analysis.metrics.anchor_points.triggers.join(", ")}
+   - Top hashtag'ler: ${analysis.metrics.anchor_points.top_hashtags.slice(0, 5).join(", ")}
+   - Caption anahtar kelimeler: ${analysis.metrics.anchor_points.caption_keywords.slice(0, 5).join(", ")}
+
+3. Drop-off (İzleyici Tutma) Skoru: ${analysis.metrics.drop_off.score}/100
+   - Tahmini izleme oranı: %${analysis.metrics.drop_off.estimated_avg_watch_percent}
+   - Süre/etkileşim oranı: ${analysis.metrics.drop_off.duration_engagement_ratio}
+   - Durum: ${analysis.metrics.drop_off.label}
+
+4. Demografik Skoru: ${analysis.metrics.demographics.score}/100
+   - Tahmini yaş aralığı: ${analysis.metrics.demographics.estimated_age_range}
+   - Sosyoekonomik katman: ${analysis.metrics.demographics.socioeconomic_tier}
+   - Dil karmaşıklığı: ${analysis.metrics.demographics.language_complexity}
+   - Kategori yakınlıkları: ${analysis.metrics.demographics.category_affinity.join(", ")}
+
+5. Duygu Kayması Skoru: ${analysis.metrics.sentiment_drift.score}/100
+   - Beğeni/olumsuz oranı: ${analysis.metrics.sentiment_drift.like_dislike_ratio}
+   - Yorum hızı: ${analysis.metrics.sentiment_drift.comment_velocity}
+   - Yön: ${analysis.metrics.sentiment_drift.drift_direction}
+
+Ortalama video süresi: ${(videos.reduce((a, v) => a + v.duration, 0) / videos.length).toFixed(1)} saniye
+En çok kullanılan hashtag'ler: ${analysis.metrics.anchor_points.top_hashtags.slice(0, 8).join(", ")}
+
+ÖNEMLİ KURALLAR:
+- Metrikleri birbirleriyle ilişkilendir, çapraz çıkarımlar yap
+- Psikolojik terimler kullan: "psikolojik kopma noktası", "çapa etkisi", "nefret-izleme döngüsü", "izleyici kaybı", "duygusal bağ", "bilinçaltı tetikleyici"
+- Spesifik yüzdeler ve sayılarla destekle
+- Gazete köşe yazısı gibi akıcı ve etkileyici yaz
+- Her yorumu birbirine bağla, tutarlı bir hikaye anlat
+
+JSON formatında döndür:
+{
+  "editorial": "Genel editöryal analiz (3-4 paragraf, derinlemesine magazinsel yorum)",
+  "hate_watching": "Nefret-izleme metriği hakkında 2-3 cümle magazinsel yorum",
+  "anchor_points": "Çapa noktası metriği hakkında 2-3 cümle magazinsel yorum",
+  "drop_off": "İzleyici tutma metriği hakkında 2-3 cümle magazinsel yorum",
+  "demographics": "Demografik metrik hakkında 2-3 cümle magazinsel yorum",
+  "sentiment_drift": "Duygu kayması metriği hakkında 2-3 cümle magazinsel yorum"
+}
+Sadece JSON döndür, başka açıklama ekleme.`;
+
+      const aiResult = await askAI(commentaryPrompt);
+      try {
+        const jsonMatch = aiResult.match(/\{[\s\S]*\}/);
+        ai_commentary = jsonMatch ? JSON.parse(jsonMatch[0]) : null;
+      } catch {
+        ai_commentary = null;
+      }
+    } catch {
+      ai_commentary = null;
+    }
+
     return NextResponse.json({
       username: cleanUsername,
       videoCount: videos.length,
@@ -159,6 +232,7 @@ export async function GET(request: NextRequest) {
       metrics: analysis.metrics,
       viral_post_drafts: analysis.viral_post_drafts,
       analyzed_at: analysis.analyzed_at,
+      ai_commentary,
     });
   } catch (e) {
     console.error("Psychological analysis error:", e);

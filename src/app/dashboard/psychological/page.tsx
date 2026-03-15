@@ -91,6 +91,14 @@ interface AnalysisData {
     estimated_engagement: string;
     target_emotion: string;
   }>;
+  ai_commentary: {
+    editorial: string;
+    hate_watching: string;
+    anchor_points: string;
+    drop_off: string;
+    demographics: string;
+    sentiment_drift: string;
+  } | null;
 }
 
 const METRIC_CONFIG = [
@@ -116,6 +124,62 @@ function ScoreBar({ score, color }: { score: number; color: string }) {
       <span className={`text-sm font-bold w-10 text-right ${color}`}>{score}</span>
     </div>
   );
+}
+
+function generateFallbackCommentary(data: AnalysisData) {
+  const m = data.metrics;
+  const d = data.analysis_data;
+  const engRate = d.avg_engagement_rate;
+  const commentRatio = m.hate_watching.comment_to_view_ratio;
+  const watchPct = m.drop_off.estimated_avg_watch_percent;
+
+  const editorial = `@${data.username} profilinin ${d.video_count} videosu uzerinden yapilan derinlemesine analiz, ilginc psikolojik oruntuleri ortaya koyuyor. ` +
+    `Toplam ${formatNumber(d.total_views)} goruntulenmede %${engRate} etkilesim oranina sahip bu profil, ` +
+    (engRate > 8 ? `izleyicileriyle guclu bir duygusal bag kurmayı basaran nadir hesaplardan biri.` :
+     engRate > 3 ? `ortalama ustu bir izleyici bagliligi sergiliyor.` :
+     `izleyici bagliligini artirmasi gereken bir profil olarak one cikiyor.`) +
+    `\n\n` +
+    `Izleyici tutma orani %${watchPct} seviyesinde - bu, ` +
+    (watchPct > 75 ? `izleyicilerin buyuk cogunlugunun videoyu sonuna kadar izledigini gosteren guclu bir 'psikolojik baglama' isaretdir. Icerikler, izleyicinin dikkatini dagitmadan sonuca tasimayı basariyor.` :
+     watchPct > 50 ? `izleyicilerin yarisından fazlasinin videoyu tamamladigini gosteren makul bir tutuculuk. Ancak videonun ilk 3-5 saniyesinde bir 'kopma noktasi' olabilir.` :
+     `ciddi bir 'izleyici kaybi' (drop-off) sinyali. Izleyicilerin onemli bir kismi videonun ilk saniyelerinde ayrilıyor - bu da 'psikolojik kopma' yasandigini gosteriyor.`) +
+    `\n\n` +
+    (m.hate_watching.score > 50 ? `Dikkat cekici bir bulgu: Nefret-izleme endeksi ${m.hate_watching.score}/100 ile yuksek. Yorum/goruntuleme orani %${commentRatio} - bu, icerigin 'nefret-izleme dongusu' yarattıgını, izleyicilerin begenmese bile izlemeye devam ettigini gosteriyor.` :
+     `Nefret-izleme endeksi ${m.hate_watching.score}/100 ile dusuk seyrediyor - icerik, 'nefret-izleme' degil gercek ilgi uzerinden etkilesim aliyor.`) +
+    `\n\n` +
+    `Demografik haritaya gore, ${m.demographics.estimated_age_range} yas araligindaki ${m.demographics.socioeconomic_tier.toLowerCase()} gelir grubundaki izleyiciler ana kitleyi olusturuyor. ` +
+    `Duygu kaymasi ${m.sentiment_drift.drift_direction === "positive" ? "pozitif" : m.sentiment_drift.drift_direction === "negative" ? "negatif" : "notr"} yonde ilerliyor - ` +
+    (m.sentiment_drift.score > 50 ? `bu da izleyici kitlesinde belirgin bir 'duygusal kutuplaşma' oldugunu gosteriyor.` : `bu da izleyici kitlesinin duygusal olarak stabil oldugunu gosteriyor.`);
+
+  const hate_watching = m.hate_watching.score > 50
+    ? `Yorum/goruntuleme orani %${commentRatio} ile dikkat cekici derecede yuksek. Bu, izleyicilerin onemli bir kisminin 'nefret-izleme dongusu'ne girdigini, icerigi begenmese de izlemeye ve yorum yapmaya devam ettigini ortaya koyuyor. Olumsuzluk tahmini %${m.hate_watching.negativity_estimate} seviyesinde.`
+    : `Nefret-izleme endeksi ${m.hate_watching.score}/100 ile saglikli seviyede. Izleyiciler icerigi gercekten sevdikleri icin etkilesime geciyorlar, 'nefret-izleme' motivasyonu dusuk. Yorum/goruntuleme orani %${commentRatio} ile organik etkilesimi dogruluyor.`;
+
+  const anchor_points = `Capa noktasi skoru ${m.anchor_points.score}/100 - ` +
+    (m.anchor_points.score > 60
+      ? `icerik, izleyicinin dikkatini yakalayan guclu 'bilincalti tetikleyiciler' kullaniyor. ${m.anchor_points.top_hashtags.slice(0, 3).map(h => h).join(", ")} gibi hashtag'ler, izleyicinin icerige duygusal olarak baglanmasini saglayan 'capa noktalari' olusturuyor.`
+      : `icerik, izleyicinin dikkatini yakalamak icin daha guclu 'capa noktalari'na ihtiyac duyuyor. Hashtag stratejisi ve caption anahtar kelimeleri guclendirilebilir.`);
+
+  const drop_off = `Tahmini izleme orani %${watchPct} - ` +
+    (watchPct > 75
+      ? `bu, izleyicilerin buyuk cogunlugunun videoyu sonuna kadar izledigini gosteren mukemmel bir sinyal. 'Psikolojik kopma' orani cok dusuk, icerik izleyiciyi sonuna kadar 'bagli' tutuyor.`
+      : watchPct > 50
+      ? `izleyicilerin yarısından fazlasi videoyu tamamliyor, ancak belirli bir noktada 'izleyici kaybi' yaşaniyor. Video suresi/etkilesim orani ${m.drop_off.duration_engagement_ratio} - bu, videonun belirli bir aninda 'psikolojik kopma noktasi' oldugunu isaret ediyor.`
+      : `ciddi bir 'izleyici kaybi' sinyali. Izleyicilerin buyuk kismi videonun ilk saniyelerinde ayrilıyor. Sure/etkilesim orani ${m.drop_off.duration_engagement_ratio} ile 'hizli terk' paternini dogruluyor.`);
+
+  const demographics = `Hedef kitle ${m.demographics.estimated_age_range} yas araliginda, ${m.demographics.socioeconomic_tier.toLowerCase()} sosyoekonomik katmandan. ` +
+    `Dil karmasikligi '${m.demographics.language_complexity.toLowerCase()}' seviyesinde - bu, icerigin ` +
+    (m.demographics.language_complexity === "Düşük" || m.demographics.language_complexity === "Dusuk"
+      ? `genis kitlelere hitap eden, kolay tuketilebilir bir dil kullanidigini gosteriyor. 'Viral yayilma' potansiyeli yuksek.`
+      : `belirli bir egitim seviyesindeki izleyicilere hitap ettigini ve 'nis kitle' stratejisi izledigini gosteriyor.`);
+
+  const sentiment_drift = `Duygu kaymasi ${m.sentiment_drift.drift_direction === "positive" ? "pozitif" : m.sentiment_drift.drift_direction === "negative" ? "negatif" : "notr"} yonde, skor ${m.sentiment_drift.score}/100. ` +
+    `Yorum hizi ${m.sentiment_drift.comment_velocity} ile ` +
+    (m.sentiment_drift.comment_velocity > 1
+      ? `yuksek - izleyiciler icerigi izledikten sonra hizla yorum yaziyor, bu da guclu bir 'duygusal tetikleme' mekanizmasinin calistigini gosteriyor.`
+      : `normal seviyede - izleyiciler duygusal olarak stabil bir sekilde etkilesime geciyor, ani 'duygusal patlamalar' yok.`);
+
+  return { editorial, hate_watching, anchor_points, drop_off, demographics, sentiment_drift };
 }
 
 function PsychologicalContent() {
@@ -264,6 +328,26 @@ function PsychologicalContent() {
             ))}
           </div>
 
+          {/* Editorial Analysis */}
+          {(() => {
+            const commentary = data.ai_commentary || generateFallbackCommentary(data);
+            return (
+              <div className="bg-gradient-to-br from-purple-500/5 via-card to-blue-500/5 rounded-xl border border-purple-500/20 p-5">
+                <div className="flex items-center gap-2 mb-3">
+                  <Sparkles className="w-5 h-5 text-purple-400" />
+                  <h3 className="text-sm font-semibold text-purple-400">Editoryal Psikolojik Analiz</h3>
+                </div>
+                <div className="prose prose-sm prose-invert max-w-none">
+                  {commentary.editorial.split("\n\n").map((p, i) => (
+                    <p key={i} className="text-sm text-muted-foreground leading-relaxed mb-3 last:mb-0 italic">
+                      {p}
+                    </p>
+                  ))}
+                </div>
+              </div>
+            );
+          })()}
+
           {/* Radar Chart + Metric Scores */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Radar Chart */}
@@ -333,6 +417,9 @@ function PsychologicalContent() {
                   <span className="text-foreground font-medium">%{data.metrics.hate_watching.negativity_estimate.toFixed(0)}</span>
                 </div>
               </div>
+              <p className="mt-3 pt-3 border-t border-border text-[11px] text-purple-300/80 italic leading-relaxed">
+                {(data.ai_commentary || generateFallbackCommentary(data)).hate_watching}
+              </p>
             </div>
 
             {/* Anchor Points */}
@@ -368,6 +455,9 @@ function PsychologicalContent() {
                   </div>
                 )}
               </div>
+              <p className="mt-3 pt-3 border-t border-border text-[11px] text-purple-300/80 italic leading-relaxed">
+                {(data.ai_commentary || generateFallbackCommentary(data)).anchor_points}
+              </p>
             </div>
 
             {/* Drop Off */}
@@ -391,6 +481,9 @@ function PsychologicalContent() {
                   <span className="text-foreground font-medium">{data.metrics.drop_off.duration_engagement_ratio.toFixed(2)}</span>
                 </div>
               </div>
+              <p className="mt-3 pt-3 border-t border-border text-[11px] text-purple-300/80 italic leading-relaxed">
+                {(data.ai_commentary || generateFallbackCommentary(data)).drop_off}
+              </p>
             </div>
 
             {/* Demographics */}
@@ -418,6 +511,9 @@ function PsychologicalContent() {
                   <span className="text-foreground font-medium">{data.metrics.demographics.language_complexity}</span>
                 </div>
               </div>
+              <p className="mt-3 pt-3 border-t border-border text-[11px] text-purple-300/80 italic leading-relaxed">
+                {(data.ai_commentary || generateFallbackCommentary(data)).demographics}
+              </p>
             </div>
 
             {/* Sentiment Drift */}
@@ -451,6 +547,9 @@ function PsychologicalContent() {
                   </span>
                 </div>
               </div>
+              <p className="mt-3 pt-3 border-t border-border text-[11px] text-purple-300/80 italic leading-relaxed">
+                {(data.ai_commentary || generateFallbackCommentary(data)).sentiment_drift}
+              </p>
             </div>
 
             {/* Summary */}
