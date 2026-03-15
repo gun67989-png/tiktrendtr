@@ -95,7 +95,7 @@ export async function GET() {
       if (realData) {
         return { postingTimes: realData, source: "live" as const };
       }
-      return { postingTimes: { heatmap: [], bestTimes: [] }, source: "no_data" as const };
+      return { postingTimes: { heatmap: [], bestTimes: [] }, source: "no_data" as const, _cacheable: false };
     },
     1800 // 30 minutes
   );

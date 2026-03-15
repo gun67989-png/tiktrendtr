@@ -184,6 +184,7 @@ export async function GET() {
         },
         emergingTrends: [],
         source: "no_data" as const,
+        _cacheable: false,
       };
     },
     600 // 10 minutes

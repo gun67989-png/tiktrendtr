@@ -168,7 +168,7 @@ export async function GET(request: NextRequest) {
       if (realSounds && realSounds.length > 0) {
         return { sounds: realSounds, source: "live" as const };
       }
-      return { sounds: [], source: "no_data" as const, message: "Henüz yeterli ses verisi yok. Veriler 6 saatte bir güncellenir." };
+      return { sounds: [], source: "no_data" as const, message: "Henüz yeterli ses verisi yok. Veriler 6 saatte bir güncellenir.", _cacheable: false };
     },
     600 // 10 minutes
   );

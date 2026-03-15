@@ -26,6 +26,7 @@ import {
   Heart,
   Compass,
   Lightbulb,
+  Trophy,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
@@ -43,6 +44,8 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import WelcomeOverlay from "@/components/WelcomeOverlay";
 import LogoutOverlay from "@/components/LogoutOverlay";
 import OnboardingFlow from "@/components/OnboardingFlow";
+import BeginnerGuide from "@/components/dashboard/BeginnerGuide";
+import { useAchievements, AchievementToast, AchievementsPanel } from "@/components/dashboard/Achievements";
 
 const LITE_PATHS = [
   "/dashboard/creators",
@@ -317,8 +320,15 @@ export default function DashboardLayout({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [user, setUser] = useState<UserInfo | null>(null);
   const [showOnboarding, setShowOnboarding] = useState(false);
+  const [achievementsOpen, setAchievementsOpen] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
+  const { unlocked, newAchievement, checkPageAchievement, totalPoints, maxPoints } = useAchievements();
+
+  // Track page visits for achievements
+  useEffect(() => {
+    checkPageAchievement(pathname);
+  }, [pathname, checkPageAchievement]);
 
   useEffect(() => {
     fetch("/api/auth/check")
@@ -420,6 +430,20 @@ export default function DashboardLayout({
 
             {/* Right actions */}
             <div className="flex items-center gap-2">
+              {/* Achievements button */}
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-9 w-9 relative"
+                onClick={() => setAchievementsOpen(true)}
+              >
+                <Trophy className="h-4 w-4 text-amber-400" />
+                {totalPoints > 0 && (
+                  <span className="absolute -top-0.5 -right-0.5 w-4 h-4 bg-amber-400 text-[9px] text-white rounded-full flex items-center justify-center font-bold">
+                    {unlocked.length}
+                  </span>
+                )}
+              </Button>
               <ThemeToggle />
 
               {user && (
@@ -462,9 +486,22 @@ export default function DashboardLayout({
         </header>
 
         {/* Page content */}
-        <main className="p-4 sm:p-6 lg:p-8 w-full max-w-[1400px] mx-auto">
+        <main className="p-4 sm:p-6 lg:p-8 w-full max-w-[1400px] mx-auto space-y-6">
+          {pathname === "/dashboard" && <BeginnerGuide />}
           {children}
         </main>
+
+        {/* Achievement toast */}
+        <AchievementToast achievement={newAchievement} />
+
+        {/* Achievements panel */}
+        <AchievementsPanel
+          isOpen={achievementsOpen}
+          onClose={() => setAchievementsOpen(false)}
+          unlocked={unlocked}
+          totalPoints={totalPoints}
+          maxPoints={maxPoints}
+        />
       </div>
     </div>
   );

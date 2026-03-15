@@ -29,29 +29,29 @@ const item = {
 const values = [
   {
     icon: Shield,
-    title: "Guvenilirlik",
-    desc: "Gercek veriye dayali analizler sunuyoruz. Tahmin degil, olcum yapiyoruz. Her veri noktasi dogrulanmis kaynaklardan geliyor.",
+    title: "Güvenilirlik",
+    desc: "Gerçek veriye dayalı analizler sunuyoruz. Tahmin değil, ölçüm yapıyoruz. Her veri noktası doğrulanmış kaynaklardan geliyor.",
     color: "text-teal",
     bg: "bg-teal/10",
   },
   {
     icon: Zap,
-    title: "Hiz",
-    desc: "Trendler hizla degisir. Platformumuz verileri surekli guncelleyerek firsatlari kacirmanizi onler.",
+    title: "Hız",
+    desc: "Trendler hızla değişir. Platformumuz verileri sürekli güncelleyerek fırsatları kaçırmanızı önler.",
     color: "text-primary",
     bg: "bg-primary/10",
   },
   {
     icon: Users,
-    title: "Topluluk Odaklilik",
-    desc: "Turkiye'deki icerik ureticilerinin ihtiyaclarina odaklaniyoruz. Her ozellik gercek kullanici geri bildirimlerine dayanir.",
+    title: "Topluluk Odaklılık",
+    desc: "Türkiye'deki içerik üreticilerinin ihtiyaçlarına odaklanıyoruz. Her özellik gerçek kullanıcı geri bildirimlerine dayanır.",
     color: "text-purple-400",
     bg: "bg-purple-400/10",
   },
   {
     icon: Globe,
-    title: "Erisebilirlik",
-    desc: "Profesyonel analiz araclarini herkes icin erisilebilir kiliyoruz. Ucretsiz plan ile herkes trenleri takip edebilir.",
+    title: "Erişebilirlik",
+    desc: "Profesyonel analiz araçlarını herkes için erişilebilir kılıyoruz. Ücretsiz plan ile herkes trendleri takip edebilir.",
     color: "text-blue-400",
     bg: "bg-blue-400/10",
   },
@@ -60,23 +60,23 @@ const values = [
 const milestones = [
   {
     year: "2025 Q3",
-    title: "Fikir Asamasi",
-    desc: "Turkiye'deki icerik ureticilerinin trend takibinde yasadigi zorluklar fark edildi.",
+    title: "Fikir Aşaması",
+    desc: "Türkiye'deki içerik üreticilerinin trend takibinde yaşadığı zorluklar fark edildi.",
   },
   {
     year: "2025 Q4",
-    title: "Gelistirme Basladi",
-    desc: "Veri toplama altyapisi ve AI tabanli analiz motoru gelistirilmeye baslandi.",
+    title: "Geliştirme Başladı",
+    desc: "Veri toplama altyapısı ve AI tabanlı analiz motoru geliştirilmeye başlandı.",
   },
   {
     year: "2026 Q1",
     title: "Beta Lansman",
-    desc: "Ilk kullanicilar platforma davet edildi. Geri bildirimlerle hizla iyilestirildi.",
+    desc: "İlk kullanıcılar platforma davet edildi. Geri bildirimlerle hızla iyileştirildi.",
   },
   {
     year: "2026 Q2",
-    title: "Halka Acik Lansman",
-    desc: "Pro plan, rakip analizi ve AI icerik onerileri ile tam surum yayinlandi.",
+    title: "Halka Açık Lansman",
+    desc: "Pro plan, rakip analizi ve AI içerik önerileri ile tam sürüm yayınlandı.",
   },
 ];
 
@@ -92,13 +92,13 @@ export default function AboutPage() {
               href="/login"
               className="text-sm text-muted-foreground hover:text-foreground transition-colors px-4 py-2"
             >
-              Giris Yap
+              Giriş Yap
             </Link>
             <Link
               href="/register"
               className="text-sm bg-primary text-white px-4 py-2 rounded-lg hover:bg-primary/80 transition-colors font-medium"
             >
-              Ucretsiz Basla
+              Ücretsiz Başla
             </Link>
           </div>
         </div>
@@ -115,7 +115,7 @@ export default function AboutPage() {
           <motion.div variants={item} className="text-center mb-16">
             <div className="inline-flex items-center gap-2 bg-primary/10 border border-primary/20 text-primary text-xs px-4 py-1.5 rounded-full mb-4">
               <Heart className="w-3 h-3" />
-              Hakkimizda
+              Hakkımızda
             </div>
             <h1 className="text-3xl md:text-4xl font-bold mb-4">
               Turkiye&apos;nin TikTok{" "}
@@ -125,8 +125,8 @@ export default function AboutPage() {
               Platformu
             </h1>
             <p className="text-muted-foreground text-sm md:text-base max-w-xl mx-auto leading-relaxed">
-              Valyze, Turkiye&apos;deki icerik ureticilerine, markalara ve
-              dijital pazarlamacilara veri odakli TikTok analizi sunan bagimsiz
+              Valyze, Türkiye&apos;deki içerik üreticilerine, markalara ve
+              dijital pazarlamacılara veri odaklı TikTok analizi sunan bağımsız
               bir teknoloji platformudur.
             </p>
           </motion.div>
@@ -145,13 +145,13 @@ export default function AboutPage() {
                   Misyonumuz
                 </h2>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Turkiye&apos;deki dijital icerik ureticilerinin dogru zamanda
-                  dogru trende yonelmesini saglayarak buyumelerini
-                  hizlandirmak. Binlerce videoyu analiz ederek neyin viral
-                  oldugunu, neden viral oldugunu ve bir sonraki trendin ne
-                  olacagini anlasilir sekilde sunuyoruz. Amacimiz, buyuk
-                  ajanslarin sahip oldugu veri avantajini bireysel ureticilere
-                  de ulastirmak.
+                  Türkiye&apos;deki dijital içerik üreticilerinin doğru zamanda
+                  doğru trende yönelmesini sağlayarak büyümelerini
+                  hızlandırmak. Binlerce videoyu analiz ederek neyin viral
+                  olduğunu, neden viral olduğunu ve bir sonraki trendin ne
+                  olacağını anlaşılır şekilde sunuyoruz. Amacımız, büyük
+                  ajansların sahip olduğu veri avantajını bireysel üreticilere
+                  de ulaştırmak.
                 </p>
               </div>
             </div>
@@ -171,12 +171,12 @@ export default function AboutPage() {
                   Vizyonumuz
                 </h2>
                 <p className="text-sm text-muted-foreground leading-relaxed">
-                  Turkiye&apos;de sosyal medya analizinin referans noktasi
-                  olmak. Sadece TikTok degil, tum kisa video platformlarinda
-                  icerik ureticilerinin en guvenilir veri ortagi haline
+                  Türkiye&apos;de sosyal medya analizinin referans noktası
+                  olmak. Sadece TikTok değil, tüm kısa video platformlarında
+                  içerik üreticilerinin en güvenilir veri ortağı haline
                   gelmek istiyoruz. Yapay zeka destekli analizlerimizi
-                  surekli gelistirerek ureticilerin sadece trendleri takip
-                  etmesini degil, trendleri belirlemesini sagliyoruz.
+                  sürekli geliştirerek üreticilerin sadece trendleri takip
+                  etmesini değil, trendleri belirlemesini sağlıyoruz.
                 </p>
               </div>
             </div>
@@ -185,7 +185,7 @@ export default function AboutPage() {
           {/* Degerlerimiz */}
           <motion.div variants={item} className="mb-12">
             <h2 className="text-xl font-bold text-foreground text-center mb-6">
-              Degerlerimiz
+              Değerlerimiz
             </h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               {values.map((v) => (
@@ -216,7 +216,7 @@ export default function AboutPage() {
             className="bg-card border border-border rounded-xl p-6 md:p-8 mb-12"
           >
             <h2 className="text-lg font-bold text-foreground mb-4">
-              Ne Yapiyoruz?
+              Ne Yapıyoruz?
             </h2>
             <div className="space-y-4">
               <div className="flex items-start gap-3">
@@ -228,8 +228,8 @@ export default function AboutPage() {
                     Trend Analizi
                   </h3>
                   <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
-                    Her gun binlerce Turkiye odakli TikTok videosunu tarayarak
-                    viral trendleri, yukselen hashtag&apos;leri ve populer
+                    Her gün binlerce Türkiye odaklı TikTok videosunu tarayarak
+                    viral trendleri, yükselen hashtag&apos;leri ve popüler
                     sesleri tespit ediyoruz.
                   </p>
                 </div>
@@ -240,11 +240,11 @@ export default function AboutPage() {
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-foreground">
-                    AI Destekli Icerik Onerileri
+                    AI Destekli İçerik Önerileri
                   </h3>
                   <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
                     Yapay zeka modellerimiz mevcut trendleri analiz ederek size
-                    ozel icerik fikirleri, hook onerileri ve paylasim zamanlari
+                    özel içerik fikirleri, hook önerileri ve paylaşım zamanları
                     sunuyor.
                   </p>
                 </div>
@@ -255,12 +255,12 @@ export default function AboutPage() {
                 </div>
                 <div>
                   <h3 className="text-sm font-semibold text-foreground">
-                    Rakip ve Pazar Analizi
+                    Rakip ve Pazar İncelemesi
                   </h3>
                   <p className="text-xs text-muted-foreground leading-relaxed mt-0.5">
-                    Rakiplerinizin hangi iceriklerinin tuttugunuzu, hangi
-                    formatlarin ise yaradigini ve sektorunuzdeki bosluklan
-                    gormenizi sagliyoruz.
+                    Rakiplerinizin hangi içeriklerinin tuttuğunu, hangi
+                    formatların işe yaradığını ve sektörünüzdeki boşlukları
+                    görmenizi sağlıyoruz.
                   </p>
                 </div>
               </div>
@@ -270,7 +270,7 @@ export default function AboutPage() {
           {/* Yol Haritasi */}
           <motion.div variants={item} className="mb-12">
             <h2 className="text-xl font-bold text-foreground text-center mb-6">
-              Yolculugumuz
+              Yolculuğumuz
             </h2>
             <div className="relative">
               {/* Timeline line */}
@@ -316,8 +316,8 @@ export default function AboutPage() {
           >
             {[
               { label: "Kategori Analizi", value: "12+", color: "text-primary" },
-              { label: "Turkce Anahtar Kelime", value: "70+", color: "text-teal" },
-              { label: "Veri Guncelleme", value: "6 saatte bir", color: "text-purple-400" },
+              { label: "Türkçe Anahtar Kelime", value: "70+", color: "text-teal" },
+              { label: "Veri Güncelleme", value: "6 saatte bir", color: "text-purple-400" },
               { label: "AI Destekli Analiz", value: "Gemini & Claude", color: "text-blue-400" },
             ].map((stat) => (
               <div
@@ -340,25 +340,25 @@ export default function AboutPage() {
             className="bg-card border border-border rounded-xl p-6 md:p-8 text-center"
           >
             <h2 className="text-xl md:text-2xl font-bold mb-2">
-              Siz de Katilmak Ister Misiniz?
+              Siz de Katılmak İster Misiniz?
             </h2>
             <p className="text-sm text-muted-foreground mb-5 max-w-md mx-auto">
-              Binlerce icerik ureticisi viral firsatlari kesfetmek icin
-              Valyze kullaniyor. Ucretsiz hesabinizi hemen olusturun.
+              İçerik üreticileri viral fırsatları keşfetmek için
+              Valyze kullanıyor. Ücretsiz hesabınızı hemen oluşturun.
             </p>
             <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
               <Link
                 href="/register"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-primary text-white px-6 py-3 rounded-md hover:bg-primary/80 transition-all font-medium text-sm"
               >
-                Ucretsiz Basla <ArrowRight className="w-4 h-4" />
+                Ücretsiz Başla <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
                 href="/contact"
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 bg-card border border-border text-foreground px-6 py-3 rounded-md hover:border-primary/30 transition-all font-medium text-sm"
               >
                 <MessageCircle className="w-4 h-4" />
-                Bize Ulasin
+                Bize Ulaşın
               </Link>
             </div>
           </motion.div>
