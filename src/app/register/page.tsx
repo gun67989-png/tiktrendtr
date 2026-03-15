@@ -163,19 +163,7 @@ function RegisterContent() {
             Ana Sayfa
           </Link>
 
-          <div className="flex items-center gap-4 mb-4">
-            <div className="w-12 h-12 rounded-xl bg-primary flex items-center justify-center">
-              <TrendingUp className="w-6 h-6 text-white" />
-            </div>
-            <div>
-              <h1 className="text-3xl xl:text-4xl font-bold text-foreground">
-                Val<span className="text-primary">yze</span>
-              </h1>
-              <p className="text-muted-foreground text-sm tracking-wide">
-                TikTok Trend Analiz Platformu
-              </p>
-            </div>
-          </div>
+          <LogoLink size="lg" showSubtitle subtitle="TikTok Trend Analiz Platformu" />
         </motion.div>
 
         {/* Orta — Avantajlar */}
