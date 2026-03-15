@@ -129,13 +129,13 @@ function RegisterContent() {
   };
 
   return (
-    <div className="min-h-screen bg-background flex relative overflow-hidden">
+    <div className="min-h-screen bg-gradient-to-br from-purple-500/[0.06] via-background to-blue-500/[0.06] flex relative overflow-hidden">
       {/* ─────────── SOL PANEL — Marka & Avantajlar (sadece desktop) ─────────── */}
       <div className="hidden lg:flex lg:w-[55%] xl:w-[60%] relative flex-col justify-between p-10 xl:p-16 overflow-hidden">
         {/* Arka plan efektleri */}
         <div className="absolute inset-0">
-          <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-teal/8 rounded-full blur-[150px]" />
-          <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[120px]" />
+          <div className="absolute -top-40 -left-40 w-[500px] h-[500px] bg-purple-500/[0.08] rounded-full blur-[150px]" />
+          <div className="absolute bottom-0 right-0 w-[400px] h-[400px] bg-blue-500/[0.06] rounded-full blur-[120px]" />
         </div>
 
         {/* Grid pattern */}
@@ -181,7 +181,7 @@ function RegisterContent() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: 0.4, duration: 0.5 }}
-              className="text-muted-foreground text-sm mb-8"
+              className="text-foreground/60 text-sm mb-8"
             >
               Hesap oluşturun ve Türkiye&apos;nin TikTok trendlerini analiz etmeye hemen başlayın.
             </motion.p>
@@ -190,22 +190,28 @@ function RegisterContent() {
             <div className="space-y-3 mb-8">
               {benefits.map((benefit, i) => {
                 const Icon = benefit.icon;
+                const cardColors = [
+                  { bg: "bg-purple-500/[0.08]", border: "border-purple-500/10", iconBg: "bg-purple-500/15", iconColor: "text-purple-400", shadow: "hover:shadow-purple-500/10" },
+                  { bg: "bg-blue-500/[0.08]", border: "border-blue-500/10", iconBg: "bg-blue-500/15", iconColor: "text-blue-400", shadow: "hover:shadow-blue-500/10" },
+                  { bg: "bg-teal-500/[0.08]", border: "border-teal-500/10", iconBg: "bg-teal-500/15", iconColor: "text-teal", shadow: "hover:shadow-teal-500/10" },
+                ];
+                const c = cardColors[i % cardColors.length];
                 return (
                   <motion.div
                     key={benefit.title}
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 + i * 0.1, duration: 0.4 }}
-                    className="flex items-start gap-4 p-4 rounded-xl bg-card/40 border border-border/50 transition-all duration-300 hover:bg-card/60 hover:border-border hover:shadow-md hover:shadow-teal/5 hover:-translate-y-0.5"
+                    className={`flex items-start gap-4 p-4 rounded-xl ${c.bg} border ${c.border} transition-all duration-300 hover:scale-[1.02] hover:shadow-md ${c.shadow} hover:-translate-y-0.5`}
                   >
-                    <div className="w-10 h-10 rounded-lg bg-teal/10 flex items-center justify-center flex-shrink-0">
-                      <Icon className="w-5 h-5 text-teal" />
+                    <div className={`w-10 h-10 rounded-lg ${c.iconBg} flex items-center justify-center flex-shrink-0`}>
+                      <Icon className={`w-5 h-5 ${c.iconColor}`} />
                     </div>
                     <div>
                       <p className="text-sm font-medium text-foreground">
                         {benefit.title}
                       </p>
-                      <p className="text-xs text-muted-foreground mt-0.5">
+                      <p className="text-xs text-foreground/60 mt-0.5">
                         {benefit.desc}
                       </p>
                     </div>
@@ -219,9 +225,9 @@ function RegisterContent() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.9, duration: 0.4 }}
-              className="bg-card/30 border border-border/30 rounded-xl p-4"
+              className="bg-rose-500/[0.06] border border-rose-500/10 rounded-xl p-4"
             >
-              <p className="text-xs font-semibold text-muted-foreground mb-3 uppercase tracking-wider">
+              <p className="text-xs font-semibold text-foreground/60 mb-3 uppercase tracking-wider">
                 Free Plana Dahil
               </p>
               <div className="grid grid-cols-2 gap-2">
@@ -234,7 +240,7 @@ function RegisterContent() {
                     className="flex items-center gap-2"
                   >
                     <Check className="w-3.5 h-3.5 text-teal flex-shrink-0" />
-                    <span className="text-xs text-muted-foreground">{item}</span>
+                    <span className="text-xs text-foreground/60">{item}</span>
                   </motion.div>
                 ))}
               </div>
@@ -249,26 +255,24 @@ function RegisterContent() {
           transition={{ delay: 1.2, duration: 0.5 }}
           className="relative z-10 space-y-4"
         >
-          <div className="flex items-center gap-6">
-            <div>
-              <p className="text-2xl font-bold text-primary">5.2K+</p>
-              <p className="text-muted-foreground text-xs">Aktif Kullanıcı</p>
+          <div className="flex items-center gap-4">
+            <div className="bg-purple-500/[0.08] border border-purple-500/10 rounded-xl px-4 py-3">
+              <p className="text-2xl font-bold text-purple-400">5.2K+</p>
+              <p className="text-foreground/60 text-xs">Aktif Kullanıcı</p>
             </div>
-            <div className="w-px h-8 bg-border" />
-            <div>
+            <div className="bg-teal-500/[0.08] border border-teal-500/10 rounded-xl px-4 py-3">
               <p className="text-2xl font-bold text-teal">25K+</p>
-              <p className="text-muted-foreground text-xs">Günlük Analiz</p>
+              <p className="text-foreground/60 text-xs">Günlük Analiz</p>
             </div>
-            <div className="w-px h-8 bg-border" />
-            <div>
+            <div className="bg-amber-500/[0.08] border border-amber-500/10 rounded-xl px-4 py-3">
               <p className="text-2xl font-bold text-amber-400">150K+</p>
-              <p className="text-muted-foreground text-xs">Trend Takibi</p>
+              <p className="text-foreground/60 text-xs">Trend Takibi</p>
             </div>
           </div>
           <motion.p
             animate={{ opacity: [0.7, 1, 0.7] }}
             transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
-            className="text-muted-foreground text-xs flex items-center gap-2"
+            className="text-foreground/60 text-xs flex items-center gap-2"
           >
             <motion.span
               animate={{ scale: [1, 1.15, 1] }}
@@ -340,7 +344,7 @@ function RegisterContent() {
               <h2 className="hidden lg:block text-2xl xl:text-3xl font-bold text-foreground mb-2">
                 Hesap Oluştur
               </h2>
-              <p className="text-muted-foreground text-sm">
+              <p className="text-foreground/60 text-sm">
                 <span className="lg:hidden">Yeni Hesap Oluştur</span>
                 <span className="hidden lg:inline">
                   Bilgilerinizi girerek hemen başlayın
@@ -355,7 +359,7 @@ function RegisterContent() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.25 }}
               >
-                <label className="block text-sm font-medium text-muted-foreground mb-1.5">
+                <label className="block text-sm font-medium text-foreground/60 mb-1.5">
                   Kullanıcı Adı
                 </label>
                 <div className="relative">
@@ -376,7 +380,7 @@ function RegisterContent() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.3 }}
               >
-                <label className="block text-sm font-medium text-muted-foreground mb-1.5">
+                <label className="block text-sm font-medium text-foreground/60 mb-1.5">
                   E-posta
                 </label>
                 <div className="relative">
@@ -397,7 +401,7 @@ function RegisterContent() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.35 }}
               >
-                <label className="block text-sm font-medium text-muted-foreground mb-1.5">
+                <label className="block text-sm font-medium text-foreground/60 mb-1.5">
                   Şifre
                 </label>
                 <div className="relative">
@@ -429,7 +433,7 @@ function RegisterContent() {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: 0.4 }}
               >
-                <label className="block text-sm font-medium text-muted-foreground mb-1.5">
+                <label className="block text-sm font-medium text-foreground/60 mb-1.5">
                   Şifre Tekrar
                 </label>
                 <div className="relative">
@@ -463,7 +467,7 @@ function RegisterContent() {
                 disabled={
                   loading || !username || !email || !password || !confirmPassword
                 }
-                className="w-full bg-primary text-white font-semibold py-3 rounded-md hover:bg-primary/80 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                className="w-full bg-gradient-to-r from-primary to-rose-500 text-white font-semibold py-3 rounded-md hover:opacity-90 hover:scale-[1.02] transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin" />
@@ -492,7 +496,7 @@ function RegisterContent() {
               transition={{ delay: 0.55 }}
               className="text-center mt-6"
             >
-              <p className="text-muted-foreground text-sm">
+              <p className="text-foreground/60 text-sm">
                 Zaten hesabınız var mı?{" "}
                 <Link
                   href="/login"

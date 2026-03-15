@@ -304,10 +304,10 @@ export default function EnterpriseDashboard({ user }: Props) {
   }, []);
 
   const stats = [
-    { label: "Analiz Edilen Video", value: overview.totalVideosAnalyzed, icon: Video, color: "text-amber-400", bg: "bg-amber-400/10", gradient: "from-amber-500/10 to-amber-500/0" },
-    { label: "Rakip Takip", value: 3, icon: Users, color: "text-teal", bg: "bg-teal/10", gradient: "from-teal/10 to-teal/0" },
-    { label: "Marka Etkileşim", value: overview.avgEngagement, icon: Percent, color: "text-purple-400", bg: "bg-purple-400/10", suffix: "%", gradient: "from-purple-400/10 to-purple-400/0" },
-    { label: "ROI Skoru", value: roiScore, icon: TrendingUp, color: "text-primary", bg: "bg-primary/10", gradient: "from-primary/10 to-primary/0" },
+    { label: "Analiz Edilen Video", value: overview.totalVideosAnalyzed, icon: Video, color: "text-amber-400", bg: "bg-amber-400/10", gradient: "from-amber-500/10 to-amber-500/0", cardBg: "bg-amber-500/[0.06]", cardBorder: "border-amber-500/10" },
+    { label: "Rakip Takip", value: 3, icon: Users, color: "text-teal", bg: "bg-teal/10", gradient: "from-teal/10 to-teal/0", cardBg: "bg-teal/[0.06]", cardBorder: "border-teal/10" },
+    { label: "Marka Etkileşim", value: overview.avgEngagement, icon: Percent, color: "text-purple-400", bg: "bg-purple-400/10", suffix: "%", gradient: "from-purple-400/10 to-purple-400/0", cardBg: "bg-purple-500/[0.06]", cardBorder: "border-purple-500/10" },
+    { label: "ROI Skoru", value: roiScore, icon: TrendingUp, color: "text-primary", bg: "bg-primary/10", gradient: "from-primary/10 to-primary/0", cardBg: "bg-primary/[0.06]", cardBorder: "border-primary/10" },
   ];
 
   const nicheColors = ["#FF3B5C", "#2dd4bf", "#8b5cf6", "#f59e0b", "#3b82f6", "#ec4899", "#14b8a6", "#f97316"];
@@ -371,7 +371,7 @@ export default function EnterpriseDashboard({ user }: Props) {
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 0.4 }}
-                className="text-muted-foreground text-sm mt-2 max-w-md"
+                className="text-foreground/60 text-sm mt-2 max-w-md"
               >
                 {user.subscriptionNiche && <span className="text-amber-400/80">{user.subscriptionNiche}</span>}
                 {user.subscriptionNiche && " · "}Marka kontrol paneliniz hazır
@@ -473,7 +473,7 @@ export default function EnterpriseDashboard({ user }: Props) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: 0.3 + i * 0.08 }}
             whileHover={{ scale: 1.03, y: -2 }}
-            className="relative overflow-hidden bg-card rounded-xl border border-border p-4 cursor-default group"
+            className="relative overflow-hidden bg-amber-500/[0.04] rounded-xl border border-amber-500/10 p-4 cursor-default group hover:shadow-md hover:shadow-amber-500/5"
           >
             <div className="absolute top-0 right-0 w-16 h-16 bg-gradient-to-bl from-amber-500/5 to-transparent rounded-bl-full" />
             <div className="flex items-center gap-2 mb-2">
@@ -494,13 +494,13 @@ export default function EnterpriseDashboard({ user }: Props) {
           <motion.div
             key={stat.label}
             variants={scaleIn}
-            whileHover={{ scale: 1.03, boxShadow: "0 0 25px rgba(245,158,11,0.08)" }}
-            className="relative overflow-hidden bg-card rounded-xl border border-border p-3 sm:p-5 transition-all cursor-default group"
+            whileHover={{ scale: 1.05, boxShadow: "0 0 25px rgba(245,158,11,0.08)" }}
+            className={`relative overflow-hidden ${stat.cardBg} rounded-xl border ${stat.cardBorder} p-3 sm:p-5 transition-all cursor-default group`}
           >
             <div className={`absolute inset-0 bg-gradient-to-br ${stat.gradient} opacity-0 group-hover:opacity-100 transition-opacity`} />
             <div className="relative z-10 flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
-                <p className="text-muted-foreground text-[10px] sm:text-xs font-medium uppercase tracking-wider leading-tight">
+                <p className="text-foreground/60 text-[10px] sm:text-xs font-medium uppercase tracking-wider leading-tight">
                   {stat.label}
                 </p>
                 <p className="text-lg sm:text-2xl font-bold text-foreground mt-1 sm:mt-2 truncate">
@@ -521,7 +521,7 @@ export default function EnterpriseDashboard({ user }: Props) {
 
       {/* ===== MARKA PERFORMANS GRAFİĞİ + TREND NİŞLER ===== */}
       <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-        <div className="lg:col-span-2 bg-card rounded-xl border border-border p-3 sm:p-6">
+        <div className="lg:col-span-2 bg-amber-500/[0.03] rounded-xl border border-amber-500/10 p-3 sm:p-6">
           <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
             <BarChart2 className="w-4 h-4 text-amber-400" />
             Marka Performansı - Son 30 Gün
@@ -560,7 +560,7 @@ export default function EnterpriseDashboard({ user }: Props) {
         </div>
 
         {/* Trend Nişler */}
-        <div className="bg-card rounded-xl border border-border p-3 sm:p-6">
+        <div className="bg-purple-500/[0.04] rounded-xl border border-purple-500/10 p-3 sm:p-6">
           <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
             <Award className="w-4 h-4 text-amber-400" />
             Trend Nişler
@@ -632,8 +632,8 @@ export default function EnterpriseDashboard({ user }: Props) {
               initial={{ opacity: 0, rotateY: 15, x: 30 }}
               animate={{ opacity: 1, rotateY: 0, x: 0 }}
               transition={{ delay: 0.8 + i * 0.15, duration: 0.6 }}
-              whileHover={{ scale: 1.03, y: -4 }}
-              className={`relative overflow-hidden bg-card rounded-xl border ${strat.border} p-5 transition-all cursor-default group`}
+              whileHover={{ scale: 1.05, y: -4 }}
+              className={`relative overflow-hidden bg-card rounded-xl border ${strat.border} p-5 transition-all cursor-default group hover:shadow-lg`}
             >
               <div className={`absolute inset-0 bg-gradient-to-br ${strat.gradient} opacity-50`} />
               <div className="relative z-10">
@@ -672,7 +672,7 @@ export default function EnterpriseDashboard({ user }: Props) {
                   animate={{ opacity: 1, y: 0 }}
                   transition={{ delay: 0.6 + i * 0.06 }}
                   whileHover={{ scale: 1.02, y: -2 }}
-                  className="relative overflow-hidden bg-card rounded-xl border border-border p-4 hover:border-amber-500/20 transition-all group"
+                  className="relative overflow-hidden bg-amber-500/[0.03] rounded-xl border border-amber-500/10 p-4 hover:border-amber-500/20 hover:shadow-md hover:shadow-amber-500/5 transition-all group"
                 >
                   <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
 
@@ -750,7 +750,7 @@ export default function EnterpriseDashboard({ user }: Props) {
                 transition={{ delay: 0.6 + i * 0.06 }}
                 whileHover={{ scale: 1.02, y: -2 }}
                 onClick={() => router.push(`/dashboard/sounds/${encodeURIComponent(sound.name)}`)}
-                className="relative overflow-hidden bg-card rounded-xl border border-border p-4 hover:border-teal/20 transition-all cursor-pointer group"
+                className="relative overflow-hidden bg-teal/[0.04] rounded-xl border border-teal/10 p-4 hover:border-teal/20 hover:shadow-md hover:shadow-teal/5 transition-all cursor-pointer group"
               >
                 <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-teal/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
                 <div className="flex items-start justify-between mb-2">
@@ -818,7 +818,7 @@ export default function EnterpriseDashboard({ user }: Props) {
               whileHover={{ scale: 1.05, y: -3 }}
               whileTap={{ scale: 0.97 }}
               onClick={() => router.push(link.href)}
-              className="relative overflow-hidden bg-card rounded-xl border border-border p-3 sm:p-4 text-left hover:border-amber-500/30 transition-all group"
+              className="relative overflow-hidden bg-amber-500/[0.03] rounded-xl border border-amber-500/10 p-3 sm:p-4 text-left hover:border-amber-500/30 hover:shadow-md hover:shadow-amber-500/5 transition-all group"
             >
               <div className="absolute top-0 right-0 w-12 h-12 bg-gradient-to-bl from-amber-500/5 to-transparent rounded-bl-full opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className={`${link.bg} w-9 h-9 rounded-lg flex items-center justify-center mb-2 group-hover:scale-110 transition-transform`}>
@@ -846,7 +846,7 @@ export default function EnterpriseDashboard({ user }: Props) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 1 + i * 0.08 }}
               whileHover={{ scale: 1.02, y: -2 }}
-              className="relative overflow-hidden bg-card rounded-xl border border-border p-4 hover:border-amber-500/20 transition-all group"
+              className="relative overflow-hidden bg-amber-500/[0.04] rounded-xl border border-amber-500/10 p-4 hover:border-amber-500/20 hover:shadow-md hover:shadow-amber-500/5 transition-all group"
             >
               <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/30 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
               <div className="flex items-start justify-between mb-2">

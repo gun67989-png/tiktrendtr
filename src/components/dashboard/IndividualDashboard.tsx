@@ -214,10 +214,10 @@ export default function IndividualDashboard({ user }: Props) {
   const isPremium = user?.subscriptionType && user.subscriptionType !== "free";
 
   const stats = [
-    { label: "Analiz Edilen Video", value: overview.totalVideosAnalyzed, icon: Video, color: "text-primary", bg: "bg-primary/10" },
-    { label: "Aktif Trend", value: overview.activeTrends, icon: TrendingUp, color: "text-teal", bg: "bg-teal/10" },
-    { label: "Ortalama Etkileşim", value: overview.avgEngagement, icon: Percent, color: "text-purple-400", bg: "bg-purple-400/10", suffix: "%" },
-    { label: "En İyi Paylaşım Saati", value: 0, displayValue: overview.bestPostingTime, icon: Clock, color: "text-amber-400", bg: "bg-amber-400/10" },
+    { label: "Analiz Edilen Video", value: overview.totalVideosAnalyzed, icon: Video, color: "text-primary", bg: "bg-primary/10", cardBg: "bg-primary/[0.06]", cardBorder: "border-primary/10" },
+    { label: "Aktif Trend", value: overview.activeTrends, icon: TrendingUp, color: "text-teal", bg: "bg-teal/10", cardBg: "bg-teal/[0.06]", cardBorder: "border-teal/10" },
+    { label: "Ortalama Etkileşim", value: overview.avgEngagement, icon: Percent, color: "text-purple-400", bg: "bg-purple-400/10", suffix: "%", cardBg: "bg-purple-500/[0.06]", cardBorder: "border-purple-500/10" },
+    { label: "En İyi Paylaşım Saati", value: 0, displayValue: overview.bestPostingTime, icon: Clock, color: "text-amber-400", bg: "bg-amber-400/10", cardBg: "bg-amber-500/[0.06]", cardBorder: "border-amber-500/10" },
   ];
 
   const viralOpportunities = overview.viralFormats.length > 0
@@ -288,7 +288,7 @@ export default function IndividualDashboard({ user }: Props) {
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
               transition={{ delay: 0.4 }}
-              className="text-muted-foreground text-sm mt-1"
+              className="text-foreground/60 text-sm mt-1"
             >
               {user?.subscriptionNiche && `${user.subscriptionNiche} · `}Bugün trendleri keşfetmeye hazır mısın?
             </motion.p>
@@ -336,11 +336,11 @@ export default function IndividualDashboard({ user }: Props) {
             key={stat.label}
             variants={item}
             whileHover={pulseHover}
-            className="bg-card rounded-xl border border-border p-3 sm:p-5 transition-all cursor-default group"
+            className={`${stat.cardBg} rounded-xl border ${stat.cardBorder} p-3 sm:p-5 transition-all cursor-default group`}
           >
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
-                <p className="text-muted-foreground text-[10px] sm:text-xs font-medium uppercase tracking-wider leading-tight">
+                <p className="text-foreground/60 text-[10px] sm:text-xs font-medium uppercase tracking-wider leading-tight">
                   {stat.label}
                 </p>
                 <p className="text-lg sm:text-2xl font-bold text-foreground mt-1 sm:mt-2 truncate">
@@ -364,7 +364,7 @@ export default function IndividualDashboard({ user }: Props) {
       {/* ===== BUGÜNÜN İÇERİK PLANI + HAFTALIK HEDEFLER ===== */}
       <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
         {/* Bugünün İçerik Planı */}
-        <div className="bg-card rounded-xl border border-border p-4 sm:p-6">
+        <div className="bg-teal/[0.04] rounded-xl border border-teal/10 p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
             <Calendar className="w-4 h-4 text-teal" />
             <h3 className="text-sm font-semibold text-foreground">Bug&#252;n&#252;n &#304;&#231;erik Plan&#305;</h3>
@@ -420,7 +420,7 @@ export default function IndividualDashboard({ user }: Props) {
         </div>
 
         {/* Haftalık Hedefler */}
-        <div className="bg-card rounded-xl border border-border p-4 sm:p-6">
+        <div className="bg-purple-500/[0.04] rounded-xl border border-purple-500/10 p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
             <Target className="w-4 h-4 text-primary" />
             <h3 className="text-sm font-semibold text-foreground">Haftal&#305;k Hedefler</h3>
@@ -519,8 +519,8 @@ export default function IndividualDashboard({ user }: Props) {
               initial={{ opacity: 0, scale: 0.9 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.5 + i * 0.1 }}
-              whileHover={{ scale: 1.04, y: -3 }}
-              className="bg-card rounded-xl border border-border p-4 cursor-default group relative overflow-hidden"
+              whileHover={{ scale: 1.05, y: -3 }}
+              className="bg-rose-500/[0.04] rounded-xl border border-rose-500/10 p-4 cursor-default group relative overflow-hidden hover:shadow-lg hover:shadow-rose-500/5"
             >
               {/* Pulse glow on hover */}
               <div className="absolute inset-0 bg-primary/5 opacity-0 group-hover:opacity-100 transition-opacity rounded-xl" />
@@ -550,7 +550,7 @@ export default function IndividualDashboard({ user }: Props) {
 
       {/* ===== PERFORMANS GRAFİĞİ + TREND NİŞLER ===== */}
       <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-        <div className="lg:col-span-2 bg-card rounded-xl border border-border p-3 sm:p-6">
+        <div className="lg:col-span-2 bg-primary/[0.03] rounded-xl border border-primary/10 p-3 sm:p-6">
           <h3 className="text-sm font-semibold text-foreground mb-4 flex items-center gap-2">
             <TrendingUp className="w-4 h-4 text-primary" />
             Etkileşim Trendi - Son 30 Gün
@@ -589,7 +589,7 @@ export default function IndividualDashboard({ user }: Props) {
         </div>
 
         {/* Trend Nişler */}
-        <div className="bg-card rounded-xl border border-border p-3 sm:p-6">
+        <div className="bg-amber-500/[0.04] rounded-xl border border-amber-500/10 p-3 sm:p-6">
           <h3 className="text-sm font-semibold text-foreground mb-4">Trend Nişler</h3>
           <div className="space-y-3">
             {overview.trendingNiches.map((niche, i) => (
@@ -661,7 +661,7 @@ export default function IndividualDashboard({ user }: Props) {
                 transition={{ delay: 0.6 + i * 0.08 }}
                 whileHover={{ scale: 1.02 }}
                 onClick={() => router.push(`/dashboard/sounds/${encodeURIComponent(sound.name)}`)}
-                className="bg-card rounded-xl border border-border p-4 hover:border-teal/20 transition-all cursor-pointer group"
+                className="bg-teal/[0.04] rounded-xl border border-teal/10 p-4 hover:border-teal/20 hover:shadow-md hover:shadow-teal/5 transition-all cursor-pointer group"
               >
                 <div className="flex items-start justify-between mb-2">
                   <div className="flex items-center gap-2 min-w-0">
@@ -707,7 +707,7 @@ export default function IndividualDashboard({ user }: Props) {
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: 0.8 + i * 0.1 }}
               whileHover={{ scale: 1.02 }}
-              className="bg-card rounded-xl border border-border p-4 hover:border-primary/20 transition-all"
+              className="bg-primary/[0.04] rounded-xl border border-primary/10 p-4 hover:border-primary/20 hover:shadow-md hover:shadow-primary/5 hover:scale-[1.02] transition-all"
             >
               <div className="flex items-start justify-between mb-2">
                 <span className="text-xs bg-muted text-muted-foreground px-2 py-1 rounded-md capitalize">{trend.type}</span>
