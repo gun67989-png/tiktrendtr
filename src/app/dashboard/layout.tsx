@@ -61,6 +61,7 @@ const PREMIUM_PATHS = [
   "/dashboard/hooks",
   "/dashboard/reports",
   "/dashboard/daily-report",
+  "/dashboard/ad-analysis",
 ];
 
 const navItems: { href: string; label: string; icon: typeof Home; badge?: string }[] = [
@@ -82,6 +83,7 @@ const premiumNavItems: { href: string; label: string; icon: typeof Home; badge?:
   { href: "/dashboard/hooks", label: "Hook Analizi", icon: Zap, badge: "Yeni" },
   { href: "/dashboard/reports", label: "Günlük Rapor", icon: BarChart2 },
   { href: "/dashboard/daily-report", label: "Detaylı Rapor", icon: FileText },
+  { href: "/dashboard/ad-analysis", label: "Reklam Analizi", icon: BarChart2, badge: "Yeni" },
 ];
 
 interface UserInfo {

@@ -178,6 +178,7 @@ const quickLinks = [
   { href: "/dashboard/predictions", label: "Trend Tahminleri", icon: TrendingUp, color: "text-teal", bg: "bg-teal/10", desc: "Erken uyarı sistemi" },
   { href: "/dashboard/hooks", label: "Hook Analizi", icon: Play, color: "text-blue-400", bg: "bg-blue-400/10", desc: "Hook performansı" },
   { href: "/dashboard/daily-report", label: "Detaylı Rapor", icon: FileText, color: "text-rose-400", bg: "bg-rose-400/10", desc: "PDF dışa aktar" },
+  { href: "/dashboard/ad-analysis", label: "Reklam Analizi", icon: BarChart2, color: "text-orange-400", bg: "bg-orange-400/10", desc: "ROI & performans" },
 ];
 
 // Brand metrics will be populated from real overview data in the component
@@ -214,6 +215,7 @@ export default function EnterpriseDashboard({ user }: Props) {
   const [topVideos, setTopVideos] = useState<VideoData[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<VideoData | null>(null);
   const [lastUpdate, setLastUpdate] = useState("");
+  const [roiScore, setRoiScore] = useState(0);
   const router = useRouter();
 
   const isEnterprise = user.subscriptionType === "enterprise";
@@ -253,6 +255,17 @@ export default function EnterpriseDashboard({ user }: Props) {
   }, []);
 
   useEffect(() => {
+    fetch("/api/trends/ad-performance")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.performance?.summary?.overallROI) {
+          setRoiScore(data.performance.summary.overallROI);
+        }
+      })
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
     fetch("/api/trends/videos?limit=5&sortBy=viralScore&order=desc")
       .then((r) => r.json())
       .then((data) => setTopVideos(data.videos || []))
@@ -263,7 +276,7 @@ export default function EnterpriseDashboard({ user }: Props) {
     { label: "Analiz Edilen Video", value: overview.totalVideosAnalyzed, icon: Video, color: "text-amber-400", bg: "bg-amber-400/10", gradient: "from-amber-500/10 to-amber-500/0" },
     { label: "Rakip Takip", value: 3, icon: Users, color: "text-teal", bg: "bg-teal/10", gradient: "from-teal/10 to-teal/0" },
     { label: "Marka Etkileşim", value: overview.avgEngagement, icon: Percent, color: "text-purple-400", bg: "bg-purple-400/10", suffix: "%", gradient: "from-purple-400/10 to-purple-400/0" },
-    { label: "ROI Skoru", value: 87, icon: TrendingUp, color: "text-primary", bg: "bg-primary/10", gradient: "from-primary/10 to-primary/0" },
+    { label: "ROI Skoru", value: roiScore, icon: TrendingUp, color: "text-primary", bg: "bg-primary/10", gradient: "from-primary/10 to-primary/0" },
   ];
 
   const nicheColors = ["#FF3B5C", "#2dd4bf", "#8b5cf6", "#f59e0b", "#3b82f6", "#ec4899", "#14b8a6", "#f97316"];
