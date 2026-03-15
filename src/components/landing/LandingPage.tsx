@@ -589,7 +589,7 @@ export default function LandingPage({ content }: LandingPageProps) {
       </nav>
 
       {/* ── Hero (Canva-style: spacious, big visual) ── */}
-      <section className="relative pt-32 pb-20 md:pt-44 md:pb-32 lg:pt-48 lg:pb-36 px-4 sm:px-6 overflow-hidden">
+      <section className="relative pt-20 pb-12 md:pt-28 md:pb-16 lg:pt-32 lg:pb-20 px-4 sm:px-6 overflow-hidden">
         {/* Gradient mesh background */}
         <div className="absolute inset-0">
           <Image src="/images/hero-creator.jpg" alt="" fill className="object-cover opacity-[0.04]" unoptimized />
