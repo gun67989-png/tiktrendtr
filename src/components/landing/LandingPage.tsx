@@ -161,14 +161,14 @@ const brandBenefits = [
 ];
 
 /* ─── Glass helpers ─── */
-const glass = "bg-card/60 backdrop-blur-xl border border-white/[0.06]";
-const glassHover = "hover:bg-card/80 hover:border-white/[0.12] hover:shadow-lg hover:shadow-primary/5";
+const glass = "bg-card/60 backdrop-blur-xl border border-white/[0.08]";
+const glassHover = "hover:bg-card/80 hover:border-white/[0.15] hover:shadow-xl hover:shadow-primary/10 hover:scale-[1.02]";
 
 /* ─── Section Divider ─── */
 function SectionDivider() {
   return (
-    <div className="w-full flex justify-center py-2">
-      <div className="w-2/3 max-w-2xl h-px bg-gradient-to-r from-transparent via-primary/20 to-transparent" />
+    <div className="w-full flex justify-center py-3">
+      <div className="w-2/3 max-w-2xl h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
     </div>
   );
 }
@@ -192,7 +192,7 @@ function FloatingParticles() {
       {particles.map((p) => (
         <motion.div
           key={p.id}
-          className="absolute rounded-full bg-primary/20"
+          className="absolute rounded-full bg-purple-400/25"
           style={{
             width: p.size,
             height: p.size,
@@ -222,10 +222,10 @@ function HeroDashboardMockup() {
   return (
     <div className="relative w-full max-w-2xl mx-auto">
       {/* Outer glow */}
-      <div className="absolute -inset-8 bg-primary/[0.08] rounded-[2rem] blur-3xl -z-10" />
-      <div className="absolute -inset-4 bg-teal/[0.05] rounded-[1.5rem] blur-2xl -z-10" />
+      <div className="absolute -inset-8 bg-purple-500/[0.12] rounded-[2rem] blur-3xl -z-10" />
+      <div className="absolute -inset-4 bg-blue-500/[0.08] rounded-[1.5rem] blur-2xl -z-10" />
 
-      <div className={`${glass} rounded-2xl overflow-hidden shadow-2xl shadow-primary/15 border border-white/[0.08]`}>
+      <div className={`${glass} rounded-2xl overflow-hidden shadow-2xl shadow-purple-500/20 border border-purple-500/[0.12]`}>
         {/* Browser chrome */}
         <div className="flex items-center gap-2 px-5 py-3 border-b border-white/[0.06] bg-white/[0.02]">
           <div className="flex gap-1.5">
@@ -345,7 +345,7 @@ function FeatureDeepDiveMockup({ data }: { data: { metrics: { label: string; val
           </div>
         </div>
       </div>
-      <div className="absolute -inset-6 bg-gradient-to-r from-primary/[0.04] via-teal/[0.03] to-purple-500/[0.04] rounded-3xl blur-3xl -z-10" />
+      <div className="absolute -inset-6 bg-gradient-to-r from-primary/[0.08] via-teal/[0.06] to-purple-500/[0.08] rounded-3xl blur-3xl -z-10" />
     </div>
   );
 }
@@ -387,8 +387,8 @@ function LiveDemoPreview() {
       viewport={{ once: true }}
       className="relative"
     >
-      <div className="bg-card/80 backdrop-blur-2xl border border-white/[0.08] rounded-2xl overflow-hidden shadow-2xl shadow-primary/5">
-        <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.06]">
+      <div className="bg-gradient-to-br from-blue-500/[0.06] to-teal/[0.06] backdrop-blur-2xl border border-teal/[0.15] rounded-2xl overflow-hidden shadow-2xl shadow-teal/15">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-teal/[0.10]">
           <div className="flex items-center gap-2">
             <div className="w-2 h-2 rounded-full bg-teal animate-pulse" />
             <span className="text-xs font-medium text-foreground">Canl{"\u0131"} Dashboard {"\u00D6"}nizleme</span>
@@ -449,7 +449,7 @@ function LiveDemoPreview() {
           </Link>
         </div>
       </div>
-      <div className="absolute -inset-6 bg-gradient-to-r from-primary/[0.04] via-teal/[0.03] to-purple-500/[0.04] rounded-3xl blur-3xl -z-10" />
+      <div className="absolute -inset-6 bg-gradient-to-r from-blue-500/[0.08] via-teal/[0.06] to-cyan-500/[0.08] rounded-3xl blur-3xl -z-10" />
     </motion.div>
   );
 }
@@ -458,25 +458,37 @@ function LiveDemoPreview() {
 
 function FeatureCard({ f, i }: { f: LandingFeature; i: number }) {
   const Icon = resolveIcon(f.iconName);
+  const cardColors = [
+    { bg: "bg-purple-500/[0.08]", hoverBg: "group-hover:from-purple-500/[0.10] group-hover:to-violet-500/[0.08]", glow: "from-purple-500/25 to-violet-500/25", shadow: "hover:shadow-purple-500/15", border: "border-purple-500/[0.10]" },
+    { bg: "bg-blue-500/[0.08]", hoverBg: "group-hover:from-blue-500/[0.10] group-hover:to-cyan-500/[0.08]", glow: "from-blue-500/25 to-cyan-500/25", shadow: "hover:shadow-blue-500/15", border: "border-blue-500/[0.10]" },
+    { bg: "bg-teal/[0.08]", hoverBg: "group-hover:from-teal/[0.10] group-hover:to-green-500/[0.08]", glow: "from-teal/25 to-green-500/25", shadow: "hover:shadow-teal/15", border: "border-teal/[0.10]" },
+    { bg: "bg-primary/[0.08]", hoverBg: "group-hover:from-primary/[0.10] group-hover:to-rose-500/[0.08]", glow: "from-primary/25 to-rose-500/25", shadow: "hover:shadow-primary/15", border: "border-primary/[0.10]" },
+    { bg: "bg-amber-500/[0.08]", hoverBg: "group-hover:from-amber-500/[0.10] group-hover:to-orange-500/[0.08]", glow: "from-amber-500/25 to-orange-500/25", shadow: "hover:shadow-amber-500/15", border: "border-amber-500/[0.10]" },
+    { bg: "bg-violet-500/[0.08]", hoverBg: "group-hover:from-violet-500/[0.10] group-hover:to-purple-500/[0.08]", glow: "from-violet-500/25 to-purple-500/25", shadow: "hover:shadow-violet-500/15", border: "border-violet-500/[0.10]" },
+    { bg: "bg-cyan-500/[0.08]", hoverBg: "group-hover:from-cyan-500/[0.10] group-hover:to-blue-500/[0.08]", glow: "from-cyan-500/25 to-blue-500/25", shadow: "hover:shadow-cyan-500/15", border: "border-cyan-500/[0.10]" },
+    { bg: "bg-rose-500/[0.08]", hoverBg: "group-hover:from-rose-500/[0.10] group-hover:to-pink-500/[0.08]", glow: "from-rose-500/25 to-pink-500/25", shadow: "hover:shadow-rose-500/15", border: "border-rose-500/[0.10]" },
+    { bg: "bg-green-500/[0.08]", hoverBg: "group-hover:from-green-500/[0.10] group-hover:to-emerald-500/[0.08]", glow: "from-green-500/25 to-emerald-500/25", shadow: "hover:shadow-green-500/15", border: "border-green-500/[0.10]" },
+  ];
+  const c = cardColors[i % cardColors.length];
   return (
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: i * 0.06 }}
-      whileHover={{ scale: 1.03, y: -4 }}
-      className={`group relative ${glass} rounded-2xl p-6 md:p-8 ${glassHover} transition-all duration-300`}
+      whileHover={{ scale: 1.05, y: -6 }}
+      className={`group relative ${c.bg} backdrop-blur-xl border ${c.border} rounded-2xl p-6 md:p-8 hover:bg-card/80 hover:border-white/[0.15] hover:shadow-xl ${c.shadow} hover:scale-[1.02] transition-all duration-300`}
     >
       {/* Hover glow effect */}
-      <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-primary/[0.00] to-teal/[0.00] group-hover:from-primary/[0.04] group-hover:to-teal/[0.04] transition-all duration-500" />
-      <div className="absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-primary/20 via-transparent to-teal/20 blur-sm -z-10" />
+      <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br from-transparent to-transparent ${c.hoverBg} transition-all duration-500`} />
+      <div className={`absolute -inset-px rounded-2xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br ${c.glow} blur-sm -z-10`} />
 
       <div className="relative">
         <div className={`w-14 h-14 rounded-2xl ${f.bg} flex items-center justify-center mb-5 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/10 transition-all duration-300`}>
           <Icon className={`w-7 h-7 ${f.color}`} />
         </div>
         <h3 className="text-base md:text-lg font-semibold text-foreground mb-2.5">{f.title}</h3>
-        <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
+        <p className="text-sm text-foreground/60 leading-relaxed">{f.desc}</p>
       </div>
     </motion.div>
   );
@@ -516,7 +528,7 @@ function FAQItem({ faq, index }: { faq: LandingFAQ; index: number }) {
             className="overflow-hidden"
           >
             <div className="px-5 md:px-6 pb-5 md:pb-6 pt-0">
-              <p className="text-sm text-muted-foreground leading-relaxed">{faq.answer}</p>
+              <p className="text-sm text-foreground/60 leading-relaxed">{faq.answer}</p>
             </div>
           </motion.div>
         )}
@@ -539,10 +551,10 @@ export default function LandingPage({ content }: LandingPageProps) {
     <div className="min-h-screen bg-background text-foreground relative overflow-x-hidden">
       {/* Global ambient gradients */}
       <div className="fixed inset-0 pointer-events-none z-0">
-        <div className="absolute inset-0 bg-gradient-to-br from-blue-900/[0.08] via-transparent to-rose-900/[0.06]" />
-        <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-primary/[0.04] rounded-full blur-[180px]" />
-        <div className="absolute bottom-1/4 right-1/4 w-[700px] h-[700px] bg-teal/[0.03] rounded-full blur-[180px]" />
-        <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-purple-500/[0.03] rounded-full blur-[150px]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-900/[0.12] via-transparent to-rose-900/[0.10]" />
+        <div className="absolute top-0 left-1/4 w-[800px] h-[800px] bg-primary/[0.07] rounded-full blur-[180px]" />
+        <div className="absolute bottom-1/4 right-1/4 w-[700px] h-[700px] bg-teal/[0.06] rounded-full blur-[180px]" />
+        <div className="absolute top-1/2 right-0 w-[500px] h-[500px] bg-purple-500/[0.06] rounded-full blur-[150px]" />
       </div>
 
       {/* ── Navbar ── */}
@@ -556,7 +568,7 @@ export default function LandingPage({ content }: LandingPageProps) {
             <a href="#faq" className="text-sm text-muted-foreground hover:text-foreground transition-colors">SSS</a>
             <Link href="/login" className="text-sm text-muted-foreground hover:text-foreground transition-colors">Giri{"\u015F"} Yap</Link>
             <ThemeToggle />
-            <Link href="/register" className="text-sm bg-primary/90 backdrop-blur-sm text-primary-foreground px-5 py-2.5 rounded-xl font-medium hover:bg-primary transition-all hover:shadow-lg hover:shadow-primary/20">
+            <Link href="/register" className="text-sm bg-gradient-to-r from-primary to-rose-500 backdrop-blur-sm text-primary-foreground px-5 py-2.5 rounded-xl font-medium hover:from-primary hover:to-rose-400 transition-all hover:shadow-lg hover:shadow-primary/25 hover:scale-105">
               {"\u00DC"}cretsiz Ba{"\u015F"}la
             </Link>
           </div>
@@ -593,12 +605,12 @@ export default function LandingPage({ content }: LandingPageProps) {
         {/* Gradient mesh background */}
         <div className="absolute inset-0">
           <Image src="/images/hero-creator.jpg" alt="" fill className="object-cover opacity-[0.04]" unoptimized />
-          <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-primary/[0.10] via-transparent to-transparent" />
-          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-teal/[0.08] via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-b from-purple-950/40 via-background/95 to-background" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-purple-600/[0.15] via-blue-600/[0.08] to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-teal/[0.12] via-transparent to-transparent" />
         </div>
-        <div className="absolute top-20 left-1/4 w-64 md:w-[500px] h-64 md:h-[500px] bg-primary/[0.05] rounded-full blur-[200px]" />
-        <div className="absolute top-40 right-1/4 w-56 md:w-[400px] h-56 md:h-[400px] bg-teal/[0.05] rounded-full blur-[200px]" />
+        <div className="absolute top-20 left-1/4 w-64 md:w-[500px] h-64 md:h-[500px] bg-purple-500/[0.10] rounded-full blur-[200px]" />
+        <div className="absolute top-40 right-1/4 w-56 md:w-[400px] h-56 md:h-[400px] bg-blue-500/[0.08] rounded-full blur-[200px]" />
 
         {/* Floating particles */}
         <FloatingParticles />
@@ -607,7 +619,7 @@ export default function LandingPage({ content }: LandingPageProps) {
           {/* Text content - centered on top for Canva style */}
           <div className="text-center max-w-4xl mx-auto mb-16 md:mb-20">
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6 }}
-              className="inline-flex items-center gap-2 bg-primary/[0.08] backdrop-blur-sm border border-primary/15 text-primary text-xs sm:text-sm px-4 py-2 rounded-full mb-7">
+              className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/[0.15] to-purple-500/[0.15] backdrop-blur-sm border border-primary/25 text-primary text-xs sm:text-sm px-5 py-2.5 rounded-full mb-7 shadow-lg shadow-primary/10">
               <Zap className="w-3.5 h-3.5" />
               T{"\u00FC"}rkiye&apos;nin #1 TikTok Analiz Platformu
             </motion.div>
@@ -620,13 +632,13 @@ export default function LandingPage({ content }: LandingPageProps) {
             </motion.h1>
 
             <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.2, duration: 0.6 }}
-              className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto mb-10 leading-relaxed">
+              className="text-base sm:text-lg md:text-xl text-foreground/70 max-w-2xl mx-auto mb-10 leading-relaxed">
               TikTok videolar{"\u0131"}n{"\u0131"} derinlemesine analiz edin, hangi i{"\u00E7"}eriklerin neden viral oldu{"\u011F"}unu ke{"\u015F"}fedin. AI destekli analiz ile rakiplerinizden bir ad{"\u0131"}m {"\u00F6"}nde olun.
             </motion.p>
 
             <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }}
               className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-8">
-              <Link href="/register" className="group inline-flex items-center gap-2.5 bg-primary/90 backdrop-blur-sm text-primary-foreground px-8 py-4 rounded-2xl hover:bg-primary transition-all font-medium text-base shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30 hover:scale-[1.02]">
+              <Link href="/register" className="group inline-flex items-center gap-2.5 bg-gradient-to-r from-primary to-rose-500 backdrop-blur-sm text-primary-foreground px-8 py-4 rounded-2xl hover:from-primary hover:to-rose-400 transition-all font-medium text-base shadow-xl shadow-primary/30 hover:shadow-2xl hover:shadow-primary/40 hover:scale-[1.04]">
                 {"\u00DC"}cretsiz Analiz Ba{"\u015F"}lat <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
               </Link>
               <Link href="/login" className={`inline-flex items-center gap-2.5 ${glass} text-foreground px-8 py-4 rounded-2xl ${glassHover} transition-all font-medium text-base`}>
@@ -656,14 +668,23 @@ export default function LandingPage({ content }: LandingPageProps) {
       <section className="relative overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-b from-card/40 via-card/20 to-transparent backdrop-blur-xl" />
         <div className="relative max-w-6xl mx-auto px-4 sm:px-6 py-14 md:py-20">
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-8 md:gap-12">
-            {stats.map((s, i) => (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8">
+            {stats.map((s, i) => {
+              const statColors = [
+                { bg: "bg-primary/[0.08]", border: "border-primary/15", text: "text-primary", shadow: "shadow-primary/10" },
+                { bg: "bg-teal/[0.08]", border: "border-teal/15", text: "text-teal", shadow: "shadow-teal/10" },
+                { bg: "bg-purple-500/[0.08]", border: "border-purple-500/15", text: "text-purple-400", shadow: "shadow-purple-500/10" },
+                { bg: "bg-amber-500/[0.08]", border: "border-amber-500/15", text: "text-amber-400", shadow: "shadow-amber-500/10" },
+              ];
+              const c = statColors[i % statColors.length];
+              return (
               <motion.div key={s.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
-                className="text-center">
-                <p className="text-4xl md:text-5xl font-bold bg-gradient-to-r from-primary to-teal bg-clip-text text-transparent">{s.value}</p>
-                <p className="text-sm text-muted-foreground mt-2">{s.label}</p>
+                className={`text-center ${c.bg} border ${c.border} rounded-2xl p-6 shadow-lg ${c.shadow} hover:scale-105 transition-transform duration-300`}>
+                <p className={`text-4xl md:text-5xl font-bold ${c.text}`}>{s.value}</p>
+                <p className="text-sm text-foreground/70 mt-2 font-medium">{s.label}</p>
               </motion.div>
-            ))}
+            );
+            })}
           </div>
         </div>
       </section>
@@ -672,15 +693,16 @@ export default function LandingPage({ content }: LandingPageProps) {
 
       {/* ── Features Grid ── */}
       <section id="features" className="relative py-24 md:py-32 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute top-1/4 left-0 w-96 h-96 bg-primary/[0.03] rounded-full blur-[180px]" />
-        <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-teal/[0.03] rounded-full blur-[180px]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/[0.06] via-transparent to-rose-500/[0.06]" />
+        <div className="absolute top-1/4 left-0 w-96 h-96 bg-purple-500/[0.08] rounded-full blur-[180px]" />
+        <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-pink-500/[0.06] rounded-full blur-[180px]" />
         <div className="max-w-6xl mx-auto relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14 md:mb-20">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 tracking-tight">
               TikTok B{"\u00FC"}y{"\u00FC"}mesi {"\u0130\u00E7"}in{" "}
               <span className="text-primary">G{"\u00FC\u00E7"}l{"\u00FC"} Ara{"\u00E7"}lar</span>
             </h2>
-            <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto">
+            <p className="text-base md:text-lg text-foreground/70 max-w-xl mx-auto">
               Viral olmak i{"\u00E7"}in ihtiyac{"\u0131"}n{"\u0131"}z olan her ara{"\u00E7"} tek bir platformda.
             </p>
           </motion.div>
@@ -697,17 +719,17 @@ export default function LandingPage({ content }: LandingPageProps) {
 
       {/* ── Live Demo Preview ── */}
       <section className="relative py-24 md:py-32 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-card/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-b from-blue-500/[0.04] via-teal/[0.06] to-blue-500/[0.04]" />
         <div className="max-w-6xl mx-auto relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14 md:mb-20">
-            <div className="inline-flex items-center gap-2 bg-teal/[0.08] backdrop-blur-sm border border-teal/15 text-teal text-xs sm:text-sm px-4 py-2 rounded-full mb-5">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-teal/[0.15] to-cyan-500/[0.15] backdrop-blur-sm border border-teal/25 text-teal text-xs sm:text-sm px-5 py-2.5 rounded-full mb-5 shadow-lg shadow-teal/10">
               <Play className="w-3.5 h-3.5" />
               Canl{"\u0131"} {"\u00D6"}nizleme
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 tracking-tight">
               Dashboard{"\u2019"}unuz <span className="text-teal">B{"\u00F6"}yle</span> G{"\u00F6"}r{"\u00FC"}necek
             </h2>
-            <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto">
+            <p className="text-base md:text-lg text-foreground/70 max-w-xl mx-auto">
               Ger{"\u00E7"}ek zamanl{"\u0131"} trend verileri, viralite skorlar{"\u0131"} ve b{"\u00FC"}y{"\u00FC"}me metrikleri tek bir ekranda.
             </p>
           </motion.div>
@@ -721,7 +743,8 @@ export default function LandingPage({ content }: LandingPageProps) {
       <SectionDivider />
 
       {/* ── Feature Deep Dives (Canva-style alternating layout with mockups) ── */}
-      <section className="py-24 md:py-32 px-4 sm:px-6">
+      <section className="relative py-24 md:py-32 px-4 sm:px-6 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-rose-500/[0.04] via-transparent to-purple-500/[0.04]" />
         <div className="max-w-6xl mx-auto space-y-28 md:space-y-36">
           {featureDeepDives.map((fd, idx) => {
             const isReversed = idx % 2 === 1;
@@ -729,11 +752,11 @@ export default function LandingPage({ content }: LandingPageProps) {
               <motion.div key={fd.badge} initial={{ opacity: 0, y: 40 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true, margin: "-50px" }}
                 className="grid md:grid-cols-2 gap-12 md:gap-16 items-center">
                 <div className={isReversed ? "md:order-2" : ""}>
-                  <span className="inline-block text-[11px] font-semibold text-primary uppercase tracking-wider mb-4 bg-primary/[0.08] backdrop-blur-sm px-3 py-1.5 rounded-full border border-primary/15">
+                  <span className="inline-block text-[11px] font-semibold text-primary uppercase tracking-wider mb-4 bg-gradient-to-r from-primary/[0.15] to-rose-500/[0.12] backdrop-blur-sm px-4 py-2 rounded-full border border-primary/25 shadow-md shadow-primary/10">
                     {fd.badge}
                   </span>
                   <h3 className="text-2xl sm:text-3xl md:text-4xl font-bold text-foreground mb-4 leading-tight tracking-tight">{fd.title}</h3>
-                  <p className="text-base md:text-lg text-muted-foreground leading-relaxed mb-7">{fd.desc}</p>
+                  <p className="text-base md:text-lg text-foreground/70 leading-relaxed mb-7">{fd.desc}</p>
                   <ul className="space-y-3.5">
                     {fd.features.map((feat) => (
                       <li key={feat} className="flex items-center gap-3 text-base text-foreground">
@@ -758,13 +781,13 @@ export default function LandingPage({ content }: LandingPageProps) {
 
       {/* ── How It Works ── */}
       <section className="relative py-24 md:py-32 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-card/30 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.06] via-teal/[0.08] to-cyan-500/[0.06]" />
         <div className="max-w-5xl mx-auto relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14 md:mb-20">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 tracking-tight">
               3 Ad{"\u0131"}mda <span className="text-teal">Ba{"\u015F"}la</span>
             </h2>
-            <p className="text-base md:text-lg text-muted-foreground max-w-lg mx-auto">
+            <p className="text-base md:text-lg text-foreground/70 max-w-lg mx-auto">
               {"\u00DC"}cretsiz hesap olu{"\u015F"}turun ve dakikalar i{"\u00E7"}inde trendleri ke{"\u015F"}fetmeye ba{"\u015F"}lay{"\u0131"}n.
             </p>
           </motion.div>
@@ -773,12 +796,12 @@ export default function LandingPage({ content }: LandingPageProps) {
             {steps.map((step, i) => (
               <motion.div key={step.num} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.12 }}
                 className="relative text-center">
-                <div className={`w-18 h-18 w-[72px] h-[72px] rounded-2xl ${glass} flex items-center justify-center mx-auto mb-5`}>
-                  <step.icon className="w-8 h-8 text-primary" />
+                <div className={`w-18 h-18 w-[72px] h-[72px] rounded-2xl bg-gradient-to-br from-teal/[0.12] to-blue-500/[0.12] backdrop-blur-xl border border-teal/[0.15] flex items-center justify-center mx-auto mb-5 shadow-lg shadow-teal/10`}>
+                  <step.icon className="w-8 h-8 text-teal" />
                 </div>
                 <div className="text-xs text-primary font-bold mb-2 uppercase tracking-wider">Ad{"\u0131"}m {step.num}</div>
                 <h3 className="text-lg font-bold text-foreground mb-2">{step.title}</h3>
-                <p className="text-sm text-muted-foreground">{step.desc}</p>
+                <p className="text-sm text-foreground/60">{step.desc}</p>
                 {i < steps.length - 1 && (
                   <ChevronRight className="hidden md:block absolute top-9 -right-4 w-6 h-6 text-muted-foreground/20" />
                 )}
@@ -792,14 +815,15 @@ export default function LandingPage({ content }: LandingPageProps) {
 
       {/* ── For Who: Brands vs Individuals ── */}
       <section id="for-who" className="relative py-24 md:py-32 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute top-1/4 left-0 w-96 h-96 bg-teal/[0.03] rounded-full blur-[180px]" />
-        <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-amber-500/[0.03] rounded-full blur-[180px]" />
+        <div className="absolute inset-0 bg-gradient-to-r from-green-500/[0.05] via-transparent to-amber-500/[0.05]" />
+        <div className="absolute top-1/4 left-0 w-96 h-96 bg-teal/[0.08] rounded-full blur-[180px]" />
+        <div className="absolute bottom-1/4 right-0 w-96 h-96 bg-amber-500/[0.08] rounded-full blur-[180px]" />
         <div className="max-w-6xl mx-auto relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14 md:mb-20">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 tracking-tight">
               Size <span className="text-teal">Ne</span> Kazand{"\u0131"}r{"\u0131"}r{"\u0131"}z?
             </h2>
-            <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto">
+            <p className="text-base md:text-lg text-foreground/70 max-w-xl mx-auto">
               {"\u0130"}ster bireysel i{"\u00E7"}erik {"\u00FC"}retici olun, ister marka. Valyze TR ile TikTok stratejinizi tamamen d{"\u00F6"}n{"\u00FC\u015F"}t{"\u00FC"}r{"\u00FC"}n.
             </p>
           </motion.div>
@@ -807,7 +831,7 @@ export default function LandingPage({ content }: LandingPageProps) {
           <div className="grid md:grid-cols-2 gap-8">
             {/* Individual */}
             <motion.div initial={{ opacity: 0, x: -20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-              className={`${glass} rounded-2xl p-8 md:p-10 ${glassHover} transition-all duration-300`}>
+              className="bg-gradient-to-br from-teal/[0.10] to-green-500/[0.06] backdrop-blur-xl border border-teal/[0.15] rounded-2xl p-8 md:p-10 hover:border-teal/[0.25] hover:shadow-xl hover:shadow-teal/10 hover:scale-[1.02] transition-all duration-300">
               <div className="flex items-center gap-4 mb-8">
                 <div className="w-14 h-14 rounded-2xl bg-teal/10 flex items-center justify-center">
                   <Users className="w-7 h-7 text-teal" />
@@ -824,7 +848,7 @@ export default function LandingPage({ content }: LandingPageProps) {
                     <div className="w-10 h-10 rounded-xl bg-teal/[0.06] flex items-center justify-center shrink-0 group-hover/item:bg-teal/10 transition-colors">
                       <b.icon className="w-5 h-5 text-teal" />
                     </div>
-                    <span className="text-base text-muted-foreground group-hover/item:text-foreground transition-colors">{b.text}</span>
+                    <span className="text-base text-foreground/60 group-hover/item:text-foreground transition-colors">{b.text}</span>
                   </motion.div>
                 ))}
               </div>
@@ -839,9 +863,9 @@ export default function LandingPage({ content }: LandingPageProps) {
 
             {/* Brands */}
             <motion.div initial={{ opacity: 0, x: 20 }} whileInView={{ opacity: 1, x: 0 }} viewport={{ once: true }}
-              className={`${glass} rounded-2xl p-8 md:p-10 ${glassHover} transition-all duration-300 relative`}>
+              className="bg-gradient-to-br from-amber-500/[0.10] to-orange-500/[0.06] backdrop-blur-xl border border-amber-500/[0.15] rounded-2xl p-8 md:p-10 hover:border-amber-500/[0.25] hover:shadow-xl hover:shadow-amber-500/10 hover:scale-[1.02] transition-all duration-300 relative">
               <div className="absolute top-5 right-5">
-                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-amber-400/[0.08] border border-amber-400/15 px-2.5 py-1 rounded-full backdrop-blur-sm">
+                <span className="text-[10px] font-bold uppercase tracking-wider text-amber-400 bg-gradient-to-r from-amber-400/[0.15] to-orange-400/[0.15] border border-amber-400/25 px-3 py-1.5 rounded-full backdrop-blur-sm shadow-md shadow-amber-400/10">
                   Kurumsal
                 </span>
               </div>
@@ -861,7 +885,7 @@ export default function LandingPage({ content }: LandingPageProps) {
                     <div className="w-10 h-10 rounded-xl bg-amber-500/[0.06] flex items-center justify-center shrink-0 group-hover/item:bg-amber-500/10 transition-colors">
                       <b.icon className="w-5 h-5 text-amber-400" />
                     </div>
-                    <span className="text-base text-muted-foreground group-hover/item:text-foreground transition-colors">{b.text}</span>
+                    <span className="text-base text-foreground/60 group-hover/item:text-foreground transition-colors">{b.text}</span>
                   </motion.div>
                 ))}
               </div>
@@ -881,27 +905,36 @@ export default function LandingPage({ content }: LandingPageProps) {
 
       {/* ── Testimonials (Canva-style: larger cards, more prominent) ── */}
       <section className="relative py-24 md:py-32 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-card/20 to-transparent" />
+        <div className="absolute inset-0 bg-gradient-to-br from-purple-500/[0.06] via-violet-500/[0.08] to-purple-500/[0.06]" />
+        <div className="absolute top-1/3 left-1/4 w-[500px] h-[500px] bg-violet-500/[0.08] rounded-full blur-[200px]" />
         <div className="max-w-6xl mx-auto relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14 md:mb-20">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 tracking-tight">{"\u00DC"}reticiler Ne Diyor?</h2>
-            <p className="text-base md:text-lg text-muted-foreground">Erken kullan{"\u0131"}c{"\u0131"}lardan geri bildirimler.</p>
+            <p className="text-base md:text-lg text-foreground/70">Erken kullan{"\u0131"}c{"\u0131"}lardan geri bildirimler.</p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
-            {testimonials.map((t, i) => (
+            {testimonials.map((t, i) => {
+              const testimonialColors = [
+                { bg: "from-purple-500/[0.08] to-violet-500/[0.05]", border: "border-purple-500/[0.12]", hoverBorder: "hover:border-purple-500/[0.25]", shadow: "hover:shadow-purple-500/15", shine: "via-purple-300/[0.08]" },
+                { bg: "from-blue-500/[0.08] to-cyan-500/[0.05]", border: "border-blue-500/[0.12]", hoverBorder: "hover:border-blue-500/[0.25]", shadow: "hover:shadow-blue-500/15", shine: "via-blue-300/[0.08]" },
+                { bg: "from-teal/[0.08] to-green-500/[0.05]", border: "border-teal/[0.12]", hoverBorder: "hover:border-teal/[0.25]", shadow: "hover:shadow-teal/15", shine: "via-teal/[0.08]" },
+                { bg: "from-rose-500/[0.08] to-pink-500/[0.05]", border: "border-rose-500/[0.12]", hoverBorder: "hover:border-rose-500/[0.25]", shadow: "hover:shadow-rose-500/15", shine: "via-rose-300/[0.08]" },
+              ];
+              const tc = testimonialColors[i % testimonialColors.length];
+              return (
               <motion.div
                 key={t.author}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                whileHover={{ y: -6, scale: 1.02 }}
-                className="group relative bg-card/40 backdrop-blur-2xl border border-white/[0.08] rounded-2xl p-6 md:p-7 hover:bg-card/60 hover:border-white/[0.15] hover:shadow-xl hover:shadow-primary/5 transition-all duration-300"
+                whileHover={{ y: -8, scale: 1.04 }}
+                className={`group relative bg-gradient-to-br ${tc.bg} backdrop-blur-2xl ${tc.border} rounded-2xl p-6 md:p-7 hover:bg-card/60 ${tc.hoverBorder} hover:shadow-xl ${tc.shadow} transition-all duration-300`}
               >
                 {/* Glass shine effect */}
-                <div className="absolute inset-0 rounded-2xl bg-gradient-to-br from-white/[0.03] via-transparent to-white/[0.01] pointer-events-none" />
-                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.1] to-transparent" />
+                <div className={`absolute inset-0 rounded-2xl bg-gradient-to-br from-white/[0.03] ${tc.shine} to-white/[0.01] pointer-events-none`} />
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.15] to-transparent" />
 
                 <div className="relative">
                   <div className="flex items-center gap-0.5 mb-4">
@@ -909,7 +942,7 @@ export default function LandingPage({ content }: LandingPageProps) {
                       <Star key={j} className="w-4 h-4 text-primary fill-primary" />
                     ))}
                   </div>
-                  <p className="text-sm md:text-base text-muted-foreground leading-relaxed mb-5">&ldquo;{t.quote}&rdquo;</p>
+                  <p className="text-sm md:text-base text-foreground/60 leading-relaxed mb-5">&ldquo;{t.quote}&rdquo;</p>
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/20 to-teal/20 flex items-center justify-center text-primary text-sm font-bold backdrop-blur-sm border border-white/[0.06]">{t.avatar}</div>
                     <div>
@@ -919,7 +952,8 @@ export default function LandingPage({ content }: LandingPageProps) {
                   </div>
                 </div>
               </motion.div>
-            ))}
+            );
+            })}
           </div>
         </div>
       </section>
@@ -928,6 +962,7 @@ export default function LandingPage({ content }: LandingPageProps) {
 
       {/* ── Trusted By / Powered By ── */}
       <section className="relative py-16 md:py-24 px-4 sm:px-6 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-card/15 to-transparent" />
         <div className="max-w-5xl mx-auto relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10">
             <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Altyap{"\u0131"}m{"\u0131"}z{"\u0131"} G{"\u00FC\u00E7"}lendiren Teknolojiler</p>
@@ -952,7 +987,7 @@ export default function LandingPage({ content }: LandingPageProps) {
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
                 whileHover={{ scale: 1.03 }}
-                className={`${tech.bg} border ${tech.borderColor} rounded-2xl p-5 text-center hover:shadow-lg transition-all duration-300`}
+                className={`${tech.bg} border ${tech.borderColor} rounded-2xl p-5 text-center hover:shadow-xl hover:scale-105 transition-all duration-300`}
               >
                 <div className="w-12 h-12 rounded-xl bg-white/[0.04] flex items-center justify-center mx-auto mb-3">
                   <tech.icon className={`w-6 h-6 ${tech.color}`} />
@@ -969,38 +1004,47 @@ export default function LandingPage({ content }: LandingPageProps) {
 
       {/* ── Pricing ── */}
       <section id="pricing" className="relative py-24 md:py-32 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-teal/[0.03] rounded-full blur-[200px]" />
-        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-primary/[0.03] rounded-full blur-[200px]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-blue-500/[0.05] via-cyan-500/[0.06] to-blue-500/[0.05]" />
+        <div className="absolute top-0 left-1/4 w-[500px] h-[500px] bg-cyan-500/[0.08] rounded-full blur-[200px]" />
+        <div className="absolute bottom-0 right-1/4 w-[500px] h-[500px] bg-blue-500/[0.08] rounded-full blur-[200px]" />
         <div className="max-w-7xl mx-auto relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14 md:mb-20">
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 tracking-tight">
               {"\u015E"}effaf <span className="text-teal">Fiyatland{"\u0131"}rma</span>
             </h2>
-            <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto">
+            <p className="text-base md:text-lg text-foreground/70 max-w-xl mx-auto">
               Gizli {"\u00FC"}cret yok, s{"\u00FC"}rpriz yok. {"\u0130"}htiyac{"\u0131"}n{"\u0131"}za uygun plan{"\u0131"} se{"\u00E7"}in, istedi{"\u011F"}iniz zaman iptal edin.
             </p>
           </motion.div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-5 md:gap-6">
-            {plans.map((plan, i) => (
+            {plans.map((plan, i) => {
+              const planColors = [
+                { bg: "from-blue-500/[0.06] to-cyan-500/[0.04]", border: "border-blue-500/[0.12]", shadow: "shadow-blue-500/10" },
+                { bg: "from-teal/[0.06] to-green-500/[0.04]", border: "border-teal/[0.12]", shadow: "shadow-teal/10" },
+                { bg: "from-purple-500/[0.06] to-violet-500/[0.04]", border: "border-purple-500/[0.12]", shadow: "shadow-purple-500/10" },
+                { bg: "from-amber-500/[0.06] to-orange-500/[0.04]", border: "border-amber-500/[0.12]", shadow: "shadow-amber-500/10" },
+              ];
+              const pc = planColors[i % planColors.length];
+              return (
               <motion.div
                 key={plan.id}
                 initial={{ opacity: 0, y: 20 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true }}
                 transition={{ delay: i * 0.08 }}
-                className={`relative ${glass} rounded-2xl p-6 md:p-8 border ${plan.accent} ${glassHover} transition-all duration-300 flex flex-col ${
-                  plan.popular ? "ring-1 ring-teal/30 shadow-lg shadow-teal/10" : ""
+                className={`relative bg-gradient-to-br ${pc.bg} backdrop-blur-xl ${pc.border} rounded-2xl p-6 md:p-8 border ${plan.accent} hover:shadow-xl ${pc.shadow} hover:scale-[1.03] hover:border-white/[0.20] transition-all duration-300 flex flex-col ${
+                  plan.popular ? "ring-2 ring-teal/40 shadow-xl shadow-teal/15" : ""
                 }`}
               >
                 {plan.popular && (
-                  <div className="absolute -top-3 left-1/2 -translate-x-1/2 bg-teal/90 backdrop-blur-sm text-white text-[10px] font-bold px-3 py-1 rounded-full flex items-center gap-1 shadow-lg shadow-teal/20">
+                  <div className="absolute -top-3.5 left-1/2 -translate-x-1/2 bg-gradient-to-r from-teal to-cyan-500 backdrop-blur-sm text-white text-[10px] font-bold px-4 py-1.5 rounded-full flex items-center gap-1 shadow-xl shadow-teal/30">
                     <Star className="w-2.5 h-2.5" /> EN POP{"\u00DC"}LER
                   </div>
                 )}
                 <div className="mb-5">
                   <h3 className="text-lg font-bold text-foreground mb-1">{plan.name}</h3>
-                  <p className="text-sm text-muted-foreground">{plan.desc}</p>
+                  <p className="text-sm text-foreground/60">{plan.desc}</p>
                 </div>
                 <div className="flex items-baseline gap-1 mb-6">
                   <span className={`text-4xl font-bold ${plan.popular ? "text-teal" : "text-foreground"}`}>{"\u20BA"}{plan.price === 0 ? "0" : plan.price.toLocaleString("tr-TR")}</span>
@@ -1008,7 +1052,7 @@ export default function LandingPage({ content }: LandingPageProps) {
                 </div>
                 <ul className="space-y-3 mb-8 flex-1">
                   {plan.features.map((f) => (
-                    <li key={f} className="flex items-start gap-2.5 text-sm text-muted-foreground">
+                    <li key={f} className="flex items-start gap-2.5 text-sm text-foreground/60">
                       <Check className={`w-4 h-4 shrink-0 mt-0.5 ${plan.popular ? "text-teal" : "text-muted-foreground/50"}`} />
                       <span>{f}</span>
                     </li>
@@ -1018,13 +1062,14 @@ export default function LandingPage({ content }: LandingPageProps) {
                   {plan.btnText}
                 </Link>
               </motion.div>
-            ))}
+            );
+            })}
           </div>
 
           {/* Pricing transparency note */}
           <motion.div initial={{ opacity: 0 }} whileInView={{ opacity: 1 }} viewport={{ once: true }} transition={{ delay: 0.4 }}
             className="mt-10 text-center">
-            <div className={`inline-flex items-center gap-6 ${glass} rounded-xl px-8 py-4`}>
+            <div className="inline-flex items-center gap-6 bg-gradient-to-r from-blue-500/[0.06] to-cyan-500/[0.06] backdrop-blur-xl border border-blue-500/[0.10] rounded-xl px-8 py-4 shadow-lg shadow-blue-500/5">
               <div className="flex items-center gap-2 text-sm text-muted-foreground">
                 <Shield className="w-4 h-4 text-teal" />
                 <span>256-bit SSL</span>
@@ -1048,18 +1093,19 @@ export default function LandingPage({ content }: LandingPageProps) {
 
       {/* ── FAQ ── */}
       <section id="faq" className="relative py-24 md:py-32 px-4 sm:px-6 overflow-hidden">
-        <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/[0.03] rounded-full blur-[180px]" />
-        <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-teal/[0.03] rounded-full blur-[180px]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-transparent via-card/10 to-transparent" />
+        <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary/[0.05] rounded-full blur-[180px]" />
+        <div className="absolute bottom-1/4 left-0 w-96 h-96 bg-teal/[0.05] rounded-full blur-[180px]" />
         <div className="max-w-3xl mx-auto relative z-10">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-14 md:mb-20">
-            <div className="inline-flex items-center gap-2 bg-primary/[0.08] backdrop-blur-sm border border-primary/15 text-primary text-xs sm:text-sm px-4 py-2 rounded-full mb-5">
+            <div className="inline-flex items-center gap-2 bg-gradient-to-r from-primary/[0.12] to-violet-500/[0.12] backdrop-blur-sm border border-primary/25 text-primary text-xs sm:text-sm px-5 py-2.5 rounded-full mb-5 shadow-md shadow-primary/10">
               <HelpCircle className="w-3.5 h-3.5" />
               S{"\u0131"}k Sorulan Sorular
             </div>
             <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold mb-5 tracking-tight">
               Merak <span className="text-primary">Ettikleriniz</span>
             </h2>
-            <p className="text-base md:text-lg text-muted-foreground max-w-xl mx-auto">
+            <p className="text-base md:text-lg text-foreground/70 max-w-xl mx-auto">
               Valyze hakk{"\u0131"}nda en {"\u00E7"}ok sorulan sorular ve yan{"\u0131"}tlar{"\u0131"}.
             </p>
           </motion.div>
@@ -1088,11 +1134,12 @@ export default function LandingPage({ content }: LandingPageProps) {
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
             className="relative rounded-3xl p-10 md:p-20 overflow-hidden">
             {/* Gradient background for CTA */}
-            <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.15] via-card/80 to-teal/[0.15] rounded-3xl" />
-            <div className="absolute inset-0 backdrop-blur-xl border border-white/[0.08] rounded-3xl" />
-            <div className="absolute top-0 left-1/4 w-72 h-72 bg-primary/[0.10] rounded-full blur-[150px]" />
-            <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-teal/[0.10] rounded-full blur-[150px]" />
-            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.25] via-purple-500/[0.15] to-teal/[0.25] rounded-3xl" />
+            <div className="absolute inset-0 backdrop-blur-xl border border-white/[0.12] rounded-3xl" />
+            <div className="absolute top-0 left-1/4 w-72 h-72 bg-primary/[0.18] rounded-full blur-[150px]" />
+            <div className="absolute bottom-0 right-1/4 w-72 h-72 bg-teal/[0.18] rounded-full blur-[150px]" />
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-96 h-96 bg-purple-500/[0.10] rounded-full blur-[200px]" />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
 
             <div className="relative z-10">
               <motion.div
@@ -1110,7 +1157,7 @@ export default function LandingPage({ content }: LandingPageProps) {
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
                 <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
-                  <Link href="/register" className="inline-flex items-center gap-2.5 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-10 py-4 rounded-2xl font-medium text-base shadow-xl shadow-primary/25 hover:shadow-2xl hover:shadow-primary/30 transition-shadow">
+                  <Link href="/register" className="inline-flex items-center gap-2.5 bg-gradient-to-r from-primary via-rose-500 to-primary text-primary-foreground px-10 py-4 rounded-2xl font-medium text-base shadow-xl shadow-primary/35 hover:shadow-2xl hover:shadow-primary/45 hover:scale-105 transition-all duration-300">
                     {"\u00DC"}cretsiz Hesap Olu{"\u015F"}tur <ArrowRight className="w-5 h-5" />
                   </Link>
                 </motion.div>
