@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import Link from "next/link";
 import {
@@ -32,6 +32,9 @@ import {
   Shield,
   FileText,
   LucideIcon,
+  Cpu,
+  Radio,
+  Lock,
 } from "lucide-react";
 import Image from "next/image";
 import LogoLink from "@/components/LogoLink";
@@ -129,6 +132,49 @@ const brandBenefits = [
 const glass = "bg-card/60 backdrop-blur-xl border border-white/[0.06]";
 const glassHover = "hover:bg-card/80 hover:border-white/[0.12] hover:shadow-lg hover:shadow-primary/5";
 
+/* ─── Floating Particles ─── */
+
+function FloatingParticles() {
+  const [particles] = useState(() =>
+    Array.from({ length: 30 }, (_, i) => ({
+      id: i,
+      x: Math.random() * 100,
+      y: Math.random() * 100,
+      size: Math.random() * 3 + 1,
+      duration: Math.random() * 15 + 10,
+      delay: Math.random() * 5,
+    }))
+  );
+
+  return (
+    <div className="absolute inset-0 overflow-hidden pointer-events-none">
+      {particles.map((p) => (
+        <motion.div
+          key={p.id}
+          className="absolute rounded-full bg-primary/20"
+          style={{
+            width: p.size,
+            height: p.size,
+            left: `${p.x}%`,
+            top: `${p.y}%`,
+          }}
+          animate={{
+            y: [0, -30, 10, -20, 0],
+            x: [0, 15, -10, 5, 0],
+            opacity: [0.2, 0.6, 0.3, 0.5, 0.2],
+          }}
+          transition={{
+            duration: p.duration,
+            delay: p.delay,
+            repeat: Infinity,
+            ease: "easeInOut",
+          }}
+        />
+      ))}
+    </div>
+  );
+}
+
 /* ─── Mockup ─── */
 
 function DashboardMockup() {
@@ -194,6 +240,110 @@ function DashboardMockup() {
   );
 }
 
+/* ─── Live Demo Preview Card ─── */
+
+function LiveDemoPreview() {
+  const [activeTab, setActiveTab] = useState(0);
+  const tabs = ["Trendler", "Hashtag", "Sesler"];
+  const demoData = [
+    [
+      { title: "Dans challenge videosu", score: 94, views: "2.4M", growth: "+340%" },
+      { title: "Yemek tarifi - viral format", score: 87, views: "1.1M", growth: "+220%" },
+      { title: "Duet trend videosu", score: 81, views: "890K", growth: "+180%" },
+    ],
+    [
+      { title: "#turkiyetiktok", score: 96, views: "5.2M", growth: "+450%" },
+      { title: "#viralolacak", score: 89, views: "3.1M", growth: "+280%" },
+      { title: "#trendyakala", score: 78, views: "1.7M", growth: "+150%" },
+    ],
+    [
+      { title: "Original Sound - trending", score: 92, views: "4.8M", growth: "+520%" },
+      { title: "Pop remix - viral beat", score: 85, views: "2.9M", growth: "+310%" },
+      { title: "Comedy audio clip", score: 74, views: "1.3M", growth: "+170%" },
+    ],
+  ];
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      setActiveTab((prev) => (prev + 1) % 3);
+    }, 4000);
+    return () => clearInterval(interval);
+  }, []);
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 30 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="relative"
+    >
+      <div className="bg-card/80 backdrop-blur-2xl border border-white/[0.08] rounded-2xl overflow-hidden shadow-2xl shadow-primary/5">
+        <div className="flex items-center justify-between px-5 py-3 border-b border-white/[0.06]">
+          <div className="flex items-center gap-2">
+            <div className="w-2 h-2 rounded-full bg-teal animate-pulse" />
+            <span className="text-xs font-medium text-foreground">Canl{"\u0131"} Dashboard {"\u00D6"}nizleme</span>
+          </div>
+          <span className="text-[10px] text-muted-foreground">Son g{"\u00FC"}ncelleme: 2 dk {"\u00F6"}nce</span>
+        </div>
+
+        <div className="px-5 pt-3">
+          <div className="flex gap-1 bg-white/[0.03] rounded-lg p-1">
+            {tabs.map((tab, i) => (
+              <button
+                key={tab}
+                onClick={() => setActiveTab(i)}
+                className={`flex-1 text-xs py-1.5 rounded-md font-medium transition-all duration-300 ${
+                  activeTab === i
+                    ? "bg-primary/20 text-primary shadow-sm"
+                    : "text-muted-foreground hover:text-foreground"
+                }`}
+              >
+                {tab}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <div className="p-5 space-y-2">
+          <AnimatePresence mode="wait">
+            {demoData[activeTab].map((item, i) => (
+              <motion.div
+                key={`${activeTab}-${i}`}
+                initial={{ opacity: 0, x: 20 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -20 }}
+                transition={{ delay: i * 0.08, duration: 0.3 }}
+                className="flex items-center justify-between bg-white/[0.03] rounded-xl px-4 py-3 border border-white/[0.04] hover:border-white/[0.08] transition-colors"
+              >
+                <div className="flex items-center gap-3">
+                  <div className="w-8 h-8 rounded-lg bg-primary/10 flex items-center justify-center">
+                    <span className="text-xs font-bold text-primary">{item.score}</span>
+                  </div>
+                  <div>
+                    <p className="text-sm font-medium text-foreground">{item.title}</p>
+                    <p className="text-[10px] text-muted-foreground">{item.views} g{"\u00F6"}r{"\u00FC"}nt{"\u00FC"}lenme</p>
+                  </div>
+                </div>
+                <span className="text-xs font-semibold text-teal">{item.growth}</span>
+              </motion.div>
+            ))}
+          </AnimatePresence>
+        </div>
+
+        <div className="px-5 pb-4">
+          <Link
+            href="/register"
+            className="w-full flex items-center justify-center gap-2 bg-primary/10 border border-primary/20 text-primary text-xs font-medium py-2.5 rounded-xl hover:bg-primary/20 transition-colors"
+          >
+            T{"\u00FC"}m verileri g{"\u00F6"}rmek i{"\u00E7"}in {"\u00FC"}cretsiz ba{"\u015F"}la <ArrowRight className="w-3 h-3" />
+          </Link>
+        </div>
+      </div>
+      <div className="absolute -inset-6 bg-gradient-to-r from-primary/[0.04] via-teal/[0.03] to-purple-500/[0.04] rounded-3xl blur-3xl -z-10" />
+    </motion.div>
+  );
+}
+
 /* ─── Feature card with dynamic icon ─── */
 
 function FeatureCard({ f, i }: { f: LandingFeature; i: number }) {
@@ -204,10 +354,15 @@ function FeatureCard({ f, i }: { f: LandingFeature; i: number }) {
       whileInView={{ opacity: 1, y: 0 }}
       viewport={{ once: true }}
       transition={{ delay: i * 0.06 }}
+      whileHover={{ scale: 1.03, y: -4 }}
       className={`group relative ${glass} rounded-xl p-5 md:p-6 ${glassHover} transition-all duration-300`}
     >
+      {/* Hover glow effect */}
+      <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-primary/[0.00] to-teal/[0.00] group-hover:from-primary/[0.04] group-hover:to-teal/[0.04] transition-all duration-500" />
+      <div className="absolute -inset-px rounded-xl opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-primary/20 via-transparent to-teal/20 blur-sm -z-10" />
+
       <div className="relative">
-        <div className={`w-11 h-11 rounded-xl ${f.bg} flex items-center justify-center mb-4 group-hover:scale-110 transition-transform duration-300`}>
+        <div className={`w-11 h-11 rounded-xl ${f.bg} flex items-center justify-center mb-4 group-hover:scale-110 group-hover:shadow-lg group-hover:shadow-primary/10 transition-all duration-300`}>
           <Icon className={`w-5 h-5 ${f.color}`} />
         </div>
         <h3 className="text-sm md:text-base font-semibold text-foreground mb-2">{f.title}</h3>
@@ -234,7 +389,12 @@ function FAQItem({ faq, index }: { faq: LandingFAQ; index: number }) {
         className="w-full flex items-center justify-between gap-4 p-4 md:p-5 text-left"
       >
         <span className="text-sm font-medium text-foreground">{faq.question}</span>
-        <ChevronDown className={`w-4 h-4 text-muted-foreground shrink-0 transition-transform duration-300 ${isOpen ? "rotate-180" : ""}`} />
+        <motion.div
+          animate={{ rotate: isOpen ? 180 : 0 }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
+        >
+          <ChevronDown className="w-4 h-4 text-muted-foreground shrink-0" />
+        </motion.div>
       </button>
       <AnimatePresence>
         {isOpen && (
@@ -320,12 +480,18 @@ export default function LandingPage({ content }: LandingPageProps) {
 
       {/* ── Hero ── */}
       <section className="relative pt-24 pb-12 md:pt-32 md:pb-20 px-4 sm:px-6 overflow-hidden">
+        {/* Gradient mesh background */}
         <div className="absolute inset-0">
           <Image src="/images/hero-creator.jpg" alt="" fill className="object-cover opacity-[0.06]" unoptimized />
           <div className="absolute inset-0 bg-gradient-to-b from-background via-background/95 to-background" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_top_left,_var(--tw-gradient-stops))] from-primary/[0.08] via-transparent to-transparent" />
+          <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_bottom_right,_var(--tw-gradient-stops))] from-teal/[0.06] via-transparent to-transparent" />
         </div>
         <div className="absolute top-20 left-1/4 w-64 md:w-96 h-64 md:h-96 bg-primary/[0.04] rounded-full blur-[150px]" />
         <div className="absolute top-40 right-1/4 w-56 md:w-80 h-56 md:h-80 bg-teal/[0.04] rounded-full blur-[150px]" />
+
+        {/* Floating particles */}
+        <FloatingParticles />
 
         <div className="max-w-6xl mx-auto relative z-10">
           <div className="grid md:grid-cols-2 gap-8 md:gap-12 items-center">
@@ -350,8 +516,8 @@ export default function LandingPage({ content }: LandingPageProps) {
 
               <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.3, duration: 0.6 }}
                 className="flex flex-col sm:flex-row items-start gap-3 mb-8">
-                <Link href="/register" className="inline-flex items-center gap-2 bg-primary/90 backdrop-blur-sm text-primary-foreground px-6 py-3 rounded-xl hover:bg-primary transition-all font-medium text-sm shadow-lg shadow-primary/20">
-                  {"\u00DC"}cretsiz Analiz Ba{"\u015F"}lat <ArrowRight className="w-4 h-4" />
+                <Link href="/register" className="group inline-flex items-center gap-2 bg-primary/90 backdrop-blur-sm text-primary-foreground px-6 py-3 rounded-xl hover:bg-primary transition-all font-medium text-sm shadow-lg shadow-primary/20 hover:shadow-xl hover:shadow-primary/30 hover:scale-[1.02]">
+                  {"\u00DC"}cretsiz Analiz Ba{"\u015F"}lat <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Link>
                 <Link href="/login" className={`inline-flex items-center gap-2 ${glass} text-foreground px-6 py-3 rounded-xl ${glassHover} transition-all font-medium text-sm`}>
                   <Play className="w-4 h-4" /> Dashboard Demo
@@ -409,6 +575,29 @@ export default function LandingPage({ content }: LandingPageProps) {
             {features.map((f, i) => (
               <FeatureCard key={f.title} f={f} i={i} />
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── Live Demo Preview ── */}
+      <section className="relative py-16 md:py-24 px-4 sm:px-6 border-y border-white/[0.06] overflow-hidden">
+        <div className="absolute inset-0 bg-card/20 backdrop-blur-xl" />
+        <div className="max-w-5xl mx-auto relative z-10">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-10 md:mb-14">
+            <div className="inline-flex items-center gap-2 bg-teal/[0.08] backdrop-blur-sm border border-teal/15 text-teal text-xs px-3 py-1.5 rounded-full mb-4">
+              <Play className="w-3 h-3" />
+              Canl{"\u0131"} {"\u00D6"}nizleme
+            </div>
+            <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">
+              Dashboard{"\u2019"}unuz <span className="text-teal">B{"\u00F6"}yle</span> G{"\u00F6"}r{"\u00FC"}necek
+            </h2>
+            <p className="text-sm text-muted-foreground max-w-lg mx-auto">
+              Ger{"\u00E7"}ek zamanl{"\u0131"} trend verileri, viralite skorlar{"\u0131"} ve b{"\u00FC"}y{"\u00FC"}me metrikleri tek bir ekranda.
+            </p>
+          </motion.div>
+
+          <div className="max-w-2xl mx-auto">
+            <LiveDemoPreview />
           </div>
         </div>
       </section>
@@ -587,24 +776,76 @@ export default function LandingPage({ content }: LandingPageProps) {
 
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
             {testimonials.map((t, i) => (
-              <motion.div key={t.author} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.08 }}
-                className={`${glass} rounded-xl p-4 md:p-5 ${glassHover} transition-all duration-300`}>
-                <div className="flex items-center gap-0.5 mb-3">
-                  {Array.from({ length: 5 }).map((_, j) => (
-                    <Star key={j} className="w-3 h-3 text-primary fill-primary" />
-                  ))}
-                </div>
-                <p className="text-sm text-muted-foreground leading-relaxed mb-4">&ldquo;{t.quote}&rdquo;</p>
-                <div className="flex items-center gap-2.5">
-                  <div className="w-8 h-8 rounded-full bg-primary/15 flex items-center justify-center text-primary text-xs font-bold backdrop-blur-sm">{t.avatar}</div>
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{t.author}</p>
-                    <p className="text-[10px] text-muted-foreground">{t.role}</p>
+              <motion.div
+                key={t.author}
+                initial={{ opacity: 0, y: 20 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                whileHover={{ y: -4, scale: 1.02 }}
+                className="group relative bg-card/40 backdrop-blur-2xl border border-white/[0.08] rounded-xl p-4 md:p-5 hover:bg-card/60 hover:border-white/[0.15] hover:shadow-xl hover:shadow-primary/5 transition-all duration-300"
+              >
+                {/* Glass shine effect */}
+                <div className="absolute inset-0 rounded-xl bg-gradient-to-br from-white/[0.03] via-transparent to-white/[0.01] pointer-events-none" />
+                <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-white/[0.1] to-transparent" />
+
+                <div className="relative">
+                  <div className="flex items-center gap-0.5 mb-3">
+                    {Array.from({ length: 5 }).map((_, j) => (
+                      <Star key={j} className="w-3 h-3 text-primary fill-primary" />
+                    ))}
+                  </div>
+                  <p className="text-sm text-muted-foreground leading-relaxed mb-4">&ldquo;{t.quote}&rdquo;</p>
+                  <div className="flex items-center gap-2.5">
+                    <div className="w-8 h-8 rounded-full bg-gradient-to-br from-primary/20 to-teal/20 flex items-center justify-center text-primary text-xs font-bold backdrop-blur-sm border border-white/[0.06]">{t.avatar}</div>
+                    <div>
+                      <p className="text-sm font-medium text-foreground">{t.author}</p>
+                      <p className="text-[10px] text-muted-foreground">{t.role}</p>
+                    </div>
                   </div>
                 </div>
               </motion.div>
             ))}
           </div>
+        </div>
+      </section>
+
+      {/* ── Trusted By / Powered By ── */}
+      <section className="relative py-12 md:py-16 px-4 sm:px-6 overflow-hidden">
+        <div className="max-w-4xl mx-auto relative z-10">
+          <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} className="text-center mb-8">
+            <p className="text-xs font-semibold text-muted-foreground uppercase tracking-widest">Altyap{"\u0131"}m{"\u0131"}z{"\u0131"} G{"\u00FC\u00E7"}lendiren Teknolojiler</p>
+          </motion.div>
+
+          <motion.div
+            initial={{ opacity: 0, y: 10 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true }}
+            className="grid grid-cols-2 sm:grid-cols-4 gap-4"
+          >
+            {[
+              { icon: Brain, label: "Yapay Zeka", desc: "Gemini & Claude AI", color: "text-purple-400", bg: "bg-purple-400/[0.06]", borderColor: "border-purple-400/10" },
+              { icon: Radio, label: "Ger\u00E7ek Zamanl\u0131", desc: "6 saatte g\u00FCncelleme", color: "text-teal", bg: "bg-teal/[0.06]", borderColor: "border-teal/10" },
+              { icon: Lock, label: "SSL G\u00FCvenlik", desc: "256-bit \u015Fifreleme", color: "text-blue-400", bg: "bg-blue-400/[0.06]", borderColor: "border-blue-400/10" },
+              { icon: Cpu, label: "Ak\u0131ll\u0131 Analiz", desc: "12+ kategori takibi", color: "text-primary", bg: "bg-primary/[0.06]", borderColor: "border-primary/10" },
+            ].map((tech, i) => (
+              <motion.div
+                key={tech.label}
+                initial={{ opacity: 0, y: 10 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true }}
+                transition={{ delay: i * 0.08 }}
+                whileHover={{ scale: 1.03 }}
+                className={`${tech.bg} border ${tech.borderColor} rounded-xl p-4 text-center hover:shadow-lg transition-all duration-300`}
+              >
+                <div className="w-10 h-10 rounded-xl bg-white/[0.04] flex items-center justify-center mx-auto mb-2.5">
+                  <tech.icon className={`w-5 h-5 ${tech.color}`} />
+                </div>
+                <p className={`text-xs font-semibold ${tech.color} mb-0.5`}>{tech.label}</p>
+                <p className="text-[10px] text-muted-foreground">{tech.desc}</p>
+              </motion.div>
+            ))}
+          </motion.div>
         </div>
       </section>
 
@@ -723,20 +964,34 @@ export default function LandingPage({ content }: LandingPageProps) {
       <section className="py-16 md:py-24 px-4 sm:px-6">
         <div className="max-w-3xl mx-auto text-center">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }}
-            className={`relative ${glass} rounded-2xl p-8 md:p-14 overflow-hidden`}>
-            <div className="absolute top-0 left-1/4 w-64 h-64 bg-primary/[0.04] rounded-full blur-[120px]" />
-            <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-teal/[0.04] rounded-full blur-[120px]" />
+            className="relative rounded-2xl p-8 md:p-14 overflow-hidden">
+            {/* Gradient background for CTA */}
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/[0.12] via-card/80 to-teal/[0.12] rounded-2xl" />
+            <div className="absolute inset-0 backdrop-blur-xl border border-white/[0.08] rounded-2xl" />
+            <div className="absolute top-0 left-1/4 w-64 h-64 bg-primary/[0.08] rounded-full blur-[120px]" />
+            <div className="absolute bottom-0 right-1/4 w-64 h-64 bg-teal/[0.08] rounded-full blur-[120px]" />
+            <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/30 to-transparent" />
+
             <div className="relative z-10">
-              <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">
-                Bug{"\u00FC"}nden <span className="text-primary">B{"\u00FC"}y{"\u00FC"}meye</span> Ba{"\u015F"}la
-              </h2>
+              <motion.div
+                initial={{ scale: 0.9, opacity: 0 }}
+                whileInView={{ scale: 1, opacity: 1 }}
+                viewport={{ once: true }}
+                transition={{ delay: 0.1, duration: 0.5 }}
+              >
+                <h2 className="text-2xl sm:text-3xl md:text-4xl font-bold mb-3">
+                  Bug{"\u00FC"}nden <span className="bg-gradient-to-r from-primary to-teal bg-clip-text text-transparent">B{"\u00FC"}y{"\u00FC"}meye</span> Ba{"\u015F"}la
+                </h2>
+              </motion.div>
               <p className="text-sm text-muted-foreground mb-8 max-w-md mx-auto">
                 Viral f{"\u0131"}rsatlar{"\u0131"} ke{"\u015F"}fetmek i{"\u00E7"}in {"\u00FC"}cretsiz hesab{"\u0131"}n{"\u0131"}z{"\u0131"} olu{"\u015F"}turun ve hemen analiz etmeye ba{"\u015F"}lay{"\u0131"}n.
               </p>
               <div className="flex flex-col sm:flex-row items-center justify-center gap-3">
-                <Link href="/register" className="inline-flex items-center gap-2 bg-primary/90 backdrop-blur-sm text-primary-foreground px-8 py-3 rounded-xl hover:bg-primary transition-all font-medium text-sm shadow-lg shadow-primary/20">
-                  {"\u00DC"}cretsiz Hesap Olu{"\u015F"}tur <ArrowRight className="w-4 h-4" />
-                </Link>
+                <motion.div whileHover={{ scale: 1.05 }} whileTap={{ scale: 0.98 }}>
+                  <Link href="/register" className="inline-flex items-center gap-2 bg-gradient-to-r from-primary to-primary/80 text-primary-foreground px-8 py-3.5 rounded-xl font-medium text-sm shadow-lg shadow-primary/25 hover:shadow-xl hover:shadow-primary/30 transition-shadow">
+                    {"\u00DC"}cretsiz Hesap Olu{"\u015F"}tur <ArrowRight className="w-4 h-4" />
+                  </Link>
+                </motion.div>
                 <Link href="/contact" className="inline-flex items-center gap-2 text-muted-foreground hover:text-foreground text-sm transition-colors">
                   <MessageCircle className="w-4 h-4" /> Bize Ula{"\u015F\u0131"}n
                 </Link>

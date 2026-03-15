@@ -208,7 +208,7 @@ function RegisterContent() {
                     initial={{ opacity: 0, x: -20 }}
                     animate={{ opacity: 1, x: 0 }}
                     transition={{ delay: 0.5 + i * 0.1, duration: 0.4 }}
-                    className="flex items-start gap-4 p-4 rounded-xl bg-card/40 border border-border/50"
+                    className="flex items-start gap-4 p-4 rounded-xl bg-card/40 border border-border/50 transition-all duration-300 hover:bg-card/60 hover:border-border hover:shadow-md hover:shadow-teal/5 hover:-translate-y-0.5"
                   >
                     <div className="w-10 h-10 rounded-lg bg-teal/10 flex items-center justify-center flex-shrink-0">
                       <Icon className="w-5 h-5 text-teal" />
@@ -254,17 +254,43 @@ function RegisterContent() {
           </div>
         </div>
 
-        {/* Alt — Güven göstergesi */}
+        {/* Alt — Güven göstergesi ve istatistikler */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 1.2, duration: 0.5 }}
-          className="relative z-10"
+          className="relative z-10 space-y-4"
         >
-          <p className="text-muted-foreground text-xs flex items-center gap-2">
-            <Shield className="w-3.5 h-3.5 text-teal" />
+          <div className="flex items-center gap-6">
+            <div>
+              <p className="text-2xl font-bold text-primary">5.2K+</p>
+              <p className="text-muted-foreground text-xs">Aktif Kullanıcı</p>
+            </div>
+            <div className="w-px h-8 bg-border" />
+            <div>
+              <p className="text-2xl font-bold text-teal">25K+</p>
+              <p className="text-muted-foreground text-xs">Günlük Analiz</p>
+            </div>
+            <div className="w-px h-8 bg-border" />
+            <div>
+              <p className="text-2xl font-bold text-amber-400">150K+</p>
+              <p className="text-muted-foreground text-xs">Trend Takibi</p>
+            </div>
+          </div>
+          <motion.p
+            animate={{ opacity: [0.7, 1, 0.7] }}
+            transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+            className="text-muted-foreground text-xs flex items-center gap-2"
+          >
+            <motion.span
+              animate={{ scale: [1, 1.15, 1] }}
+              transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
+              className="inline-flex"
+            >
+              <Shield className="w-3.5 h-3.5 text-teal" />
+            </motion.span>
             256-bit SSL şifreleme ile korunmaktadır
-          </p>
+          </motion.p>
         </motion.div>
       </div>
 

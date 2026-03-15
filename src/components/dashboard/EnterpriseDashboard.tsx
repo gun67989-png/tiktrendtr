@@ -11,9 +11,13 @@ import {
   Users,
   Target,
   BarChart2,
+  BarChart3,
   FileText,
   Zap,
   ArrowRight,
+  ArrowUpRight,
+  ArrowDownRight,
+  Minus,
   Play,
   Star,
   Sparkles,
@@ -27,6 +31,8 @@ import {
   Share2,
   Award,
   Gauge,
+  Hash,
+  Music,
 } from "lucide-react";
 import {
   AreaChart,
@@ -216,6 +222,7 @@ export default function EnterpriseDashboard({ user }: Props) {
   const [selectedVideo, setSelectedVideo] = useState<VideoData | null>(null);
   const [lastUpdate, setLastUpdate] = useState("");
   const [roiScore, setRoiScore] = useState(0);
+  const [saturation, setSaturation] = useState<Array<{ name: string; type: string; saturation: number; growth: string; competition: string; opportunityScore: number; videoCount: number; avgViews: number }>>([]);
   const router = useRouter();
 
   const isEnterprise = user.subscriptionType === "enterprise";
@@ -269,6 +276,17 @@ export default function EnterpriseDashboard({ user }: Props) {
     fetch("/api/trends/videos?limit=5&sortBy=viralScore&order=desc")
       .then((r) => r.json())
       .then((data) => setTopVideos(data.videos || []))
+      .catch(() => {});
+  }, []);
+
+  useEffect(() => {
+    fetch("/api/trends/saturation")
+      .then((r) => r.json())
+      .then((data) => {
+        if (data.trends && Array.isArray(data.trends)) {
+          setSaturation(data.trends.slice(0, 10));
+        }
+      })
       .catch(() => {});
   }, []);
 
@@ -605,6 +623,83 @@ export default function EnterpriseDashboard({ user }: Props) {
           ))}
         </div>
       </motion.div>
+
+      {/* ===== TREND DOYGUNLUK ANALİZİ ===== */}
+      {saturation.length > 0 && (
+        <motion.div variants={item}>
+          <div className="flex items-center gap-2 mb-4">
+            <BarChart3 className="w-4 h-4 text-amber-400" />
+            <h3 className="text-sm font-semibold text-foreground">Trend Doygunluk Analizi</h3>
+            <span className="text-[10px] bg-amber-400/10 text-amber-400 px-2 py-0.5 rounded-full font-medium">Kurumsal</span>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
+            {saturation.map((trend, i) => {
+              const satColor = trend.saturation < 30 ? "bg-teal" : trend.saturation < 60 ? "bg-amber-400" : "bg-red-500";
+              const satTextColor = trend.saturation < 30 ? "text-teal" : trend.saturation < 60 ? "text-amber-400" : "text-red-400";
+              const GrowthIcon = trend.growth === "rising" ? ArrowUpRight : trend.growth === "declining" ? ArrowDownRight : Minus;
+              const growthColor = trend.growth === "rising" ? "text-teal" : trend.growth === "declining" ? "text-red-400" : "text-amber-400";
+              const compBg = trend.competition === "low" ? "bg-teal/10 text-teal" : trend.competition === "medium" ? "bg-amber-400/10 text-amber-400" : "bg-red-500/10 text-red-400";
+              const TypeIcon = trend.type === "hashtag" ? Hash : Music;
+
+              return (
+                <motion.div
+                  key={`${trend.name}-${i}`}
+                  initial={{ opacity: 0, y: 15 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ delay: 0.6 + i * 0.06 }}
+                  whileHover={{ scale: 1.02, y: -2 }}
+                  className="relative overflow-hidden bg-card rounded-xl border border-border p-4 hover:border-amber-500/20 transition-all group"
+                >
+                  <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-amber-500/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+
+                  {/* Header: name + type badge */}
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center gap-2 min-w-0">
+                      <div className="bg-muted p-1.5 rounded-lg shrink-0">
+                        <TypeIcon className="w-3.5 h-3.5 text-muted-foreground" />
+                      </div>
+                      <span className="text-sm font-semibold text-foreground truncate">{trend.name}</span>
+                    </div>
+                    <div className="flex items-center gap-1.5 shrink-0">
+                      <GrowthIcon className={`w-4 h-4 ${growthColor}`} />
+                      <span className={`text-[10px] font-medium px-2 py-0.5 rounded-full ${compBg}`}>
+                        {trend.competition === "low" ? "Düşük" : trend.competition === "medium" ? "Orta" : "Yüksek"}
+                      </span>
+                    </div>
+                  </div>
+
+                  {/* Saturation bar */}
+                  <div className="mb-3">
+                    <div className="flex items-center justify-between text-[10px] mb-1">
+                      <span className="text-muted-foreground">Doygunluk</span>
+                      <span className={`font-semibold ${satTextColor}`}>%{trend.saturation}</span>
+                    </div>
+                    <div className="h-2 bg-muted rounded-full overflow-hidden">
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${trend.saturation}%` }}
+                        transition={{ delay: 0.8 + i * 0.06, duration: 0.8 }}
+                        className={`h-full rounded-full ${satColor}`}
+                      />
+                    </div>
+                  </div>
+
+                  {/* Bottom stats */}
+                  <div className="flex items-center justify-between text-[10px] text-muted-foreground pt-2 border-t border-border/50">
+                    <span>{trend.videoCount} video</span>
+                    <span>{trend.avgViews > 1000000 ? `${(trend.avgViews / 1000000).toFixed(1)}M` : `${Math.round(trend.avgViews / 1000)}K`} ort. izlenme</span>
+                    <div className="flex items-center gap-1">
+                      <Sparkles className="w-3 h-3 text-amber-400" />
+                      <span className="font-semibold text-amber-400">{trend.opportunityScore}</span>
+                      <span>fırsat</span>
+                    </div>
+                  </div>
+                </motion.div>
+              );
+            })}
+          </div>
+        </motion.div>
+      )}
 
       {/* ===== TOP VİRAL VİDEOLAR ===== */}
       {topVideos.length > 0 && (

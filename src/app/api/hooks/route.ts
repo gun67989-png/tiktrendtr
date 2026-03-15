@@ -12,7 +12,7 @@ interface Hook {
   viralScore: number;
   usageCount: number;
   example: string;
-  source: "trending" | "curated";
+  source: "trending" | "curated" | "generated";
 }
 
 // Curated base hooks (proven templates) - these are always available
@@ -29,6 +29,15 @@ const CURATED_HOOKS: Hook[] = [
   { id: 10, title: "Challenge", script: "Bu trendi denemeden geçme! İşte nasıl:", niche: "Moda", viralScore: 0, usageCount: 0, example: "Trend challenge", source: "curated" },
   { id: 11, title: "Seyahat Reveal", script: "Türkiye'de kimsenin bilmediği bu yer...", niche: "Seyahat", viralScore: 0, usageCount: 0, example: "Gizli mekan keşfi", source: "curated" },
   { id: 12, title: "Oyun İpucu", script: "Bu ayarı açmazsan hep kaybedersin", niche: "Oyun", viralScore: 0, usageCount: 0, example: "Oyun ipucu", source: "curated" },
+  // --- 8 new diverse niche hooks ---
+  { id: 13, title: "Finans Uyarısı", script: "Maaşını böyle harcıyorsan 5 yıl sonra pişman olacaksın", niche: "Finans", viralScore: 0, usageCount: 0, example: "Bütçe yönetimi", source: "curated" },
+  { id: 14, title: "Sağlık Gerçeği", script: "Doktorlar bunu söylemiyor ama her gün yaptığın bu alışkanlık...", niche: "Sağlık", viralScore: 0, usageCount: 0, example: "Sağlık ipucu", source: "curated" },
+  { id: 15, title: "Oyun Rankı", script: "Bronzdan Elmas'a çıkmamın tek sebebi bu strateji", niche: "Oyun", viralScore: 0, usageCount: 0, example: "Rank atlama", source: "curated" },
+  { id: 16, title: "Dans Challenge", script: "Bu koreografiyi herkes yanlış yapıyor, doğrusu böyle:", niche: "Dans", viralScore: 0, usageCount: 0, example: "Dans öğretici", source: "curated" },
+  { id: 17, title: "Vlog Giriş", script: "Bugün benimle bir gün geçirsen neler yaşarsın biliyor musun?", niche: "Vlog", viralScore: 0, usageCount: 0, example: "Günlük vlog", source: "curated" },
+  { id: 18, title: "Yatırım Sırrı", script: "1000 TL ile başladım, 6 ayda olan şeye inanamayacaksın", niche: "Finans", viralScore: 0, usageCount: 0, example: "Yatırım hikayesi", source: "curated" },
+  { id: 19, title: "Sağlıklı Yaşam", script: "Bu 5 dakikalık rutini sabahlarına ekle, farkı 1 haftada gör", niche: "Sağlık", viralScore: 0, usageCount: 0, example: "Sabah rutini", source: "curated" },
+  { id: 20, title: "Vlog Kapanış", script: "Bu anı yakalayacağımı hiç düşünmemiştim...", niche: "Vlog", viralScore: 0, usageCount: 0, example: "Spontan vlog anı", source: "curated" },
 ];
 
 // Category to niche mapping
@@ -43,8 +52,24 @@ const CATEGORY_NICHE_MAP: Record<string, string> = {
   "Seyahat": "Seyahat",
   "Oyun": "Oyun",
   "Müzik": "Kozmetik",
-  "Dans": "Fitness",
-  "Vlog": "Kozmetik",
+  "Dans": "Dans",
+  "Vlog": "Vlog",
+  "Finans": "Finans",
+  "Sağlık": "Sağlık",
+};
+
+// Niche-specific hook templates for AI generation
+const NICHE_HOOK_TEMPLATES: Record<string, string[]> = {
+  hashtag: [
+    "#{hashtag} trendinde öne çıkmak istiyorsan bunları yapmalısın",
+    "#{hashtag} akımını herkes yapıyor ama doğrusu böyle",
+    "#{hashtag} ile viral olmak isteyenlere 3 altın kural",
+  ],
+  format: [
+    "Bu {format} formatını denemediysen yarışta geride kalıyorsun",
+    "{format} formatında en çok izlenen videoların ortak sırrı",
+    "{format} ile içerik üretmenin en etkili yolu budur",
+  ],
 };
 
 async function fetchHooks(): Promise<{ hooks: Hook[]; source: "live" | "curated" }> {
@@ -56,7 +81,7 @@ async function fetchHooks(): Promise<{ hooks: Hook[]; source: "live" | "curated"
     // Fetch top viral videos from last 7 days to extract hook patterns
     const { data: videos, error } = await supabase
       .from("trending_videos")
-      .select("caption, category, view_count, like_count, comment_count, share_count")
+      .select("caption, category, hashtags, view_count, like_count, comment_count, share_count")
       .gte("view_count", 100000)
       .order("view_count", { ascending: false })
       .limit(100);
@@ -66,54 +91,66 @@ async function fetchHooks(): Promise<{ hooks: Hook[]; source: "live" | "curated"
     }
 
     // Enrich curated hooks with real engagement data from matching categories
-    const categoryStats: Record<string, { totalViews: number; totalLikes: number; count: number; avgEngagement: number }> = {};
+    const categoryStats: Record<string, { totalViews: number; totalLikes: number; totalComments: number; totalShares: number; count: number; avgEngagement: number }> = {};
 
     for (const v of videos) {
       const cat = v.category || "Genel";
       if (!categoryStats[cat]) {
-        categoryStats[cat] = { totalViews: 0, totalLikes: 0, count: 0, avgEngagement: 0 };
+        categoryStats[cat] = { totalViews: 0, totalLikes: 0, totalComments: 0, totalShares: 0, count: 0, avgEngagement: 0 };
       }
       categoryStats[cat].totalViews += v.view_count || 0;
       categoryStats[cat].totalLikes += v.like_count || 0;
+      categoryStats[cat].totalComments += v.comment_count || 0;
+      categoryStats[cat].totalShares += v.share_count || 0;
       categoryStats[cat].count += 1;
     }
 
     // Calculate avg engagement per category
     for (const cat of Object.keys(categoryStats)) {
       const s = categoryStats[cat];
+      const totalInteractions = s.totalLikes + s.totalComments + s.totalShares;
       s.avgEngagement = s.totalViews > 0
-        ? Math.round(((s.totalLikes + (videos.filter(v => v.category === cat).reduce((sum, v) => sum + (v.comment_count || 0) + (v.share_count || 0), 0))) / s.totalViews) * 10000) / 100
+        ? Math.round((totalInteractions / s.totalViews) * 10000) / 100
         : 0;
     }
 
-    // Enrich curated hooks with real metrics
+    // Enrich curated hooks with real metrics (never random)
     const enrichedHooks: Hook[] = CURATED_HOOKS.map((hook) => {
-      // Find matching category stats for this hook's niche
       const matchingCat = Object.entries(CATEGORY_NICHE_MAP).find(([, niche]) => niche === hook.niche)?.[0];
       const stats = matchingCat ? categoryStats[matchingCat] : null;
 
       return {
         ...hook,
-        viralScore: stats ? Math.round(Math.min(10, stats.avgEngagement * 1.5) * 10) / 10 : Math.round((5 + Math.random() * 3) * 10) / 10,
+        viralScore: stats ? Math.round(Math.min(10, stats.avgEngagement * 1.5) * 10) / 10 : 0,
         usageCount: stats ? stats.count * 100 : 0,
       };
     });
 
-    // Extract hooks from actual viral video captions (first sentence pattern)
+    // Extract hooks from actual viral video captions (improved first-sentence extraction)
     const trendingHooks: Hook[] = [];
-    let hookId = 100;
+    let hookId = 200;
     const seenPatterns = new Set<string>();
 
-    for (const v of videos.slice(0, 30)) {
+    for (const v of videos.slice(0, 50)) {
       const caption = (v.caption || "").trim();
-      if (!caption || caption.length < 10) continue;
+      if (!caption || caption.length < 15) continue;
 
-      // Extract first sentence as hook
-      const firstSentence = caption.split(/[.!?\n]/)[0].trim();
-      if (firstSentence.length < 10 || firstSentence.length > 100) continue;
+      // Improved first-sentence extraction: split by punctuation and newlines
+      const sentences = caption.split(/[.!?\n]+/).map((s: string) => s.trim()).filter(Boolean);
+      const firstSentence = sentences[0] || "";
 
-      // Avoid duplicates
-      const normalized = firstSentence.toLowerCase().slice(0, 30);
+      // Filter out very short, very long, or generic captions
+      if (firstSentence.length < 15 || firstSentence.length > 120) continue;
+
+      // Skip captions that are just hashtags or mentions
+      if (/^[#@\s]+$/.test(firstSentence)) continue;
+      // Skip if more than half the words are hashtags
+      const words = firstSentence.split(/\s+/);
+      const hashtagWords = words.filter((w: string) => w.startsWith("#"));
+      if (hashtagWords.length > words.length / 2) continue;
+
+      // Avoid duplicates using normalized prefix
+      const normalized = firstSentence.toLowerCase().replace(/[^a-zçğıöşü0-9\s]/g, "").slice(0, 40);
       if (seenPatterns.has(normalized)) continue;
       seenPatterns.add(normalized);
 
@@ -135,10 +172,81 @@ async function fetchHooks(): Promise<{ hooks: Hook[]; source: "live" | "curated"
         source: "trending",
       });
 
-      if (trendingHooks.length >= 12) break;
+      if (trendingHooks.length >= 15) break;
     }
 
-    const allHooks = [...enrichedHooks, ...trendingHooks].sort((a, b) => b.viralScore - a.viralScore);
+    // --- Generate niche-specific hooks from trending data ---
+    const generatedHooks: Hook[] = [];
+    let genId = 500;
+
+    // Extract top hashtags from videos
+    const hashtagCounts: Record<string, { count: number; totalViews: number; totalLikes: number; totalComments: number; totalShares: number }> = {};
+    for (const v of videos) {
+      const tags: string[] = Array.isArray(v.hashtags)
+        ? v.hashtags
+        : typeof v.hashtags === "string"
+          ? v.hashtags.split(",").map((t: string) => t.trim()).filter(Boolean)
+          : [];
+      for (const tag of tags) {
+        const clean = tag.replace(/^#/, "").trim().toLowerCase();
+        if (!clean || clean.length < 2) continue;
+        if (!hashtagCounts[clean]) {
+          hashtagCounts[clean] = { count: 0, totalViews: 0, totalLikes: 0, totalComments: 0, totalShares: 0 };
+        }
+        hashtagCounts[clean].count++;
+        hashtagCounts[clean].totalViews += v.view_count || 0;
+        hashtagCounts[clean].totalLikes += v.like_count || 0;
+        hashtagCounts[clean].totalComments += v.comment_count || 0;
+        hashtagCounts[clean].totalShares += v.share_count || 0;
+      }
+    }
+
+    // Get top 5 hashtags by count
+    const topHashtags = Object.entries(hashtagCounts)
+      .sort(([, a], [, b]) => b.count - a.count)
+      .slice(0, 5);
+
+    for (const [hashtag, stats] of topHashtags) {
+      const templates = NICHE_HOOK_TEMPLATES.hashtag;
+      const template = templates[genId % templates.length];
+      const engRate = stats.totalViews > 0
+        ? ((stats.totalLikes + stats.totalComments + stats.totalShares) / stats.totalViews) * 100
+        : 0;
+
+      generatedHooks.push({
+        id: genId++,
+        title: `AI: #${hashtag}`,
+        script: template.replace("{hashtag}", hashtag),
+        niche: "Genel",
+        viralScore: Math.round(Math.min(10, engRate * 1.5) * 10) / 10,
+        usageCount: stats.count,
+        example: `${stats.count} videoda kullanıldı`,
+        source: "generated",
+      });
+    }
+
+    // Generate format-based hooks from top categories
+    const topCategories = Object.entries(categoryStats)
+      .sort(([, a], [, b]) => b.count - a.count)
+      .slice(0, 3);
+
+    for (const [category, stats] of topCategories) {
+      const templates = NICHE_HOOK_TEMPLATES.format;
+      const template = templates[genId % templates.length];
+
+      generatedHooks.push({
+        id: genId++,
+        title: `AI: ${category} Format`,
+        script: template.replace("{format}", category),
+        niche: CATEGORY_NICHE_MAP[category] || category,
+        viralScore: Math.round(Math.min(10, stats.avgEngagement * 1.5) * 10) / 10,
+        usageCount: stats.count * 50,
+        example: `${category} kategorisinden üretildi`,
+        source: "generated",
+      });
+    }
+
+    const allHooks = [...enrichedHooks, ...trendingHooks, ...generatedHooks].sort((a, b) => b.viralScore - a.viralScore);
     return { hooks: allHooks, source: "live" };
   } catch {
     return { hooks: CURATED_HOOKS, source: "curated" };

@@ -21,6 +21,7 @@ import {
   // Star,
   Rocket,
   Eye,
+  Hash,
 } from "lucide-react";
 import {
   AreaChart,
@@ -145,6 +146,12 @@ export default function IndividualDashboard({ user }: Props) {
   const [topVideos, setTopVideos] = useState<VideoData[]>([]);
   const [selectedVideo, setSelectedVideo] = useState<VideoData | null>(null);
   const [lastUpdate, setLastUpdate] = useState("");
+  const [contentPlan, setContentPlan] = useState<{
+    dailyTasks: Array<{ time: string; format: string; hashtags: string[]; hook: string; viewTarget: number; likeTarget: number; type: string }>;
+    weeklyInsights: { bestDays: string[]; topFormats: string[]; trendingSounds: string[]; avgViewTarget: number; avgLikeTarget: number };
+    tacticSuggestions: string[];
+    nicheStats: { avgViews: number; avgEngagement: number; totalVideos: number };
+  } | null>(null);
   const router = useRouter();
 
   useEffect(() => {
@@ -182,6 +189,14 @@ export default function IndividualDashboard({ user }: Props) {
       .catch(() => {});
   }, []);
 
+  useEffect(() => {
+    const niche = user?.subscriptionNiche || "";
+    fetch(`/api/trends/content-plan${niche ? `?niche=${encodeURIComponent(niche)}` : ""}`)
+      .then((r) => r.json())
+      .then((data) => { if (data.plan) setContentPlan(data.plan); })
+      .catch(() => {});
+  }, [user?.subscriptionNiche]);
+
   const isPremium = user?.subscriptionType && user.subscriptionType !== "free";
 
   const stats = [
@@ -200,6 +215,7 @@ export default function IndividualDashboard({ user }: Props) {
       }))
     : [];
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const dailySuggestions = overview.bestPostingTime !== "—"
     ? [
         { time: "09:00", content: "Trend ses ile POV videosu paylaş", type: "Video", icon: Play, color: "text-primary" },
@@ -212,7 +228,9 @@ export default function IndividualDashboard({ user }: Props) {
   const nicheColors = ["#FF3B5C", "#2dd4bf", "#8b5cf6", "#f59e0b", "#3b82f6", "#ec4899", "#14b8a6", "#f97316"];
 
   // Real data stats
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const growthTarget = { current: overview.totalVideosAnalyzed, goal: Math.max(overview.totalVideosAnalyzed * 2, 1000), label: "Analiz Edilen Video" };
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const growthPercent = growthTarget.goal > 0 ? Math.round((growthTarget.current / growthTarget.goal) * 100) : 0;
 
   return (
@@ -329,73 +347,147 @@ export default function IndividualDashboard({ user }: Props) {
         ))}
       </motion.div>
 
-      {/* ===== BÜYÜME HEDEFİ + GÜNLÜK TAKVİM ===== */}
+      {/* ===== BUGÜNÜN İÇERİK PLANI + HAFTALIK HEDEFLER ===== */}
       <motion.div variants={item} className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
-        {/* Büyüme Hedefi */}
+        {/* Bugünün İçerik Planı */}
         <div className="bg-card rounded-xl border border-border p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Target className="w-4 h-4 text-teal" />
-            <h3 className="text-sm font-semibold text-foreground">Büyüme Hedefi</h3>
+            <Calendar className="w-4 h-4 text-teal" />
+            <h3 className="text-sm font-semibold text-foreground">Bug&#252;n&#252;n &#304;&#231;erik Plan&#305;</h3>
           </div>
-          <div className="text-center mb-4">
-            <p className="text-3xl font-bold text-foreground">
-              <AnimatedCounter value={growthTarget.current} /> <span className="text-muted-foreground text-lg font-normal">/ {growthTarget.goal.toLocaleString("tr-TR")}</span>
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">{growthTarget.label}</p>
-          </div>
-          <div className="relative h-4 bg-muted rounded-full overflow-hidden">
-            <motion.div
-              initial={{ width: 0 }}
-              animate={{ width: `${growthPercent}%` }}
-              transition={{ delay: 0.5, duration: 1.2, ease: "easeOut" }}
-              className="absolute inset-y-0 left-0 rounded-full bg-gradient-to-r from-teal to-primary"
-            />
-            <motion.div
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              transition={{ delay: 1.5 }}
-              className="absolute inset-0 flex items-center justify-center"
-            >
-              <span className="text-[10px] font-bold text-white drop-shadow">%{growthPercent}</span>
-            </motion.div>
-          </div>
-          <div className="flex justify-between mt-2">
-            <span className="text-[10px] text-muted-foreground">Başlangıç</span>
-            <span className="text-[10px] text-muted-foreground">{growthTarget.goal.toLocaleString("tr-TR")} hedef</span>
-          </div>
+          {contentPlan && contentPlan.dailyTasks.length > 0 ? (
+            <div className="space-y-3">
+              {contentPlan.dailyTasks.map((task, i) => (
+                <motion.div
+                  key={`task-${task.time}-${i}`}
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 + i * 0.12 }}
+                  className="flex items-start gap-3 group"
+                >
+                  <div className="flex flex-col items-center">
+                    <span className="text-xs font-mono font-semibold text-foreground">{task.time}</span>
+                    {i < contentPlan.dailyTasks.length - 1 && (
+                      <div className="w-px h-8 bg-border mt-1" />
+                    )}
+                  </div>
+                  <div className="flex-1 bg-muted/50 rounded-lg p-2.5 border border-border/50 group-hover:border-primary/20 transition-colors">
+                    <div className="flex items-center gap-2 mb-1">
+                      {task.type === "video" && <Play className="w-3.5 h-3.5 text-primary" />}
+                      {task.type === "research" && <Eye className="w-3.5 h-3.5 text-purple-400" />}
+                      {task.type === "engage" && <Zap className="w-3.5 h-3.5 text-amber-400" />}
+                      <span className="text-[10px] font-medium bg-primary/10 text-primary px-1.5 py-0.5 rounded">{task.format}</span>
+                      {task.viewTarget > 0 && (
+                        <span className="text-[10px] text-muted-foreground ml-auto">
+                          {task.viewTarget.toLocaleString("tr-TR")} g&#246;r&#252;nt&#252;lenme hedefi
+                        </span>
+                      )}
+                    </div>
+                    <p className="text-xs text-foreground mb-1.5">{task.hook}</p>
+                    {task.hashtags.length > 0 && (
+                      <div className="flex flex-wrap gap-1">
+                        {task.hashtags.map((tag) => (
+                          <span key={tag} className="inline-flex items-center gap-0.5 text-[10px] text-teal bg-teal/10 px-1.5 py-0.5 rounded">
+                            <Hash className="w-2.5 h-2.5" />
+                            {tag.replace(/^#/, "")}
+                          </span>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-32 text-sm text-muted-foreground">
+              Veri y&#252;kleniyor...
+            </div>
+          )}
         </div>
 
-        {/* Günlük İçerik Takvimi */}
+        {/* Haftalık Hedefler */}
         <div className="bg-card rounded-xl border border-border p-4 sm:p-6">
           <div className="flex items-center gap-2 mb-4">
-            <Calendar className="w-4 h-4 text-primary" />
-            <h3 className="text-sm font-semibold text-foreground">Bugünün Programı</h3>
+            <Target className="w-4 h-4 text-primary" />
+            <h3 className="text-sm font-semibold text-foreground">Haftal&#305;k Hedefler</h3>
           </div>
-          <div className="space-y-3">
-            {dailySuggestions.map((sug, i) => (
-              <motion.div
-                key={sug.time}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 + i * 0.12 }}
-                className="flex items-start gap-3 group"
-              >
-                <div className="flex flex-col items-center">
-                  <span className="text-xs font-mono font-semibold text-foreground">{sug.time}</span>
-                  {i < dailySuggestions.length - 1 && (
-                    <div className="w-px h-8 bg-border mt-1" />
-                  )}
-                </div>
-                <div className="flex-1 bg-muted/50 rounded-lg p-2.5 border border-border/50 group-hover:border-primary/20 transition-colors">
-                  <div className="flex items-center gap-2 mb-1">
-                    <sug.icon className={`w-3.5 h-3.5 ${sug.color}`} />
-                    <span className="text-[10px] font-medium text-muted-foreground uppercase">{sug.type}</span>
+          {contentPlan ? (
+            <div className="space-y-4">
+              {/* Best days */}
+              {contentPlan.weeklyInsights.bestDays.length > 0 && (
+                <div>
+                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5">En &#304;yi G&#252;nler</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {contentPlan.weeklyInsights.bestDays.map((day) => (
+                      <span key={day} className="text-xs bg-teal/10 text-teal px-2 py-1 rounded-md font-medium">{day}</span>
+                    ))}
                   </div>
-                  <p className="text-xs text-foreground">{sug.content}</p>
                 </div>
-              </motion.div>
-            ))}
-          </div>
+              )}
+
+              {/* Top formats */}
+              {contentPlan.weeklyInsights.topFormats.length > 0 && (
+                <div>
+                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5">&#214;nerilen Formatlar</p>
+                  <div className="flex flex-wrap gap-1.5">
+                    {contentPlan.weeklyInsights.topFormats.map((fmt) => (
+                      <span key={fmt} className="text-xs bg-primary/10 text-primary px-2 py-1 rounded-md font-medium">{fmt}</span>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* View/Like targets */}
+              <div className="grid grid-cols-2 gap-3">
+                <div className="bg-muted/50 rounded-lg p-3 border border-border/50">
+                  <p className="text-[10px] text-muted-foreground uppercase">Haftal&#305;k G&#246;r&#252;nt&#252;lenme</p>
+                  <p className="text-lg font-bold text-foreground mt-1">
+                    {contentPlan.weeklyInsights.avgViewTarget.toLocaleString("tr-TR")}
+                  </p>
+                </div>
+                <div className="bg-muted/50 rounded-lg p-3 border border-border/50">
+                  <p className="text-[10px] text-muted-foreground uppercase">Haftal&#305;k Be&#287;eni</p>
+                  <p className="text-lg font-bold text-foreground mt-1">
+                    {contentPlan.weeklyInsights.avgLikeTarget.toLocaleString("tr-TR")}
+                  </p>
+                </div>
+              </div>
+
+              {/* Trending sounds */}
+              {contentPlan.weeklyInsights.trendingSounds.length > 0 && (
+                <div>
+                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5">Trend Sesler</p>
+                  <div className="space-y-1">
+                    {contentPlan.weeklyInsights.trendingSounds.map((sound) => (
+                      <div key={sound} className="flex items-center gap-2 text-xs text-foreground">
+                        <Play className="w-3 h-3 text-primary shrink-0" />
+                        <span className="truncate">{sound}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+
+              {/* Tactic suggestions */}
+              {contentPlan.tacticSuggestions.length > 0 && (
+                <div className="border-t border-border/50 pt-3">
+                  <p className="text-[10px] font-medium text-muted-foreground uppercase tracking-wider mb-1.5">Taktik &#214;nerileri</p>
+                  <div className="space-y-1.5">
+                    {contentPlan.tacticSuggestions.slice(0, 2).map((tip, i) => (
+                      <div key={i} className="flex items-start gap-2 text-xs text-muted-foreground">
+                        <Sparkles className="w-3 h-3 text-amber-400 shrink-0 mt-0.5" />
+                        <span>{tip}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+          ) : (
+            <div className="flex items-center justify-center h-32 text-sm text-muted-foreground">
+              Veri y&#252;kleniyor...
+            </div>
+          )}
         </div>
       </motion.div>
 
