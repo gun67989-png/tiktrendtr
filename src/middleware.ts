@@ -136,6 +136,18 @@ export async function middleware(request: NextRequest) {
     return response;
   }
 
+  // Cron endpoints - allow CRON_SECRET auth (bypass session check)
+  if (pathname === "/api/admin/auto-analyze") {
+    const cronSecret = process.env.CRON_SECRET;
+    const authHeader = request.headers.get("x-cron-secret") || request.headers.get("authorization");
+    if (cronSecret && authHeader === cronSecret) {
+      const response = NextResponse.next();
+      response.headers.set("x-request-id", requestId);
+      return response;
+    }
+    // Fall through to admin auth check if no valid cron secret
+  }
+
   // Admin API routes - check auth + admin role
   if (pathname.startsWith("/api/admin")) {
     const session = await getSessionFromRequest(request);
