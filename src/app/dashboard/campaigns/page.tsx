@@ -6,8 +6,6 @@ import PremiumGate from "@/components/PremiumGate";
 import {
   Megaphone,
   Eye,
-  Heart,
-  MessageCircle,
   Share2,
   TrendingUp,
   TrendingDown,
@@ -29,9 +27,6 @@ import {
   CartesianGrid,
   Tooltip,
   ResponsiveContainer,
-  Cell,
-  PieChart,
-  Pie,
   RadarChart,
   PolarGrid,
   PolarAngleAxis,
@@ -83,9 +78,6 @@ interface AdPerformanceData {
     overallROI: number;
   };
 }
-
-const BAR_COLORS = ["#f59e0b", "#2dd4bf", "#8b5cf6", "#3b82f6", "#ec4899", "#f97316", "#14b8a6", "#6366f1"];
-const PIE_COLORS = ["#FF3B5C", "#2dd4bf", "#a78bfa", "#60a5fa", "#f59e0b", "#f472b6", "#34d399", "#fb923c"];
 
 function TrendIcon({ trend }: { trend: "up" | "down" | "stable" }) {
   if (trend === "up") return <TrendingUp className="w-3.5 h-3.5 text-teal" />;

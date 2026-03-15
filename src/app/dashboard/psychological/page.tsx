@@ -212,15 +212,12 @@ function generateFallbackCommentary(data: AnalysisData) {
 
 function generateFallbackCommentAnalysis(
   topComments: Array<{ username: string; text: string; likes: number }>,
-  totalFetched: number,
-  data: AnalysisData
+  totalFetched: number
 ) {
   if (!topComments || topComments.length === 0) return null;
 
   const totalLikes = topComments.reduce((sum, c) => sum + c.likes, 0);
   const avgLikes = Math.round(totalLikes / topComments.length);
-  const topComment = topComments[0];
-  const engRate = data.analysis_data.avg_engagement_rate;
 
   // Detect language patterns
   const languages = new Set<string>();
@@ -770,8 +767,7 @@ function PsychologicalContent() {
                 {!ca && data.comments_data.top_comments.length > 0 && (() => {
                   const fb = generateFallbackCommentAnalysis(
                     data.comments_data.top_comments,
-                    data.comments_data.total_fetched,
-                    data
+                    data.comments_data.total_fetched
                   );
                   if (!fb) return null;
                   return (
