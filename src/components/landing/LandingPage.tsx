@@ -671,16 +671,16 @@ export default function LandingPage({ content }: LandingPageProps) {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-5 md:gap-8">
             {stats.map((s, i) => {
               const statColors = [
-                { bg: "bg-primary/[0.08]", border: "border-primary/15", text: "text-primary", shadow: "shadow-primary/10" },
-                { bg: "bg-teal/[0.08]", border: "border-teal/15", text: "text-teal", shadow: "shadow-teal/10" },
-                { bg: "bg-purple-500/[0.08]", border: "border-purple-500/15", text: "text-purple-400", shadow: "shadow-purple-500/10" },
-                { bg: "bg-amber-500/[0.08]", border: "border-amber-500/15", text: "text-amber-400", shadow: "shadow-amber-500/10" },
+                { bg: "bg-primary/[0.06]", border: "border-primary/10", gradient: "linear-gradient(135deg, #f43f5e, #ec4899)", shadow: "shadow-primary/10" },
+                { bg: "bg-teal/[0.06]", border: "border-teal/10", gradient: "linear-gradient(135deg, #14b8a6, #06b6d4)", shadow: "shadow-teal/10" },
+                { bg: "bg-purple-500/[0.06]", border: "border-purple-500/10", gradient: "linear-gradient(135deg, #a855f7, #8b5cf6)", shadow: "shadow-purple-500/10" },
+                { bg: "bg-amber-500/[0.06]", border: "border-amber-500/10", gradient: "linear-gradient(135deg, #f59e0b, #f97316)", shadow: "shadow-amber-500/10" },
               ];
               const c = statColors[i % statColors.length];
               return (
               <motion.div key={s.label} initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ delay: i * 0.1 }}
                 className={`text-center ${c.bg} border ${c.border} rounded-2xl p-6 shadow-lg ${c.shadow} hover:scale-105 transition-transform duration-300`}>
-                <p className={`text-4xl md:text-5xl font-bold ${c.text}`}>{s.value}</p>
+                <p className="text-4xl md:text-5xl font-bold" style={{ backgroundImage: c.gradient, WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{s.value}</p>
                 <p className="text-sm text-foreground/70 mt-2 font-medium">{s.label}</p>
               </motion.div>
             );
